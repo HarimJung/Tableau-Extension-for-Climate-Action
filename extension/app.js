@@ -104,8 +104,11 @@
         `${iso3} \u00b7 ${card.region || '\u2014'} \u00b7 ${card.income_group || '\u2014'}`;
 
       // Score Hero
-      document.getElementById('card-score').textContent =
+      const scoreEl = document.getElementById('card-score');
+      scoreEl.classList.remove('score-animate');
+      scoreEl.textContent =
         card.total_score != null ? VC.fmt(card.total_score) : '\u2014';
+      scoreEl.classList.add('score-animate');
 
       const gradeEl = document.getElementById('card-grade');
       const grade = card.grade || '\u2014';
@@ -130,6 +133,14 @@
 
       // Domain Bars
       renderDomainBars(card);
+
+      // Animate domain bar fills from 0% to target width
+      requestAnimationFrame(() => {
+        document.querySelectorAll('.domain-bar-fill').forEach(el => {
+          const target = el.getAttribute('data-target-width');
+          el.style.width = target;
+        });
+      });
 
       // Radar Chart
       RadarChart.render('domain-radar', {
@@ -166,9 +177,10 @@
       const row = document.createElement('div');
       row.className = 'domain-bar-row';
       row.innerHTML = `
+        <div class="domain-tooltip">${d.label}: ${score != null ? VC.fmt(score) + '/100' : 'No data'} · Weight: ${d.weight} · Global avg: ${avg}</div>
         <span class="domain-label">${d.label} <span style="font-size:9px;color:${VC.BRAND.textMuted}">(${d.weight})</span></span>
         <div class="domain-bar-track">
-          <div class="domain-bar-fill" style="width:${pct}%;background:${d.color};"></div>
+          <div class="domain-bar-fill" style="width:0%;background:${d.color};" data-target-width="${pct}%"></div>
           <div class="domain-bar-avg" style="left:${avg}%;" title="Global Avg: ${avg}"></div>
         </div>
         <span class="domain-bar-value" style="color:${score != null ? d.color : VC.BRAND.dataMissing}">${score != null ? VC.fmt(score) : '\u2014'}</span>

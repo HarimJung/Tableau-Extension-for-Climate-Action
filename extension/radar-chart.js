@@ -84,7 +84,9 @@ const RadarChart = (() => {
     });
 
     const polyStr = scorePoints.map(p => `${p.x},${p.y}`).join(' ');
-    svg += `<polygon points="${polyStr}" fill="rgba(0,102,255,0.15)" stroke="#0066FF" stroke-width="2"/>`;
+    svg += `<polygon points="${polyStr}" fill="rgba(0,102,255,0.15)" stroke="#0066FF" stroke-width="2" opacity="0">`;
+    svg += `<animate attributeName="opacity" from="0" to="1" dur="0.6s" fill="freeze"/>`;
+    svg += `</polygon>`;
 
     // 각 꼭짓점 도트 + 점수 라벨
     for (let i = 0; i < DOMAINS.length; i++) {
@@ -93,9 +95,11 @@ const RadarChart = (() => {
       const r = val != null ? (val / 100) * maxR : 0;
       const p = polarToXY(cx, cy, r, d.angle);
 
-      // 도트
+      // 도트 (with sequential fade-in)
       if (val != null) {
-        svg += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${d.color}" stroke="white" stroke-width="1.5"/>`;
+        svg += `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${d.color}" stroke="white" stroke-width="1.5" opacity="0">`;
+        svg += `<animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="${i * 0.1}s" fill="freeze"/>`;
+        svg += `</circle>`;
       }
 
       // 도메인 라벨 (외곽)

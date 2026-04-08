@@ -34,7 +34,10 @@ body {
   color: var(--vc-text);
   font-size: 13px;
   line-height: 1.5;
+  padding: 0;
+  margin: 0;
   overflow-x: hidden;
+  overflow-y: auto;
 }
 
 /* ———— Setup Screen ———— */
@@ -92,8 +95,8 @@ body {
 
 /* ———— Climate Card (Extension 1) ———— */
 .climate-card {
-  padding: 16px;
-  max-width: 480px;
+  padding: 20px;
+  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -115,10 +118,11 @@ body {
   background: var(--vc-section-bg);
   border-radius: 12px;
   margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 .score-big {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 700;
   line-height: 1;
 }
@@ -132,6 +136,7 @@ body {
   border-radius: 12px;
   font-size: 22px;
   font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
 .class-pill {
   display: inline-block;
@@ -162,6 +167,13 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 6px;
+  cursor: pointer;
+  position: relative;
+  padding: 2px 4px;
+}
+.domain-bar-row:hover {
+  background: #F8F9FA;
+  border-radius: 6px;
 }
 .domain-label {
   width: 100px;
@@ -172,16 +184,16 @@ body {
 }
 .domain-bar-track {
   flex: 1;
-  height: 20px;
+  height: 24px;
   background: #F1F5F9;
-  border-radius: 4px;
+  border-radius: 6px;
   position: relative;
   overflow: visible;
 }
 .domain-bar-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.6s ease;
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .domain-bar-avg {
   position: absolute;
@@ -216,6 +228,7 @@ body {
   color: var(--vc-text-secondary);
   line-height: 1.6;
   margin-bottom: 12px;
+  transition: all 0.3s ease;
 }
 .insights strong { color: var(--vc-text); }
 
@@ -266,10 +279,11 @@ body {
   background: var(--vc-section-bg);
   border-radius: 8px;
   text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 .ndc-kpi-value {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
 }
 .ndc-kpi-label {
@@ -279,11 +293,12 @@ body {
 }
 .ndc-gap-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 6px 16px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 .ndc-chart-area { margin-bottom: 16px; }
 .ndc-detail { font-size: 11px; color: var(--vc-text-muted); }
@@ -291,6 +306,7 @@ body {
 
 /* ———— Footer ———— */
 .vc-footer {
+  margin-top: 16px;
   padding: 8px 16px;
   font-size: 10px;
   color: var(--vc-text-muted);
@@ -327,3 +343,53 @@ body {
 .mini-bar-track { flex: 1; height: 8px; background: #F1F5F9; border-radius: 2px; }
 .mini-bar-fill { height: 100%; border-radius: 2px; }
 .mini-bar-value { width: 28px; font-size: 9px; font-family: 'JetBrains Mono', monospace; }
+
+/* ———— Domain Bar Hover Tooltip ———— */
+.domain-tooltip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1A1A2E;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.domain-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #1A1A2E;
+}
+.domain-bar-row:hover .domain-tooltip { display: block; }
+
+/* ———— SVG Chart Hover Dots ———— */
+.chart-dot { cursor: pointer; transition: r 0.2s ease; }
+.chart-dot:hover { r: 6; }
+
+/* ———— Card Entry Animation ———— */
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.climate-card, .ndc-card, #ts-main {
+  animation: fadeSlideIn 0.4s ease-out;
+}
+
+/* ———— Score Count-Up Effect ———— */
+.score-animate {
+  animation: scorePopIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes scorePopIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}

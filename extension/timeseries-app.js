@@ -254,6 +254,14 @@
       });
       svg += `<path d="${pathParts.join(' ')}" fill="none" stroke="${color}" stroke-width="2"/>`;
 
+      // 호버 도트 (각 데이터 포인트, 마지막 제외)
+      for (let j = 0; j < sorted.length - 1; j++) {
+        const r = sorted[j];
+        const hx = xScale(r.year);
+        const hy = yScale(r.value);
+        svg += `<circle cx="${hx}" cy="${hy}" r="4" fill="transparent" stroke="transparent" class="chart-dot" data-year="${r.year}" data-value="${r.value}" onmouseover="this.setAttribute('r','6');this.style.fill='${color}';this.style.stroke='white';this.style.strokeWidth='2'" onmouseout="this.setAttribute('r','4');this.style.fill='transparent';this.style.stroke='transparent'"/>`;
+      }
+
       // 마지막 점 + 라벨
       const last = sorted[sorted.length - 1];
       const lx = xScale(last.year);
@@ -261,7 +269,9 @@
       svg += `<circle cx="${lx}" cy="${ly}" r="3" fill="${color}"/>`;
 
       const shortLabel = (CODE_LABELS[code] || code).substring(0, 20);
-      svg += `<text x="${lx + 6}" y="${ly + 3}" font-size="8" fill="${color}" font-family="Inter,sans-serif">${shortLabel}</text>`;
+      const labelAnchor = lx >= (W - PAD.right - 20) ? 'end' : 'start';
+      const labelOffsetX = lx >= (W - PAD.right - 20) ? -6 : 6;
+      svg += `<text x="${lx + labelOffsetX}" y="${ly + 3}" text-anchor="${labelAnchor}" font-size="8" fill="${color}" font-family="Inter,sans-serif">${shortLabel}</text>`;
     }
 
     svg += '</svg>';

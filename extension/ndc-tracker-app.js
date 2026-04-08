@@ -123,7 +123,7 @@
     const gapInfo = calculateGap(emissionsTS, target);
     const gapBadge = document.getElementById('ndc-gap-badge');
     gapBadge.textContent = gapInfo.severity;
-    gapBadge.style.background = VC.GAP_COLOR[gapInfo.severity] || '#CCCCCC';
+    gapBadge.style.background = gapInfo.severity === 'No Data' ? '#CCCCCC' : (VC.GAP_COLOR[gapInfo.severity] || '#CCCCCC');
 
     // 차트
     renderNDCChart(emissionsTS, target, gapInfo);
@@ -294,6 +294,14 @@
       return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
     });
     svg += `<path d="${pathParts.join(' ')}" fill="none" stroke="#0066FF" stroke-width="2"/>`;
+
+    // 호버 도트 (각 데이터 포인트, 마지막 제외 — 마지막은 아래에서 채워진 상태로 표시)
+    for (let i = 0; i < recent.length - 1; i++) {
+      const r = recent[i];
+      const x = xScale(r.year);
+      const y = yScale(r.value);
+      svg += `<circle cx="${x}" cy="${y}" r="4" fill="transparent" stroke="transparent" class="chart-dot" data-year="${r.year}" data-value="${r.value}" onmouseover="this.setAttribute('r','6');this.style.fill='#0066FF';this.style.stroke='white';this.style.strokeWidth='2'" onmouseout="this.setAttribute('r','4');this.style.fill='transparent';this.style.stroke='transparent'"/>`;
+    }
 
     // 투영 점선 (latest → 2030)
     if (gapInfo.projected2030 != null && gapInfo.latestEmissions != null) {
