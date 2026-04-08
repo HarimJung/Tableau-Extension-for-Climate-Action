@@ -35,14 +35,20 @@
     hideAll();
     document.getElementById('loading').style.display = 'flex';
 
+    console.log('[Tableau Ext] startApp initialized. isStandalone:', VC.isStandaloneMode());
+
     try {
       const iso3 = await VC.detectISO3FromDashboard();
-      if (VC.NDC_TARGETS[iso3]) {
+      console.log('[Tableau Ext] Initial detected ISO3:', iso3);
+      if (!iso3) {
+        showEmptyState('Please select a country on the dashboard to view the NDC Gap Tracker.');
+      } else if (VC.NDC_TARGETS[iso3]) {
         await renderNDC(iso3);
       } else {
         showNotCovered(iso3);
       }
     } catch (e) {
+      console.error('[Tableau Ext] Start error:', e);
       showEmptyState();
     }
 
@@ -51,13 +57,21 @@
   }
 
   async function onDashboardChange() {
-    const iso3 = await VC.detectISO3FromDashboard();
-    if (iso3 && iso3 !== currentISO3) {
-      if (VC.NDC_TARGETS[iso3]) {
-        await renderNDC(iso3);
-      } else {
-        showNotCovered(iso3);
+    try {
+      const iso3 = await VC.detectISO3FromDashboard();
+      console.log('[Tableau Ext] Dashboard changed. Detected ISO3:', iso3);
+      if (iso3 && iso3 !== currentISO3) {
+        if (VC.NDC_TARGETS[iso3]) {
+          await renderNDC(iso3);
+        } else {
+          showNotCovered(iso3);
+        }
+      } else if (!iso3 && currentISO3) {
+        currentISO3 = null;
+        showEmptyState('Please select a country on the dashboard to view the NDC Gap Tracker.');
       }
+    } catch (e) {
+      console.error('[Tableau Ext] Dashboard change error:', e);
     }
   }
 
@@ -323,8 +337,13 @@
     });
   }
 
-  function showEmptyState() {
+  function showEmptyState(msg) {
     hideAll();
-    document.getElementById('empty-state').style.display = 'flex';
+    const el = document.getElementById('empty-state');
+    el.style.display = 'flex';
+    el.innerHTML = `<p>${msg || 'Select a country on the dashboard to view the NDC Gap Tracker.'}</p>
+                    <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+                      The extension detects ISO3 or Country Code from filters or selected marks.
+                    </p>`;
   }
 })();

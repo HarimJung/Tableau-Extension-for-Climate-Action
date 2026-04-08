@@ -70,6 +70,8 @@
     hideAll();
     document.getElementById('loading').style.display = 'flex';
 
+    console.log('[Tableau Ext] startApp initialized. isStandalone:', VC.isStandaloneMode());
+
     // 그룹/지표 드롭다운 설정
     const groupSelect = document.getElementById('ts-group');
     const indicatorSelect = document.getElementById('ts-indicator');
@@ -79,8 +81,14 @@
 
     try {
       const iso3 = await VC.detectISO3FromDashboard();
-      await loadCountry(iso3);
+      console.log('[Tableau Ext] Initial detected ISO3:', iso3);
+      if (!iso3) {
+        showEmptyState('Please select a country on the dashboard to view its Timeseries.');
+      } else {
+        await loadCountry(iso3);
+      }
     } catch (e) {
+      console.error('[Tableau Ext] Start error:', e);
       showEmptyState();
     }
 
@@ -89,9 +97,17 @@
   }
 
   async function onDashboardChange() {
-    const iso3 = await VC.detectISO3FromDashboard();
-    if (iso3 && iso3 !== currentISO3) {
-      await loadCountry(iso3);
+    try {
+      const iso3 = await VC.detectISO3FromDashboard();
+      console.log('[Tableau Ext] Dashboard changed. Detected ISO3:', iso3);
+      if (iso3 && iso3 !== currentISO3) {
+        await loadCountry(iso3);
+      } else if (!iso3 && currentISO3) {
+        currentISO3 = null;
+        showEmptyState('Please select a country on the dashboard to view its Timeseries.');
+      }
+    } catch (e) {
+      console.error('[Tableau Ext] Dashboard change error:', e);
     }
   }
 
@@ -289,8 +305,13 @@
       document.getElementById(id).style.display = 'none';
     });
   }
-  function showEmptyState() {
+  function showEmptyState(msg) {
     hideAll();
-    document.getElementById('empty-state').style.display = 'flex';
+    const el = document.getElementById('empty-state');
+    el.style.display = 'flex';
+    el.innerHTML = `<p>${msg || 'Select a country on the dashboard to view the Timeseries.'}</p>
+                    <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+                      The extension detects ISO3 or Country Code from filters or selected marks.
+                    </p>`;
   }
 })();

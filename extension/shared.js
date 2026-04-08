@@ -341,39 +341,76 @@ const VC = (() => {
     if (isStandaloneMode()) return null;
 
     const dashboard = tableau.extensions.dashboardContent.dashboard;
-    const worksheets = dashboard.worksheets;
+    const worksheets = dashboard.worksheets || [];
+
+    console.log("[EXT] worksheets:", worksheets.map(w => w.name));
 
     for (const ws of worksheets) {
-      // 1. 필터에서 ISO3 찾기
-      const filters = await ws.getFiltersAsync();
-      for (const f of filters) {
-        if (f.fieldName.toLowerCase().includes('iso3') ||
-            f.fieldName.toLowerCase().includes('iso') ||
-            f.fieldName.toLowerCase().includes('country_iso3')) {
-          if (f.appliedValues && f.appliedValues.length === 1) {
-            return f.appliedValues[0].value;
+      try {
+        const marks = await ws.getSelectedMarksAsync();
+        console.log(`[EXT] worksheet=${ws.name} selectedMarks=`, marks);
+
+        if (marks && marks.data && marks.data.length > 0) {
+          for (const table of marks.data) {
+            const columns = table.columns || [];
+            const rows = table.data || [];
+
+            console.log(`[EXT] worksheet=${ws.name} columns=`, columns.map(c => ({
+              fieldName: c.fieldName,
+              caption: c.caption
+            })));
+
+            const isoIndex = columns.findIndex(col => {
+              const a = (col.fieldName || "").toLowerCase();
+              const b = (col.caption || "").toLowerCase();
+              return [
+                "iso3",
+                "iso 3",
+                "country code",
+                "countrycode",
+                "iso code"
+              ].some(key => a.includes(key) || b.includes(key));
+            });
+
+            if (isoIndex >= 0 && rows.length > 0) {
+              const raw = rows[0][isoIndex] && rows[0][isoIndex].value;
+              const iso3 = String(raw || "").trim().toUpperCase();
+              console.log(`[EXT] detected iso3 from selected marks:`, iso3);
+              if (iso3) return iso3;
+            }
           }
         }
+      } catch (err) {
+        console.error(`[EXT] getSelectedMarksAsync failed for ${ws.name}`, err);
       }
     }
 
-    // 2. 선택된 마크에서 ISO3 찾기
     for (const ws of worksheets) {
-      const marks = await ws.getSelectedMarksAsync();
-      if (marks.data && marks.data.length > 0) {
-        const table = marks.data[0];
-        const columns = table.columns;
-        const iso3ColIdx = columns.findIndex(
-          c => c.fieldName.toLowerCase().includes('iso3') ||
-               c.fieldName.toLowerCase().includes('iso'));
-        if (iso3ColIdx >= 0 && table.data.length > 0) {
-          return table.data[0][iso3ColIdx].value;
+      try {
+        const filters = await ws.getFiltersAsync();
+        console.log(`[EXT] worksheet=${ws.name} filters=`, filters);
+
+        for (const f of filters) {
+          const field = String(f.fieldName || "").toLowerCase();
+          if (
+            field.includes("iso3") ||
+            field.includes("country code") ||
+            field.includes("countrycode")
+          ) {
+            if (f.appliedValues && f.appliedValues.length > 0) {
+              const iso3 = String(f.appliedValues[0].value || "").trim().toUpperCase();
+              console.log(`[EXT] detected iso3 from filter:`, iso3);
+              if (iso3) return iso3;
+            }
+          }
         }
+      } catch (err) {
+        console.error(`[EXT] getFiltersAsync failed for ${ws.name}`, err);
       }
     }
 
-    // ISO3 감지 실패 시 기본값 KOR
-    return 'KOR';
+    console.log("[EXT] no iso3 detected");
+    return null;
   }
 
   // ———— Tableau 이벤트 리스너 등록 ————

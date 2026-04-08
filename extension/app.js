@@ -38,15 +38,19 @@
     hideAll();
     document.getElementById('loading').style.display = 'flex';
 
+    console.log('[Tableau Ext] startApp initialized. isStandalone:', VC.isStandaloneMode());
+
     try {
       const iso3 = await VC.detectISO3FromDashboard();
-      const urlPreview = (VC.getSupabaseUrl() || '(not set)').substring(0, 30);
-      document.getElementById('empty-state').style.display = 'flex';
-      document.getElementById('empty-state').innerHTML =
-        'Detected ISO3: ' + (iso3 || 'null') + ' | Supabase URL: ' + urlPreview;
-      await renderCard(iso3);
+      console.log('[Tableau Ext] Initial detected ISO3:', iso3);
+      
+      if (!iso3) {
+        showEmptyState('Please select a country on the dashboard to view its Climate Card.');
+      } else {
+        await renderCard(iso3);
+      }
     } catch (e) {
-      console.error('Start error:', e);
+      console.error('[Tableau Ext] Start error:', e);
       showError('Failed to load data: ' + e.message);
     }
 
@@ -58,19 +62,17 @@
   async function onDashboardChange() {
     try {
       const iso3 = await VC.detectISO3FromDashboard();
-      const urlPreview = (VC.getSupabaseUrl() || '(not set)').substring(0, 30);
-      document.getElementById('empty-state').style.display = 'flex';
-      document.getElementById('empty-state').innerHTML =
-        'Detected ISO3: ' + (iso3 || 'null') + ' | Supabase URL: ' + urlPreview;
+      console.log('[Tableau Ext] Dashboard changed. Detected ISO3:', iso3);
+      
       if (iso3 && iso3 !== currentISO3) {
         await renderCard(iso3);
-      } else if (!iso3) {
-        // keep the debug text visible
+      } else if (!iso3 && currentISO3) {
+        currentISO3 = null;
+        showEmptyState('Please select a country on the dashboard to view its Climate Card.');
       }
     } catch (e) {
-      console.error('Dashboard change error:', e);
-      document.getElementById('empty-state').style.display = 'flex';
-      document.getElementById('empty-state').innerHTML = 'ERROR: ' + e.message;
+      console.error('[Tableau Ext] Dashboard change error:', e);
+      showError('ERROR: ' + e.message);
     }
   }
 
@@ -239,9 +241,14 @@
     document.getElementById('climate-card').style.display = 'none';
   }
 
-  function showEmptyState() {
+  function showEmptyState(msg) {
     hideAll();
-    document.getElementById('empty-state').style.display = 'flex';
+    const el = document.getElementById('empty-state');
+    el.style.display = 'flex';
+    el.innerHTML = `<p>${msg || 'Select a country on the dashboard to view its Climate Card.'}</p>
+                    <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+                      The extension detects ISO3 or Country Code from filters or selected marks.
+                    </p>`;
   }
 
   function showError(msg) {

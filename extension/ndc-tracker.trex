@@ -12,14 +12,12 @@
             organization="Visual Climate" website="https://visualclimate.org"/>
     <min-api-version>1.4</min-api-version>
     <source-location>
-      <url>http://localhost:8765/ndc-tracker.html</url>
+      <url>http://localhost:8765/ndc-tracker.html?t=123</url>
     </source-location>
     <icon>iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAASklEQVRIie2UMQ4AIAgE+f+nsdBYYIOxcRqchhMQJEnS30TETkPkMbABJhYi4hm9BpjktcQWN7JDJDlHkq0LFiR+I0mSvuMCyJYZOXCe/VQAAAAASUVORK5CYII=</icon>
     <permissions>
       <permission>full data</permission>
     </permissions>
-    <context-menu>
-      <configure-context-menu-item />
-    </context-menu>
+
   </dashboard-extension>
 </manifest>
