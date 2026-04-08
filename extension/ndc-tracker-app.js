@@ -16,7 +16,7 @@
 (function () {
   'use strict';
 
-  let currentISO3 = null;
+  var currentISO3 = null;
 
   // ———— 초기화 (setup screen 없이 즉시 시작) ————
   document.addEventListener('DOMContentLoaded', function () {
@@ -38,7 +38,7 @@
     console.log('[Tableau Ext] startApp initialized. isStandalone:', VC.isStandaloneMode());
 
     try {
-      const iso3 = await VC.detectISO3FromDashboard();
+      var iso3 = await VC.detectISO3FromDashboard();
       console.log('[Tableau Ext] Initial detected ISO3:', iso3);
       if (!iso3) {
         showEmptyState('Please select a country on the dashboard to view the NDC Gap Tracker.');
@@ -58,7 +58,7 @@
 
   async function onDashboardChange() {
     try {
-      const iso3 = await VC.detectISO3FromDashboard();
+      var iso3 = await VC.detectISO3FromDashboard();
       console.log('[Tableau Ext] Dashboard changed. Detected ISO3:', iso3);
       if (iso3 && iso3 !== currentISO3) {
         if (VC.NDC_TARGETS[iso3]) {
@@ -81,11 +81,11 @@
     document.getElementById('loading').style.display = 'flex';
     currentISO3 = iso3;
 
-    const target = VC.NDC_TARGETS[iso3];
-    const country = await VC.getCountry(iso3);
+    var target = VC.NDC_TARGETS[iso3];
+    var country = await VC.getCountry(iso3);
 
     // 실배출 시계열 조회
-    let emissionsTS = await VC.getTimeseries(iso3, 'OWID.TOTAL_GHG_EXCLUDING_LUCF');
+    var emissionsTS = await VC.getTimeseries(iso3, 'OWID.TOTAL_GHG_EXCLUDING_LUCF');
     if (emissionsTS.length === 0) {
       emissionsTS = await VC.getTimeseries(iso3, 'OWID.CO2');
     }
@@ -98,30 +98,30 @@
     document.getElementById('ndc-name').textContent = country?.name || target.name;
 
     // CAT Rating
-    const catEl = document.getElementById('ndc-cat');
+    var catEl = document.getElementById('ndc-cat');
     if (target.cat) {
-      const catColor = VC.CAT_COLOR[target.cat] || '#CCCCCC';
-      const catLabel = target.cat.replace(/_/g, ' ');
-      catEl.innerHTML = `CAT: <span style="color:${catColor};font-weight:600;">${catLabel}</span>`;
+      var catColor = VC.CAT_COLOR[target.cat] || '#CCCCCC';
+      var catLabel = target.cat.replace(/_/g, ' ');
+      catEl.innerHTML = `CAT: <span style="color:${catColor};font-weight:700;">${catLabel}</span>`;
     } else {
       catEl.textContent = 'CAT: Not rated';
     }
 
     // KPIs
     document.getElementById('kpi-target').textContent = `-${target.ndc2030_pct}%`;
-    document.getElementById('kpi-target').style.color = VC.BRAND.primary;
+    document.getElementById('kpi-target').style.color = 'var(--vc-primary)';
 
     document.getElementById('kpi-nz').textContent = target.nz_year || '\u2014';
-    document.getElementById('kpi-nz').style.color = target.nz_year ? VC.BRAND.textPrimary : VC.BRAND.dataMissing;
+    document.getElementById('kpi-nz').style.color = target.nz_year ? 'var(--vc-text)' : 'var(--vc-missing)';
 
     // Net Zero Countdown (CF08: nz_year - current year)
-    const currentYear = new Date().getFullYear();
-    const countdown = target.nz_year ? (target.nz_year - currentYear) : null;
+    var currentYear = new Date().getFullYear();
+    var countdown = target.nz_year ? (target.nz_year - currentYear) : null;
     document.getElementById('kpi-countdown').textContent = countdown != null ? `${countdown}yr` : '\u2014';
 
     // Gap 계산
-    const gapInfo = calculateGap(emissionsTS, target);
-    const gapBadge = document.getElementById('ndc-gap-badge');
+    var gapInfo = calculateGap(emissionsTS, target);
+    var gapBadge = document.getElementById('ndc-gap-badge');
     gapBadge.textContent = gapInfo.severity;
     gapBadge.style.background = gapInfo.severity === 'No Data' ? '#CCCCCC' : (VC.GAP_COLOR[gapInfo.severity] || '#CCCCCC');
 
@@ -129,7 +129,7 @@
     renderNDCChart(emissionsTS, target, gapInfo);
 
     // NDC 3.0 정보
-    const ndc3El = document.getElementById('ndc3-info');
+    var ndc3El = document.getElementById('ndc3-info');
     if (target.ndc3) {
       ndc3El.style.display = 'block';
       ndc3El.innerHTML = `
@@ -142,7 +142,7 @@
     }
 
     // Detail Table
-    const detailEl = document.getElementById('ndc-detail');
+    var detailEl = document.getElementById('ndc-detail');
     detailEl.innerHTML = `
       <tr><td>Reference type</td><td style="text-align:right;">${target.ref_type}</td></tr>
       ${target.ref_year ? `<tr><td>Reference year</td><td style="text-align:right;">${target.ref_year}</td></tr>` : ''}
@@ -157,7 +157,7 @@
 
   // ———— Gap 계산 (CF04/CF05 로직) ————
   function calculateGap(ts, target) {
-    const result = {
+    var result = {
       severity: 'No Data',
       latestEmissions: null,
       latestYear: null,
@@ -169,23 +169,23 @@
     if (ts.length < 3) return result;
 
     // 최근 데이터
-    const sorted = [...ts].sort((a, b) => b.year - a.year);
-    const latest = sorted[0];
+    var sorted = ts.slice().sort(function (a, b) { return b.year - a.year; });
+    var latest = sorted[0];
     result.latestEmissions = latest.value;
     result.latestYear = latest.year;
 
     // 10년 추세로 2030 투영 (CAGR)
-    const tenYearAgo = sorted.find(r => r.year <= latest.year - 10);
+    var tenYearAgo = sorted.find(function (r) { return r.year <= latest.year - 10; });
     if (tenYearAgo && tenYearAgo.value > 0) {
-      const years = latest.year - tenYearAgo.year;
-      const cagr = Math.pow(latest.value / tenYearAgo.value, 1 / years) - 1;
+      var years = latest.year - tenYearAgo.year;
+      var cagr = Math.pow(latest.value / tenYearAgo.value, 1 / years) - 1;
       result.trendCAGR = cagr;
       result.projected2030 = latest.value * Math.pow(1 + cagr, 2030 - latest.year);
     } else {
       // fallback: 선형 추세
-      const fiveYearAgo = sorted.find(r => r.year <= latest.year - 5);
+      var fiveYearAgo = sorted.find(function (r) { return r.year <= latest.year - 5; });
       if (fiveYearAgo) {
-        const slope = (latest.value - fiveYearAgo.value) / (latest.year - fiveYearAgo.year);
+        var slope = (latest.value - fiveYearAgo.value) / (latest.year - fiveYearAgo.year);
         result.projected2030 = latest.value + slope * (2030 - latest.year);
       }
     }
@@ -218,125 +218,204 @@
 
   // ———— NDC 차트 (배출 궤적 + 목표선) ————
   function renderNDCChart(ts, target, gapInfo) {
-    const container = document.getElementById('ndc-chart');
+    var container = document.getElementById('ndc-chart');
     if (ts.length === 0) {
       container.innerHTML = '<div class="empty-state"><p>No emissions data available.</p></div>';
       return;
     }
 
-    const sorted = [...ts].sort((a, b) => a.year - b.year);
+    var sorted = ts.slice().sort(function (a, b) { return a.year - b.year; });
     // 2000년 이후만 표시
-    const recent = sorted.filter(r => r.year >= 2000);
+    var recent = sorted.filter(function (r) { return r.year >= 2000; });
     if (recent.length === 0) {
       container.innerHTML = '<div class="empty-state"><p>No post-2000 data.</p></div>';
       return;
     }
 
-    const W = container.clientWidth || 500;
-    const H = 260;
-    const PAD = { top: 15, right: 50, bottom: 35, left: 55 };
-    const plotW = W - PAD.left - PAD.right;
-    const plotH = H - PAD.top - PAD.bottom;
+    var W = container.clientWidth || 500;
+    var H = 260;
+    var PAD = { top: 15, right: 50, bottom: 35, left: 55 };
+    var plotW = W - PAD.left - PAD.right;
+    var plotH = H - PAD.top - PAD.bottom;
 
     // 범위: x = 2000~2035, y = 자동
-    const minYear = 2000;
-    const maxYear = 2035;
-    const values = recent.map(r => r.value);
-    const extras = [];
+    var minYear = 2000;
+    var maxYear = 2035;
+    var values = recent.map(function (r) { return r.value; });
+    var extras = [];
     if (target.target_mt) extras.push(target.target_mt);
     if (target.ref_mt) extras.push(target.ref_mt);
     if (gapInfo.projected2030) extras.push(gapInfo.projected2030);
-    const allVals = [...values, ...extras].filter(v => v != null);
-    const minVal = Math.min(0, Math.min(...allVals)) * 0.9;
-    const maxVal = Math.max(...allVals) * 1.15;
+    var allVals = values.concat(extras).filter(function (v) { return v != null; });
+    var minVal = Math.min(0, Math.min.apply(null, allVals)) * 0.9;
+    var maxVal = Math.max.apply(null, allVals) * 1.15;
 
-    const xScale = (year) => PAD.left + ((year - minYear) / (maxYear - minYear)) * plotW;
-    const yScale = (val) => PAD.top + plotH - ((val - minVal) / (maxVal - minVal)) * plotH;
+    function xScale(year) { return PAD.left + ((year - minYear) / (maxYear - minYear)) * plotW; }
+    function yScale(val) { return PAD.top + plotH - ((val - minVal) / (maxVal - minVal)) * plotH; }
 
-    let svg = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">';
 
     // 그리드
-    for (let i = 0; i <= 4; i++) {
-      const v = minVal + (maxVal - minVal) * (i / 4);
-      const y = yScale(v);
-      svg += `<line x1="${PAD.left}" y1="${y}" x2="${W - PAD.right}" y2="${y}" stroke="#E5E7EB" stroke-width="0.5"/>`;
-      svg += `<text x="${PAD.left - 4}" y="${y + 3}" text-anchor="end" font-size="8" fill="#8888A0" font-family="JetBrains Mono,monospace">${formatVal(v)}</text>`;
+    for (var i = 0; i <= 4; i++) {
+      var v = minVal + (maxVal - minVal) * (i / 4);
+      var y = yScale(v);
+      svg += '<line x1="' + PAD.left + '" y1="' + y + '" x2="' + (W - PAD.right) + '" y2="' + y + '" stroke="var(--vc-border)" stroke-width="0.5"/>';
+      svg += '<text x="' + (PAD.left - 4) + '" y="' + (y + 3) + '" text-anchor="end" font-size="8" fill="var(--vc-text-muted)" font-family="JetBrains Mono,monospace">' + formatVal(v) + '</text>';
     }
 
     // X축
-    for (let y = 2000; y <= 2035; y += 5) {
-      const x = xScale(y);
-      svg += `<line x1="${x}" y1="${PAD.top}" x2="${x}" y2="${PAD.top + plotH}" stroke="#E5E7EB" stroke-width="0.3"/>`;
-      svg += `<text x="${x}" y="${H - 10}" text-anchor="middle" font-size="8" fill="#8888A0" font-family="JetBrains Mono,monospace">${y}</text>`;
+    for (var yr = 2000; yr <= 2035; yr += 5) {
+      var x = xScale(yr);
+      svg += '<line x1="' + x + '" y1="' + PAD.top + '" x2="' + x + '" y2="' + (PAD.top + plotH) + '" stroke="var(--vc-border)" stroke-width="0.3"/>';
+      svg += '<text x="' + x + '" y="' + (H - 10) + '" text-anchor="middle" font-size="8" fill="var(--vc-text-muted)" font-family="JetBrains Mono,monospace">' + yr + '</text>';
     }
 
     // 2030 목표선 (absolute 타입)
     if (target.target_mt && target.ref_type === 'absolute') {
-      const ty = yScale(target.target_mt);
-      svg += `<line x1="${PAD.left}" y1="${ty}" x2="${W - PAD.right}" y2="${ty}" stroke="#E5484D" stroke-width="1.5" stroke-dasharray="6,3"/>`;
-      svg += `<text x="${W - PAD.right + 3}" y="${ty + 3}" font-size="8" fill="#E5484D" font-family="Inter,sans-serif" font-weight="600">Target ${VC.fmt(target.target_mt, 0)}</text>`;
+      var ty = yScale(target.target_mt);
+      svg += '<line x1="' + PAD.left + '" y1="' + ty + '" x2="' + (W - PAD.right) + '" y2="' + ty + '" stroke="var(--vc-talker)" stroke-width="1.5" stroke-dasharray="6,3"/>';
+      svg += '<text x="' + (W - PAD.right + 3) + '" y="' + (ty + 3) + '" font-size="8" fill="var(--vc-talker)" font-family="Inter,sans-serif" font-weight="600">Target ' + VC.fmt(target.target_mt, 0) + '</text>';
     }
 
     // 갭 영역 (projected와 target 사이)
     if (gapInfo.projected2030 != null && target.target_mt && target.ref_type === 'absolute') {
-      const latestX = xScale(gapInfo.latestYear);
-      const projX = xScale(2030);
-      const projY = yScale(gapInfo.projected2030);
-      const targetY = yScale(target.target_mt);
-      const gapColor = gapInfo.gapMt > 0 ? 'rgba(229,72,77,0.12)' : 'rgba(0,166,126,0.12)';
-      svg += `<polygon points="${latestX},${yScale(gapInfo.latestEmissions)} ${projX},${projY} ${projX},${targetY} ${latestX},${targetY}" fill="${gapColor}"/>`;
+      var latestX = xScale(gapInfo.latestYear);
+      var projX = xScale(2030);
+      var projY = yScale(gapInfo.projected2030);
+      var targetY = yScale(target.target_mt);
+      var gapColor = gapInfo.gapMt > 0 ? 'rgba(229,72,77,0.1)' : 'rgba(0,166,126,0.1)';
+      svg += '<polygon points="' + latestX + ',' + yScale(gapInfo.latestEmissions) + ' ' + projX + ',' + projY + ' ' + projX + ',' + targetY + ' ' + latestX + ',' + targetY + '" fill="' + gapColor + '"/>';
     }
 
-    // 실배출 라인 (실선)
-    const pathParts = recent.map((r, i) => {
-      const x = xScale(r.year);
-      const y = yScale(r.value);
-      return i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
+    // 실배출 라인 (area fill + line)
+    // Area fill
+    var areaPath = 'M ' + xScale(recent[0].year) + ' ' + (PAD.top + plotH);
+    for (var j = 0; j < recent.length; j++) {
+      areaPath += ' L ' + xScale(recent[j].year) + ' ' + yScale(recent[j].value);
+    }
+    areaPath += ' L ' + xScale(recent[recent.length - 1].year) + ' ' + (PAD.top + plotH) + ' Z';
+    svg += '<path d="' + areaPath + '" fill="rgba(0,102,255,0.06)"/>';
+
+    // Line
+    var pathParts = recent.map(function (r, idx) {
+      var px = xScale(r.year);
+      var py = yScale(r.value);
+      return idx === 0 ? ('M ' + px + ' ' + py) : ('L ' + px + ' ' + py);
     });
-    svg += `<path d="${pathParts.join(' ')}" fill="none" stroke="#0066FF" stroke-width="2"/>`;
-
-    // 호버 도트 (각 데이터 포인트, 마지막 제외 — 마지막은 아래에서 채워진 상태로 표시)
-    for (let i = 0; i < recent.length - 1; i++) {
-      const r = recent[i];
-      const x = xScale(r.year);
-      const y = yScale(r.value);
-      svg += `<circle cx="${x}" cy="${y}" r="4" fill="transparent" stroke="transparent" class="chart-dot" data-year="${r.year}" data-value="${r.value}" onmouseover="this.setAttribute('r','6');this.style.fill='#0066FF';this.style.stroke='white';this.style.strokeWidth='2'" onmouseout="this.setAttribute('r','4');this.style.fill='transparent';this.style.stroke='transparent'"/>`;
-    }
+    svg += '<path d="' + pathParts.join(' ') + '" fill="none" stroke="var(--vc-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
 
     // 투영 점선 (latest → 2030)
     if (gapInfo.projected2030 != null && gapInfo.latestEmissions != null) {
-      const lx = xScale(gapInfo.latestYear);
-      const ly = yScale(gapInfo.latestEmissions);
-      const px = xScale(2030);
-      const py = yScale(gapInfo.projected2030);
-      svg += `<line x1="${lx}" y1="${ly}" x2="${px}" y2="${py}" stroke="#0066FF" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>`;
-      svg += `<circle cx="${px}" cy="${py}" r="4" fill="#0066FF" opacity="0.6"/>`;
-      svg += `<text x="${px + 5}" y="${py + 3}" font-size="8" fill="#0066FF" font-family="JetBrains Mono,monospace">${VC.fmt(gapInfo.projected2030, 0)}</text>`;
+      var lx = xScale(gapInfo.latestYear);
+      var ly = yScale(gapInfo.latestEmissions);
+      var px = xScale(2030);
+      var py = yScale(gapInfo.projected2030);
+      svg += '<line x1="' + lx + '" y1="' + ly + '" x2="' + px + '" y2="' + py + '" stroke="var(--vc-primary)" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5"/>';
+      svg += '<circle cx="' + px + '" cy="' + py + '" r="3.5" fill="var(--vc-primary)" opacity="0.5"/>';
+      svg += '<text x="' + (px + 5) + '" y="' + (py + 3) + '" font-size="8" fill="var(--vc-primary)" font-family="JetBrains Mono,monospace">' + VC.fmt(gapInfo.projected2030, 0) + '</text>';
     }
 
-    // 최신 데이터 포인트
+    // 최신 데이터 포인트 (강조)
     if (recent.length > 0) {
-      const last = recent[recent.length - 1];
-      svg += `<circle cx="${xScale(last.year)}" cy="${yScale(last.value)}" r="4" fill="#0066FF"/>`;
+      var last = recent[recent.length - 1];
+      svg += '<circle cx="' + xScale(last.year) + '" cy="' + yScale(last.value) + '" r="4" fill="var(--vc-primary)" stroke="white" stroke-width="1.5"/>';
     }
+
+    // 크로스헤어 라인 (initially hidden, controlled by JS)
+    svg += '<line class="crosshair-x" x1="0" y1="' + PAD.top + '" x2="0" y2="' + (PAD.top + plotH) + '" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<line class="crosshair-y" x1="' + PAD.left + '" y1="0" x2="' + (W - PAD.right) + '" y2="0" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<circle class="crosshair-dot" cx="0" cy="0" r="5" fill="none" stroke="var(--vc-primary)" stroke-width="2" style="display:none"/>';
+
+    // 인비저블 오버레이 for mouse tracking
+    svg += '<rect x="' + PAD.left + '" y="' + PAD.top + '" width="' + plotW + '" height="' + plotH + '" fill="transparent" class="chart-overlay" style="cursor:crosshair"/>';
 
     svg += '</svg>';
     container.innerHTML = svg;
+
+    // ———— Interactive tooltip + crosshair ————
+    var svgEl = container.querySelector('svg');
+    var crossX = svgEl.querySelector('.crosshair-x');
+    var crossY = svgEl.querySelector('.crosshair-y');
+    var crossDot = svgEl.querySelector('.crosshair-dot');
+    var overlay = svgEl.querySelector('.chart-overlay');
+    var tooltip = document.getElementById('chart-tooltip');
+
+    // Build data point array for nearest-point lookup
+    var dataPoints = recent.map(function (r) {
+      return { x: xScale(r.year), y: yScale(r.value), year: r.year, value: r.value };
+    });
+
+    overlay.addEventListener('mousemove', function (e) {
+      var rect = svgEl.getBoundingClientRect();
+      var mouseX = e.clientX - rect.left;
+
+      // Find nearest data point by x
+      var nearest = null;
+      var minDist = Infinity;
+      for (var k = 0; k < dataPoints.length; k++) {
+        var dist = Math.abs(dataPoints[k].x - mouseX);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = dataPoints[k];
+        }
+      }
+
+      if (nearest && minDist < 40) {
+        // Show crosshair
+        crossX.setAttribute('x1', nearest.x);
+        crossX.setAttribute('x2', nearest.x);
+        crossX.style.display = '';
+
+        crossY.setAttribute('y1', nearest.y);
+        crossY.setAttribute('y2', nearest.y);
+        crossY.style.display = '';
+
+        crossDot.setAttribute('cx', nearest.x);
+        crossDot.setAttribute('cy', nearest.y);
+        crossDot.style.display = '';
+
+        // Show tooltip
+        tooltip.innerHTML =
+          '<div class="tt-year">' + nearest.year + '</div>' +
+          '<div class="tt-value">' + formatVal(nearest.value) + '</div>' +
+          '<div class="tt-label">MtCO\u2082eq</div>';
+        tooltip.style.display = 'block';
+
+        // Position tooltip (avoid overflow)
+        var ttX = e.clientX + 14;
+        var ttY = e.clientY - 50;
+        if (ttX + 120 > window.innerWidth) ttX = e.clientX - 130;
+        if (ttY < 4) ttY = e.clientY + 14;
+        tooltip.style.left = ttX + 'px';
+        tooltip.style.top = ttY + 'px';
+      } else {
+        hideCrosshair();
+      }
+    });
+
+    overlay.addEventListener('mouseleave', hideCrosshair);
+
+    function hideCrosshair() {
+      crossX.style.display = 'none';
+      crossY.style.display = 'none';
+      crossDot.style.display = 'none';
+      if (tooltip) tooltip.style.display = 'none';
+    }
   }
 
   function formatVal(v) {
-    if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(0) + 'Gt';
+    if (Math.abs(v) >= 1e3) return (v / 1e3).toFixed(1) + 'Gt';
     return v.toFixed(0) + 'Mt';
   }
 
   function showNotCovered(iso3) {
     hideAll();
-    const el = document.getElementById('empty-state');
+    var el = document.getElementById('empty-state');
     el.style.display = 'flex';
-    el.innerHTML = `<p>${iso3} is not in the 20-country NDC target list.</p>
-      <p style="font-size:11px;color:#8888A0;margin-top:8px;">
-        Covered countries: ${Object.keys(VC.NDC_TARGETS).join(', ')}
-      </p>`;
+    el.innerHTML = '<p>' + iso3 + ' is not in the 20-country NDC target list.</p>' +
+      '<p style="font-size:11px;color:var(--vc-text-muted);margin-top:8px;">' +
+      'Covered countries: ' + Object.keys(VC.NDC_TARGETS).join(', ') +
+      '</p>';
   }
 
   function hideAll() {
@@ -347,11 +426,10 @@
 
   function showEmptyState(msg) {
     hideAll();
-    const el = document.getElementById('empty-state');
+    var el = document.getElementById('empty-state');
     el.style.display = 'flex';
-    el.innerHTML = `<p>${msg || 'Select a country on the dashboard to view the NDC Gap Tracker.'}</p>
-                    <p style="font-size:11px;color:#8888A0;margin-top:8px;">
-                      The extension detects ISO3 or Country Code from filters or selected marks.
-                    </p>`;
+    el.innerHTML = '<p>' + (msg || 'Select a country on the dashboard to view the NDC Gap Tracker.') + '</p>' +
+                    '<p style="font-size:11px;color:var(--vc-text-muted);margin-top:8px;">' +
+                    'The extension detects ISO3 or Country Code from filters or selected marks.</p>';
   }
 })();

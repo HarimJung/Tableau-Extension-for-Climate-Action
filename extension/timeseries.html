@@ -11,11 +11,11 @@
 
 <div id="setup-screen" class="setup-screen" style="display:none;">
   <h2>Visual Climate — Timeseries Explorer</h2>
-  <p style="margin-bottom:16px;color:#4A4A6A;font-size:12px;">Supabase 연결 정보 입력</p>
+  <p style="margin-bottom:16px;color:var(--vc-text-secondary);font-size:12px;">Supabase 연결 정보 입력</p>
   <input type="text" id="input-url" placeholder="Supabase URL">
   <input type="text" id="input-key" placeholder="Supabase Key">
   <button id="btn-save-config">Connect</button>
-  <p id="setup-error" style="color:#E5484D;font-size:11px;margin-top:8px;"></p>
+  <p id="setup-error" style="color:var(--vc-talker);font-size:11px;margin-top:8px;"></p>
 </div>
 
 <div id="loading" class="loading" style="display:none;">
@@ -28,15 +28,15 @@
 </div>
 
 <div id="ts-main" style="display:none;">
-  <!-- Country Header (compact) -->
-  <div style="padding:12px 16px;display:flex;align-items:center;gap:8px;border-bottom:1px solid #E5E7EB;">
-    <span id="ts-flag" style="font-size:24px;"></span>
-    <span id="ts-name" style="font-weight:600;font-size:15px;"></span>
-    <span id="ts-iso3" style="font-size:11px;color:#8888A0;"></span>
+  <!-- Country Header -->
+  <div class="ts-header">
+    <span id="ts-flag" class="ts-header-flag"></span>
+    <span id="ts-name" class="ts-header-name"></span>
+    <span id="ts-iso3" class="ts-header-iso"></span>
   </div>
 
   <!-- Controls -->
-  <div class="ts-controls" style="padding:12px 16px;">
+  <div class="ts-controls" style="padding:var(--sp-3) var(--sp-4);">
     <select id="ts-group">
       <option value="emissions">Emissions</option>
       <option value="fuel">Fuel Breakdown</option>
@@ -53,12 +53,15 @@
   <div id="ts-chart" class="ts-chart-area"></div>
 
   <!-- Data Table -->
-  <div id="ts-table" style="padding:8px 16px;overflow-x:auto;"></div>
+  <div id="ts-table" style="padding:var(--sp-2) var(--sp-4);overflow-x:auto;"></div>
 
   <div class="vc-footer">
     Data: <a href="https://visualclimate.org" target="_blank">visualclimate.org</a> Supabase
   </div>
 </div>
+
+<!-- Chart Tooltip -->
+<div id="chart-tooltip" class="chart-tooltip"></div>
 
 <script src="tableau.extensions.1.latest.js"></script>
 <script src="shared.js?v=2"></script>

@@ -43,7 +43,7 @@
     try {
       const iso3 = await VC.detectISO3FromDashboard();
       console.log('[Tableau Ext] Initial detected ISO3:', iso3);
-      
+
       if (!iso3) {
         showEmptyState('Please select a country on the dashboard to view its Climate Card.');
       } else {
@@ -63,7 +63,7 @@
     try {
       const iso3 = await VC.detectISO3FromDashboard();
       console.log('[Tableau Ext] Dashboard changed. Detected ISO3:', iso3);
-      
+
       if (iso3 && iso3 !== currentISO3) {
         await renderCard(iso3);
       } else if (!iso3 && currentISO3) {
@@ -74,6 +74,33 @@
       console.error('[Tableau Ext] Dashboard change error:', e);
       showError('ERROR: ' + e.message);
     }
+  }
+
+  // ———— Count-up animation ————
+  function animateCountUp(element, targetValue, duration) {
+    if (targetValue == null || isNaN(targetValue)) {
+      element.textContent = '\u2014';
+      return;
+    }
+    var startTime = null;
+    var target = Number(targetValue);
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed = timestamp - startTime;
+      var progress = Math.min(elapsed / duration, 1);
+      // ease-out-quart
+      var eased = 1 - Math.pow(1 - progress, 4);
+      var current = target * eased;
+      element.textContent = current.toFixed(1);
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      } else {
+        element.textContent = VC.fmt(target);
+      }
+    }
+    element.textContent = '0.0';
+    requestAnimationFrame(step);
   }
 
   // ———— Climate Card 렌더링 ————
@@ -103,22 +130,22 @@
       document.getElementById('card-meta').textContent =
         `${iso3} \u00b7 ${card.region || '\u2014'} \u00b7 ${card.income_group || '\u2014'}`;
 
-      // Score Hero
-      const scoreEl = document.getElementById('card-score');
+      // Score Hero — count-up animation (0 → real value, 800ms)
+      var scoreEl = document.getElementById('card-score');
       scoreEl.classList.remove('score-animate');
-      scoreEl.textContent =
-        card.total_score != null ? VC.fmt(card.total_score) : '\u2014';
+      void scoreEl.offsetWidth; // force reflow
       scoreEl.classList.add('score-animate');
+      animateCountUp(scoreEl, card.total_score, 800);
 
-      const gradeEl = document.getElementById('card-grade');
-      const grade = card.grade || '\u2014';
+      var gradeEl = document.getElementById('card-grade');
+      var grade = card.grade || '\u2014';
       gradeEl.textContent = grade;
       gradeEl.style.background = VC.GRADE_BG[grade] || '#F8F9FA';
       gradeEl.style.color = VC.GRADE_COLOR[grade] || '#1A1A2E';
 
       // Class Pill
-      const classEl = document.getElementById('card-class');
-      const className = VC.CLASS_LABEL[card.climate_class] || null;
+      var classEl = document.getElementById('card-class');
+      var className = VC.CLASS_LABEL[card.climate_class] || null;
       if (className) {
         classEl.textContent = className;
         classEl.style.background = VC.CLASS_COLOR[className];
@@ -135,9 +162,9 @@
       renderDomainBars(card);
 
       // Animate domain bar fills from 0% to target width
-      requestAnimationFrame(() => {
-        document.querySelectorAll('.domain-bar-fill').forEach(el => {
-          const target = el.getAttribute('data-target-width');
+      requestAnimationFrame(function () {
+        document.querySelectorAll('.domain-bar-fill').forEach(function (el) {
+          var target = el.getAttribute('data-target-width');
           el.style.width = target;
         });
       });
@@ -162,46 +189,46 @@
   }
 
   function renderDomainBars(card) {
-    const container = document.getElementById('domain-bar-list');
+    var container = document.getElementById('domain-bar-list');
     container.innerHTML = '';
 
     // 글로벌 평균 (대략적 중앙값; 실제 계산은 getPeerContext에서 하되 여기서는 시각 참조용)
-    // RAG 레포에서의 global avg는 약: Emissions 55, Energy 50, Economy 45, Responsibility 60, Resilience 40
-    const GLOBAL_AVG = { emissions: 55, energy: 50, economy: 45, responsibility: 60, resilience: 40 };
+    var GLOBAL_AVG = { emissions: 55, energy: 50, economy: 45, responsibility: 60, resilience: 40 };
 
-    for (const d of VC.DOMAINS) {
-      const score = card[d.scoreField];
-      const pct = score != null ? Math.min(100, Math.max(0, score)) : 0;
-      const avg = GLOBAL_AVG[d.key] || 50;
+    for (var i = 0; i < VC.DOMAINS.length; i++) {
+      var d = VC.DOMAINS[i];
+      var score = card[d.scoreField];
+      var pct = score != null ? Math.min(100, Math.max(0, score)) : 0;
+      var avg = GLOBAL_AVG[d.key] || 50;
 
-      const row = document.createElement('div');
+      var row = document.createElement('div');
       row.className = 'domain-bar-row';
       row.innerHTML = `
         <div class="domain-tooltip">${d.label}: ${score != null ? VC.fmt(score) + '/100' : 'No data'} · Weight: ${d.weight} · Global avg: ${avg}</div>
-        <span class="domain-label">${d.label} <span style="font-size:9px;color:${VC.BRAND.textMuted}">(${d.weight})</span></span>
+        <span class="domain-label">${d.label} <span style="font-size:9px;color:var(--vc-text-muted)">(${d.weight})</span></span>
         <div class="domain-bar-track">
           <div class="domain-bar-fill" style="width:0%;background:${d.color};" data-target-width="${pct}%"></div>
           <div class="domain-bar-avg" style="left:${avg}%;" title="Global Avg: ${avg}"></div>
         </div>
-        <span class="domain-bar-value" style="color:${score != null ? d.color : VC.BRAND.dataMissing}">${score != null ? VC.fmt(score) : '\u2014'}</span>
+        <span class="domain-bar-value" style="color:${score != null ? d.color : 'var(--vc-missing)'}">${score != null ? VC.fmt(score) : '\u2014'}</span>
       `;
       container.appendChild(row);
     }
   }
 
   function renderInsights(card, peer) {
-    const el = document.getElementById('insights');
-    const lines = [];
+    var el = document.getElementById('insights');
+    var lines = [];
 
     // 최고/최저 도메인 (ReportCardClient.tsx 로직)
-    const domainScores = VC.DOMAINS
-      .map(d => ({ label: d.label, score: card[d.scoreField] }))
-      .filter(d => d.score != null)
-      .sort((a, b) => b.score - a.score);
+    var domainScores = VC.DOMAINS
+      .map(function (d) { return { label: d.label, score: card[d.scoreField] }; })
+      .filter(function (d) { return d.score != null; })
+      .sort(function (a, b) { return b.score - a.score; });
 
     if (domainScores.length > 0) {
-      const best = domainScores[0];
-      const worst = domainScores[domainScores.length - 1];
+      var best = domainScores[0];
+      var worst = domainScores[domainScores.length - 1];
       lines.push(`<strong>Strongest:</strong> ${best.label} (${VC.fmt(best.score)}, ${VC.perfLabel(best.score)})`);
       if (domainScores.length > 1) {
         lines.push(`<strong>Weakest:</strong> ${worst.label} (${VC.fmt(worst.score)}, ${VC.perfLabel(worst.score)})`);
@@ -209,7 +236,7 @@
     }
 
     // Climate Class 설명
-    const className = VC.CLASS_LABEL[card.climate_class];
+    var className = VC.CLASS_LABEL[card.climate_class];
     if (className && VC.CLASS_EXPLAIN[className]) {
       lines.push(`<strong>Classification:</strong> ${className} \u2014 ${VC.CLASS_EXPLAIN[className]}`);
     }
@@ -227,21 +254,21 @@
 
   // ———— View Toggle ————
   window.showView = function (view) {
-    const barsEl = document.getElementById('domain-bars');
-    const radarEl = document.getElementById('domain-radar');
-    const btnBars = document.getElementById('btn-bars');
-    const btnRadar = document.getElementById('btn-radar');
+    var barsEl = document.getElementById('domain-bars');
+    var radarEl = document.getElementById('domain-radar');
+    var btnBars = document.getElementById('btn-bars');
+    var btnRadar = document.getElementById('btn-radar');
 
     if (view === 'radar') {
       barsEl.style.display = 'none';
       radarEl.style.display = 'flex';
-      btnBars.style.background = 'white'; btnBars.style.color = '#1A1A2E';
-      btnRadar.style.background = '#0066FF'; btnRadar.style.color = 'white';
+      btnBars.classList.remove('active');
+      btnRadar.classList.add('active');
     } else {
       barsEl.style.display = 'block';
       radarEl.style.display = 'none';
-      btnBars.style.background = '#0066FF'; btnBars.style.color = 'white';
-      btnRadar.style.background = 'white'; btnRadar.style.color = '#1A1A2E';
+      btnBars.classList.add('active');
+      btnRadar.classList.remove('active');
     }
   };
 
@@ -255,18 +282,18 @@
 
   function showEmptyState(msg) {
     hideAll();
-    const el = document.getElementById('empty-state');
+    var el = document.getElementById('empty-state');
     el.style.display = 'flex';
     el.innerHTML = `<p>${msg || 'Select a country on the dashboard to view its Climate Card.'}</p>
-                    <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+                    <p style="font-size:11px;color:var(--vc-text-muted);margin-top:8px;">
                       The extension detects ISO3 or Country Code from filters or selected marks.
                     </p>`;
   }
 
   function showError(msg) {
     hideAll();
-    const el = document.getElementById('empty-state');
+    var el = document.getElementById('empty-state');
     el.style.display = 'flex';
-    el.innerHTML = `<p style="color:#E5484D">${msg}</p>`;
+    el.innerHTML = `<p style="color:var(--vc-talker)">${msg}</p>`;
   }
 })();

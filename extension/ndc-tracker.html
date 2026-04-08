@@ -11,11 +11,11 @@
 
 <div id="setup-screen" class="setup-screen" style="display:none;">
   <h2>Visual Climate — NDC Gap Tracker</h2>
-  <p style="margin-bottom:16px;color:#4A4A6A;font-size:12px;">Supabase 연결 정보 입력</p>
+  <p style="margin-bottom:16px;color:var(--vc-text-secondary);font-size:12px;">Supabase 연결 정보 입력</p>
   <input type="text" id="input-url" placeholder="Supabase URL">
   <input type="text" id="input-key" placeholder="Supabase Key">
   <button id="btn-save-config">Connect</button>
-  <p id="setup-error" style="color:#E5484D;font-size:11px;margin-top:8px;"></p>
+  <p id="setup-error" style="color:var(--vc-talker);font-size:11px;margin-top:8px;"></p>
 </div>
 
 <div id="loading" class="loading" style="display:none;">
@@ -25,7 +25,7 @@
 
 <div id="empty-state" class="empty-state" style="display:none;">
   <p>Select one of the 20 tracked countries to view its NDC gap analysis.</p>
-  <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+  <p style="font-size:11px;color:var(--vc-text-muted);margin-top:8px;">
     Covered: KOR, USA, DEU, CHN, IND, JPN, GBR, BRA, CAN, AUS, FRA, IDN, NGA, BGD, ZAF, MEX, RUS, SAU, TUR, EGY
   </p>
 </div>
@@ -33,11 +33,11 @@
 <div id="ndc-main" class="ndc-card" style="display:none;">
   <!-- Header -->
   <div class="ndc-header">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-      <span id="ndc-flag" style="font-size:28px;"></span>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="ndc-flag" style="font-size:32px;line-height:1;"></span>
       <div>
-        <div id="ndc-name" style="font-weight:700;font-size:16px;"></div>
-        <div id="ndc-cat" style="font-size:11px;"></div>
+        <div id="ndc-name" style="font-weight:800;font-size:17px;letter-spacing:-0.02em;color:var(--vc-text);"></div>
+        <div id="ndc-cat" style="font-size:11px;font-weight:500;"></div>
       </div>
     </div>
   </div>
@@ -59,7 +59,7 @@
   </div>
 
   <!-- Gap Badge -->
-  <div style="text-align:center;margin-bottom:12px;">
+  <div style="text-align:center;margin-bottom:var(--sp-3);">
     <span id="ndc-gap-badge" class="ndc-gap-badge"></span>
   </div>
 
@@ -67,18 +67,19 @@
   <div id="ndc-chart" class="ndc-chart-area" style="height:280px;"></div>
 
   <!-- NDC 3.0 Info -->
-  <div id="ndc3-info" style="display:none;padding:8px 12px;background:#F8F9FA;border-radius:6px;margin-bottom:12px;font-size:11px;">
-  </div>
+  <div id="ndc3-info" class="ndc3-info-panel" style="display:none;"></div>
 
   <!-- Detail Table -->
-  <table id="ndc-detail" class="ndc-detail" style="width:100%;font-size:11px;">
-  </table>
+  <table id="ndc-detail" class="ndc-detail" style="width:100%;font-size:11px;"></table>
 
   <div class="vc-footer">
     Sources: UNFCCC NDC Registry, Climate Watch, CAT |
     <a href="https://visualclimate.org" target="_blank">visualclimate.org</a>
   </div>
 </div>
+
+<!-- Chart Tooltip -->
+<div id="chart-tooltip" class="chart-tooltip"></div>
 
 <script src="tableau.extensions.1.latest.js"></script>
 <script src="shared.js?v=2"></script>

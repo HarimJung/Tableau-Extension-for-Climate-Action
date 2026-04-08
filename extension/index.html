@@ -12,13 +12,13 @@
 <!-- Setup Screen (Supabase 미설정시) -->
 <div id="setup-screen" class="setup-screen" style="display:none;">
   <h2>Visual Climate — Climate Card</h2>
-  <p style="margin-bottom:16px;color:#4A4A6A;font-size:12px;">
+  <p style="margin-bottom:16px;color:var(--vc-text-secondary);font-size:12px;">
     Supabase 연결 정보를 입력하세요. 한 번만 설정하면 워크북에 저장됩니다.
   </p>
   <input type="text" id="input-url" placeholder="Supabase URL (https://xxx.supabase.co)">
   <input type="text" id="input-key" placeholder="Supabase anon key or service key">
   <button id="btn-save-config">Connect</button>
-  <p id="setup-error" style="color:#E5484D;font-size:11px;margin-top:8px;"></p>
+  <p id="setup-error" style="color:var(--vc-talker);font-size:11px;margin-top:8px;"></p>
 </div>
 
 <!-- Loading -->
@@ -30,7 +30,7 @@
 <!-- Empty State -->
 <div id="empty-state" class="empty-state" style="display:none;">
   <p>Select a country on the dashboard to view its Climate Card.</p>
-  <p style="font-size:11px;color:#8888A0;margin-top:8px;">
+  <p style="font-size:11px;color:var(--vc-text-muted);margin-top:8px;">
     The extension detects ISO3 from filters or selected marks.
   </p>
 </div>
@@ -60,11 +60,9 @@
   </div>
 
   <!-- View Toggle -->
-  <div style="display:flex;gap:8px;margin-bottom:12px;">
-    <button id="btn-bars" class="ts-controls" onclick="showView('bars')"
-            style="padding:4px 12px;border:1px solid #E5E7EB;border-radius:6px;font-size:11px;cursor:pointer;background:#0066FF;color:white;">Bars</button>
-    <button id="btn-radar" class="ts-controls" onclick="showView('radar')"
-            style="padding:4px 12px;border:1px solid #E5E7EB;border-radius:6px;font-size:11px;cursor:pointer;background:white;">Radar</button>
+  <div class="view-toggle">
+    <button id="btn-bars" class="view-toggle-btn active" onclick="showView('bars')">Bars</button>
+    <button id="btn-radar" class="view-toggle-btn" onclick="showView('radar')">Radar</button>
   </div>
 
   <!-- Domain Bars -->
@@ -85,6 +83,9 @@
     Sources: World Bank, OWID, Ember, ND-GAIN, Climate TRACE
   </div>
 </div>
+
+<!-- Chart Tooltip (shared) -->
+<div id="chart-tooltip" class="chart-tooltip"></div>
 
 <!-- Tableau Extensions API -->
 <script src="tableau.extensions.1.latest.js"></script>
