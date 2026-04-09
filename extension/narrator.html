@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visual Climate — Climate Narrator</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌍</text></svg>">
+  <link rel="stylesheet" href="styles.css?v=2">
+</head>
+<body>
+
+<!-- Loading -->
+<div id="narrator-loading" class="loading" style="display:none;">
+  <div class="spinner"></div>
+  <span>Loading narrator...</span>
+</div>
+
+<!-- Empty State -->
+<div id="narrator-empty" class="narrator-panel" style="display:none;">
+  <div class="narrator-icon">🌍</div>
+  <div class="narrator-empty-title">Visual Climate</div>
+  <div class="narrator-empty-text">
+    250 countries graded on climate action.<br>
+    Click any country on the dashboard to begin.
+  </div>
+  <div class="narrator-empty-quiz">
+    Or try the 3-minute Climate Test first:<br>
+    <a href="https://visualclimate.org/quiz" target="_blank"
+       class="narrator-link">visualclimate.org/quiz →</a>
+  </div>
+  <div class="narrator-toggle-wrap">
+    <button id="btn-mode-guided-empty" class="narrator-mode-btn active">Guided</button>
+    <button id="btn-mode-free-empty" class="narrator-mode-btn">Free</button>
+  </div>
+</div>
+
+<!-- Main Narrator Panel -->
+<div id="narrator-main" class="narrator-panel" style="display:none;">
+
+  <!-- 국가 헤더 -->
+  <div class="narrator-country-header">
+    <span id="narrator-flag" class="narrator-flag"></span>
+    <div class="narrator-country-info">
+      <div id="narrator-name" class="narrator-country-name"></div>
+      <div id="narrator-meta" class="narrator-country-meta"></div>
+    </div>
+    <span id="narrator-grade-badge" class="grade-badge narrator-grade"></span>
+  </div>
+
+  <!-- Insight 영역 -->
+  <div id="narrator-insight-section" class="narrator-section">
+    <div id="narrator-insight" class="narrator-insight-text"></div>
+    <div id="narrator-so-what" class="narrator-so-what-text"></div>
+  </div>
+
+  <!-- 핵심 수치 -->
+  <div id="narrator-metric-section" class="narrator-metric-section" style="display:none;">
+    <div id="narrator-metric-value" class="narrator-metric-value"></div>
+    <div id="narrator-metric-label" class="narrator-metric-label"></div>
+  </div>
+
+  <!-- Next Action -->
+  <div id="narrator-action-section" class="narrator-action-section">
+    <div id="narrator-action" class="narrator-action-text"></div>
+  </div>
+
+  <!-- 하단: 모듈 표시 + 토글 -->
+  <div class="narrator-footer">
+    <div id="narrator-module" class="narrator-module-text"></div>
+    <div class="narrator-toggle-wrap">
+      <button id="btn-mode-guided" class="narrator-mode-btn active">Guided</button>
+      <button id="btn-mode-free" class="narrator-mode-btn">Free</button>
+    </div>
+  </div>
+
+  <!-- Free 모드 미니 요약 -->
+  <div id="narrator-free-summary" class="narrator-free-summary" style="display:none;">
+    <div id="narrator-free-domains"></div>
+  </div>
+
+</div>
+
+<!-- 웹 링크 푸터 -->
+<div id="narrator-web-footer" class="vc-footer" style="display:none;">
+  <a id="narrator-web-link" href="#" target="_blank">View full profile on visualclimate.org →</a>
+</div>
+
+<!-- Chart Tooltip -->
+<div id="chart-tooltip" class="chart-tooltip"></div>
+
+<script src="tableau.extensions.1.latest.js"></script>
+<script src="shared.js?v=2"></script>
+<script src="narrator-app.js?v=1"></script>
+</body>
+</html>
