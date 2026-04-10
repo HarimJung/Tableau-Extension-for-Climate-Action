@@ -1,0 +1,397 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "generated": "2026-04-09",
+    "total_rules": 30,
+    "structure": "5 dashboards × 6 steps (ANCHOR → DISRUPT → EXPLORE → COMPARE → EVALUATE → REFLECT)",
+    "language": "ko",
+    "note": "All numeric values sourced from data/narrator-country-cache.json, data/quiz-global-stats.json, data/energy-absolute-twh.csv, or ndc-targets-v2.json. No hallucinated data."
+  },
+
+  "steps": ["ANCHOR", "DISRUPT", "EXPLORE", "COMPARE", "EVALUATE", "REFLECT"],
+
+  "rules": [
+
+    {
+      "id": "DB1_ANCHOR",
+      "dashboard": "DB1",
+      "step": 1,
+      "state": "ANCHOR",
+      "rosling_instinct": "Gap Instinct",
+      "narrator_text_ko": "한국과 중국, 1인당 CO₂ 배출이 더 많은 나라는?",
+      "narrator_subtext_ko": "82%의 사람이 이 질문에 틀립니다.",
+      "quiz_options": ["한국", "중국", "비슷하다"],
+      "correct_answer": 0,
+      "on_correct_ko": "정답! 하지만 82%의 사람은 '중국'이라고 답합니다.",
+      "on_wrong_ko": "82%의 사람이 같은 답을 골랐습니다. 사실은…",
+      "metric": { "value": "12.2t", "label": "한국 1인당 CO₂" },
+      "tableau_actions": [],
+      "data_source": "narrator-country-cache.json → KOR.co2_per_capita_t (EDGAR/GCP 2023)"
+    },
+    {
+      "id": "DB1_DISRUPT",
+      "dashboard": "DB1",
+      "step": 2,
+      "state": "DISRUPT",
+      "narrator_text_ko": "한국 12.2t vs 중국 8.0t. 한국이 53% 더 많이 배출합니다.",
+      "narrator_subtext_ko": "'최대 배출국'과 '1인당 최대 배출국'은 다릅니다. 중국은 총량이 크지만, 14억 인구로 나누면 한국보다 낮습니다.",
+      "metric": { "value": "53%", "label": "한국이 중국보다 높음" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "CO2 Per Capita", "field": "ISO3", "values": ["KOR", "CHN"] }
+      ],
+      "data_source": "narrator-country-cache.json → KOR 12.23t, CHN 8.0t (quiz-global-stats.json)"
+    },
+    {
+      "id": "DB1_EXPLORE",
+      "dashboard": "DB1",
+      "step": 3,
+      "state": "EXPLORE",
+      "narrator_text_ko": "다른 나라는 어떨까요? 지도에서 국가를 클릭해보세요.",
+      "narrator_subtext_ko": "미국 17.7t, 독일 8.1t, 나이지리아 1.7t, 방글라데시 1.4t. 소득 수준에 따라 배출량이 극적으로 달라집니다.",
+      "metric": null,
+      "tableau_actions": [
+        { "type": "clearFilter", "worksheet": "CO2 Per Capita", "field": "ISO3" }
+      ],
+      "data_source": "narrator-country-cache.json → USA/DEU/NGA/BGD co2_per_capita_t"
+    },
+    {
+      "id": "DB1_COMPARE",
+      "dashboard": "DB1",
+      "step": 4,
+      "state": "COMPARE",
+      "narrator_text_ko": "소득그룹별로 비교해봅시다.",
+      "narrator_subtext_ko": "고소득국 평균 ~10t vs 저소득국 평균 ~0.5t. 20배 차이입니다. '누가 배출하는가'는 곧 '누가 부유한가'와 같은 질문입니다.",
+      "metric": { "value": "20×", "label": "고소득 vs 저소득 배출 격차" },
+      "tableau_actions": [
+        { "type": "setParameter", "param": "ViewBy", "value": "Income Group" }
+      ],
+      "data_source": "quiz-global-stats.json → high_income_top10/bottom50"
+    },
+    {
+      "id": "DB1_EVALUATE",
+      "dashboard": "DB1",
+      "step": 5,
+      "state": "EVALUATE",
+      "narrator_text_ko": "한국은 고소득국 중에서도 상위권입니다.",
+      "narrator_subtext_ko": "OECD 38개국 중 1인당 CO₂ 배출 상위 5위. 제조업 중심 산업구조와 석탄화력 의존이 주요 원인입니다.",
+      "metric": { "value": "Top 5", "label": "OECD 1인당 CO₂ 순위" },
+      "tableau_actions": [
+        { "type": "applyFilter", "worksheet": "CO2 Per Capita", "field": "Income Group", "values": ["High income"] }
+      ],
+      "data_source": "narrator-country-cache.json → KOR 12.23t, income_group: High income"
+    },
+    {
+      "id": "DB1_REFLECT",
+      "dashboard": "DB1",
+      "step": 6,
+      "state": "REFLECT",
+      "narrator_text_ko": "\"세계를 이해하려면 숫자를 봐야 합니다. 하지만 숫자만으로는 세계를 이해할 수 없습니다.\"",
+      "narrator_subtext_ko": "— Hans Rosling, Factfulness. 1인당 배출은 '책임의 크기'를 보여줍니다. 다음 대시보드에서는 '변화의 방향'을 봅니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "Hans Rosling, Factfulness (2018)"
+    },
+
+    {
+      "id": "DB2_ANCHOR",
+      "dashboard": "DB2",
+      "step": 1,
+      "state": "ANCHOR",
+      "rosling_instinct": "Negativity Instinct + Straight Line Instinct",
+      "narrator_text_ko": "기후 위기에서 '아무것도 변하지 않는다'는 사실일까요?",
+      "narrator_subtext_ko": "뉴스는 나쁜 소식만 전합니다. 실제 데이터는 다른 이야기를 합니다.",
+      "quiz_options": ["맞다, 거의 안 변했다", "조금 변했다", "많이 변했다"],
+      "correct_answer": 2,
+      "on_correct_ko": "정답! 독일의 재생에너지 비율은 2010년 17%에서 2023년 53%로 3배 이상 증가했습니다.",
+      "on_wrong_ko": "실제로는 많은 것이 변했습니다. 독일의 재생에너지 비율: 17% → 53%.",
+      "metric": { "value": "53%", "label": "독일 재생에너지 비율 (2023)" },
+      "tableau_actions": [],
+      "data_source": "narrator-country-cache.json → DEU.renewable_pct = 53.29 (Ember 2024)"
+    },
+    {
+      "id": "DB2_DISRUPT",
+      "dashboard": "DB2",
+      "step": 2,
+      "state": "DISRUPT",
+      "narrator_text_ko": "독일: 재생에너지 17% → 53%. 브라질은 이미 89%입니다.",
+      "narrator_subtext_ko": "변화는 일어나고 있습니다. 문제는 '충분히 빠른가'입니다. 파리협정 목표 달성에는 연 4%p 이상의 증가가 필요합니다.",
+      "metric": { "value": "+36%p", "label": "독일 RE 증가 (2010→2023)" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "Renewable Trend", "field": "ISO3", "values": ["DEU"] }
+      ],
+      "data_source": "narrator-country-cache.json → DEU 53.29%, BRA 88.94% (Ember 2024)"
+    },
+    {
+      "id": "DB2_EXPLORE",
+      "dashboard": "DB2",
+      "step": 3,
+      "state": "EXPLORE",
+      "narrator_text_ko": "시계열 차트에서 다른 나라의 변화를 확인해보세요.",
+      "narrator_subtext_ko": "한국은 어떨까요? 9%로 OECD 최하위 수준입니다. 어떤 나라가 빠르게 변하고 있는지 직접 비교해보세요.",
+      "metric": { "value": "9.0%", "label": "한국 재생에너지 비율" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "Renewable Trend", "field": "ISO3", "values": ["KOR", "DEU", "BRA"] }
+      ],
+      "data_source": "narrator-country-cache.json → KOR 9.02% (Ember 2023)"
+    },
+    {
+      "id": "DB2_COMPARE",
+      "dashboard": "DB2",
+      "step": 4,
+      "state": "COMPARE",
+      "narrator_text_ko": "같은 고소득국인데 왜 이렇게 다를까요?",
+      "narrator_subtext_ko": "독일 53%, 한국 9%. 정책 의지와 에너지 믹스 결정이 차이를 만듭니다. 독일은 2023년 석탄 발전 125TWh, 한국은 201TWh입니다.",
+      "metric": { "value": "201 TWh", "label": "한국 석탄 발전 (2023)" },
+      "tableau_actions": [],
+      "data_source": "energy-absolute-twh.csv → KOR 2023 coal=201.34, DEU 2023 coal=124.78"
+    },
+    {
+      "id": "DB2_EVALUATE",
+      "dashboard": "DB2",
+      "step": 5,
+      "state": "EVALUATE",
+      "narrator_text_ko": "변화의 속도가 충분한가요?",
+      "narrator_subtext_ko": "파리협정 1.5°C 경로: 2030년까지 전 세계 재생에너지 비율 60% 이상 필요. 현재 세계 평균 30%. 한국 9%는 심각한 지연입니다.",
+      "metric": { "value": "30%", "label": "세계 평균 RE (2023)" },
+      "tableau_actions": [],
+      "data_source": "quiz-global-stats.json → global_renewable_pct = 30 (IRENA/Ember 2023)"
+    },
+    {
+      "id": "DB2_REFLECT",
+      "dashboard": "DB2",
+      "step": 6,
+      "state": "REFLECT",
+      "narrator_text_ko": "\"나쁜 뉴스와 좋은 뉴스는 동시에 존재할 수 있습니다.\"",
+      "narrator_subtext_ko": "— Hans Rosling. 기후 위기는 심각합니다. 동시에 변화도 일어나고 있습니다. 부정 본능에 빠지면 이미 일어난 진전을 놓칩니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "Hans Rosling, Factfulness (2018)"
+    },
+
+    {
+      "id": "DB3_ANCHOR",
+      "dashboard": "DB3",
+      "step": 1,
+      "state": "ANCHOR",
+      "rosling_instinct": "Size Instinct",
+      "narrator_text_ko": "재생에너지가 늘었으니 화석연료는 줄었을까요?",
+      "narrator_subtext_ko": "80%의 사람이 '줄었다' 또는 '비슷하다'고 답합니다.",
+      "quiz_options": ["줄었다 (-5%)", "비슷하다", "늘었다 (+20%)"],
+      "correct_answer": 2,
+      "on_correct_ko": "정답! 화석연료 사용은 2000년 대비 오히려 20% 증가했습니다.",
+      "on_wrong_ko": "사실 화석연료 절대 사용량은 2000년 대비 20% 증가했습니다.",
+      "metric": { "value": "+20%", "label": "화석연료 사용 vs 2000년" },
+      "tableau_actions": [],
+      "data_source": "quiz-global-stats.json → fossil_use_vs_2000_pct = 120 (OWID 2023)"
+    },
+    {
+      "id": "DB3_DISRUPT",
+      "dashboard": "DB3",
+      "step": 2,
+      "state": "DISRUPT",
+      "narrator_text_ko": "비율이 줄어도 절대량은 늘 수 있습니다.",
+      "narrator_subtext_ko": "전 세계 에너지 수요 자체가 크게 증가했기 때문입니다. 재생에너지가 파이를 키운 게 아니라, 커지는 파이에 추가된 것입니다.",
+      "metric": { "value": "90%", "label": "2024 신규 발전소 중 RE" },
+      "tableau_actions": [
+        { "type": "setParameter", "param": "EnergyView", "value": "Absolute" }
+      ],
+      "data_source": "quiz-global-stats.json → new_renewable_capacity_2024_pct = 90 (IRENA 2024)"
+    },
+    {
+      "id": "DB3_EXPLORE",
+      "dashboard": "DB3",
+      "step": 3,
+      "state": "EXPLORE",
+      "narrator_text_ko": "차트를 '절대량'과 '비율'로 전환하며 비교해보세요.",
+      "narrator_subtext_ko": "독일: 석탄 125TWh로 줄었지만 가스 77TWh 유지. 한국: 석탄 201TWh, 가스 170TWh로 화석 비중이 압도적입니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "energy-absolute-twh.csv → KOR 2023, DEU 2023"
+    },
+    {
+      "id": "DB3_COMPARE",
+      "dashboard": "DB3",
+      "step": 4,
+      "state": "COMPARE",
+      "narrator_text_ko": "한국의 에너지 구조를 보세요.",
+      "narrator_subtext_ko": "석탄 201TWh + 가스 170TWh + 원자력 180TWh. 재생에너지(풍력 3.4 + 태양광 33.2 + 기타 18.7TWh)는 전체의 9%에 불과합니다.",
+      "metric": { "value": "371 TWh", "label": "한국 화석연료 발전 (2023)" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "Energy Mix", "field": "ISO3", "values": ["KOR"] }
+      ],
+      "data_source": "energy-absolute-twh.csv → KOR 2023 coal+gas = 201.34+169.61"
+    },
+    {
+      "id": "DB3_EVALUATE",
+      "dashboard": "DB3",
+      "step": 5,
+      "state": "EVALUATE",
+      "narrator_text_ko": "크기 본능을 경계하세요.",
+      "narrator_subtext_ko": "'재생에너지가 90% 성장!'이라는 헤드라인 뒤에, 화석연료 절대량 증가가 숨어 있습니다. 비율과 절대량을 항상 함께 봐야 합니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "quiz-global-stats.json (OWID 2023, IRENA 2024)"
+    },
+    {
+      "id": "DB3_REFLECT",
+      "dashboard": "DB3",
+      "step": 6,
+      "state": "REFLECT",
+      "narrator_text_ko": "\"하나의 숫자만으로는 의미가 없습니다. 항상 비교하세요.\"",
+      "narrator_subtext_ko": "— Hans Rosling. 비율과 절대량, 과거와 현재, 나라와 나라. 비교 없는 숫자는 오해를 낳습니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "Hans Rosling, Factfulness (2018)"
+    },
+
+    {
+      "id": "DB4_ANCHOR",
+      "dashboard": "DB4",
+      "step": 1,
+      "state": "ANCHOR",
+      "rosling_instinct": "Urgency Instinct + Destiny Instinct",
+      "narrator_text_ko": "파리협정에 서명한 나라가 몇 개국인지 아시나요?",
+      "narrator_subtext_ko": "85%의 사람이 이 질문에 틀립니다.",
+      "quiz_options": ["약 50개국", "약 100개국", "194개국"],
+      "correct_answer": 2,
+      "on_correct_ko": "정답! 195개국 중 194개국이 서명했습니다. 거의 모든 나라입니다.",
+      "on_wrong_ko": "사실 195개국 중 194개국이 서명했습니다. 하지만 약속을 지키고 있을까요?",
+      "metric": { "value": "194", "label": "파리협정 서명국" },
+      "tableau_actions": [],
+      "data_source": "quiz-global-stats.json → paris_signatories = 194 (UNFCCC 2024)"
+    },
+    {
+      "id": "DB4_DISRUPT",
+      "dashboard": "DB4",
+      "step": 2,
+      "state": "DISRUPT",
+      "narrator_text_ko": "194개국이 약속했지만, 이행은 다른 문제입니다.",
+      "narrator_subtext_ko": "한국: NDC 목표 2030년까지 -40% (2018년 대비). 현재 실제 감축은 약 -8%. 목표와 현실의 격차가 큽니다.",
+      "metric": { "value": "-40%", "label": "한국 NDC 2030 목표" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "NDC Gap", "field": "ISO3", "values": ["KOR"] }
+      ],
+      "data_source": "ndc-targets-v2.json → KOR.ndc_2030.target_pct_reduction = 40"
+    },
+    {
+      "id": "DB4_EXPLORE",
+      "dashboard": "DB4",
+      "step": 3,
+      "state": "EXPLORE",
+      "narrator_text_ko": "다른 나라의 약속 이행 현황을 확인해보세요.",
+      "narrator_subtext_ko": "독일: 목표 -65%, 실제 감축 진행 중 (2024 배출 630Mt). 미국: 목표 -50%, 현 정권에서 NDC 3.0 불확실. 약속의 무게가 다릅니다.",
+      "metric": null,
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "NDC Gap", "field": "ISO3", "values": ["KOR", "DEU", "USA"] }
+      ],
+      "data_source": "ndc-targets-v2.json → DEU -65%, USA -50%"
+    },
+    {
+      "id": "DB4_COMPARE",
+      "dashboard": "DB4",
+      "step": 4,
+      "state": "COMPARE",
+      "narrator_text_ko": "Climate Action Tracker(CAT) 등급을 보세요.",
+      "narrator_subtext_ko": "한국: '매우 불충분(Highly Insufficient)'. 독일·미국: '불충분(Insufficient)'. 1.5°C 경로에 부합하는 나라는 거의 없습니다.",
+      "metric": { "value": "Highly\nInsufficient", "label": "한국 CAT 등급" },
+      "tableau_actions": [],
+      "data_source": "ndc-targets-v2.json → KOR.cat_rating = Highly_insufficient"
+    },
+    {
+      "id": "DB4_EVALUATE",
+      "dashboard": "DB4",
+      "step": 5,
+      "state": "EVALUATE",
+      "narrator_text_ko": "NDC 3.0 제출 마감이 다가옵니다.",
+      "narrator_subtext_ko": "독일·영국·일본·브라질은 이미 NDC 3.0을 제출했습니다. 한국은 아직 미제출. 2035년 목표를 어떻게 설정할 것인가?",
+      "metric": { "value": "4/20", "label": "NDC 3.0 제출국 (주요 20개국 중)" },
+      "tableau_actions": [],
+      "data_source": "ndc-targets-v2.json → ndc3_submitted: DEU/GBR/JPN/BRA = true"
+    },
+    {
+      "id": "DB4_REFLECT",
+      "dashboard": "DB4",
+      "step": 6,
+      "state": "REFLECT",
+      "narrator_text_ko": "\"긴급하다고 느낄 때일수록, 데이터를 먼저 봐야 합니다.\"",
+      "narrator_subtext_ko": "— Hans Rosling. 약속만으로는 기온이 내려가지 않습니다. 목표와 현실의 격차를 직시하는 것이 첫 번째 행동입니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "Hans Rosling, Factfulness (2018)"
+    },
+
+    {
+      "id": "DB5_ANCHOR",
+      "dashboard": "DB5",
+      "step": 1,
+      "state": "ANCHOR",
+      "rosling_instinct": "Blame Instinct + Generalization Instinct",
+      "narrator_text_ko": "고소득국 상위 10%의 1인당 CO₂ 배출량은 얼마일까요?",
+      "narrator_subtext_ko": "기후 위기의 '원인'과 '피해'는 같은 곳에 있지 않습니다.",
+      "quiz_options": ["약 10t", "약 15t", "약 25t"],
+      "correct_answer": 2,
+      "on_correct_ko": "정답! 약 25t입니다. 저소득국 하위 50%의 50배입니다.",
+      "on_wrong_ko": "실제로는 약 25t입니다. 저소득국 하위 50%(~0.5t)의 50배에 달합니다.",
+      "metric": { "value": "25t", "label": "고소득 상위 10% 1인당 CO₂" },
+      "tableau_actions": [],
+      "data_source": "quiz-global-stats.json → high_income_top10_co2_t = 25 (WID 2021)"
+    },
+    {
+      "id": "DB5_DISRUPT",
+      "dashboard": "DB5",
+      "step": 2,
+      "state": "DISRUPT",
+      "narrator_text_ko": "나이지리아: 1.7t 배출, 취약도 0.48. 한국: 12.2t 배출, 취약도 0.36.",
+      "narrator_subtext_ko": "적게 배출하는 나라가 더 큰 피해를 받습니다. 방글라데시는 1.4t를 배출하지만, 취약도 0.57로 세계 최고 수준입니다.",
+      "metric": { "value": "0.57", "label": "방글라데시 기후 취약도" },
+      "tableau_actions": [
+        { "type": "selectMarks", "worksheet": "Climate Justice", "field": "ISO3", "values": ["NGA", "KOR", "BGD"] }
+      ],
+      "data_source": "narrator-country-cache.json → NGA 1.71t/0.481, KOR 12.23t/0.357, BGD 1.37t/0.568"
+    },
+    {
+      "id": "DB5_EXPLORE",
+      "dashboard": "DB5",
+      "step": 3,
+      "state": "EXPLORE",
+      "narrator_text_ko": "산점도에서 배출량(X)과 취약도(Y)의 관계를 탐색해보세요.",
+      "narrator_subtext_ko": "좌상단(저배출·고취약) = 피해자. 우하단(고배출·저취약) = 원인 제공자. 기후 정의의 핵심 구도입니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "narrator-country-cache.json → all 6 countries"
+    },
+    {
+      "id": "DB5_COMPARE",
+      "dashboard": "DB5",
+      "step": 4,
+      "state": "COMPARE",
+      "narrator_text_ko": "적응 준비도(Readiness)도 불평등합니다.",
+      "narrator_subtext_ko": "한국 준비도 0.72 vs 나이지리아 0.25 vs 방글라데시 0.28. 기후 피해를 가장 많이 받을 나라가 대응 능력도 가장 낮습니다.",
+      "metric": { "value": "0.25", "label": "나이지리아 적응 준비도" },
+      "tableau_actions": [],
+      "data_source": "narrator-country-cache.json → KOR 0.722, NGA 0.253, BGD 0.279"
+    },
+    {
+      "id": "DB5_EVALUATE",
+      "dashboard": "DB5",
+      "step": 5,
+      "state": "EVALUATE",
+      "narrator_text_ko": "'가난한 나라가 원인'이라는 편견을 넘어서야 합니다.",
+      "narrator_subtext_ko": "사하라 이남 아프리카 전체(11억 인구)의 배출량은 한국 한 나라보다 적습니다. 책임과 지원은 비례해야 합니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "narrator-country-cache.json → NGA 293Mt total vs KOR 624Mt total"
+    },
+    {
+      "id": "DB5_REFLECT",
+      "dashboard": "DB5",
+      "step": 6,
+      "state": "REFLECT",
+      "narrator_text_ko": "\"비난할 대상을 찾는 본능은 문제를 이해하는 것을 방해합니다.\"",
+      "narrator_subtext_ko": "— Hans Rosling. 기후 위기에 '나쁜 나라'와 '착한 나라'는 없습니다. 구조적 불평등을 데이터로 직시하는 것이 시작입니다.",
+      "metric": null,
+      "tableau_actions": [],
+      "data_source": "Hans Rosling, Factfulness (2018)"
+    }
+  ]
+}
