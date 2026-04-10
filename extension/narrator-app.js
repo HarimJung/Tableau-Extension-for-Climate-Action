@@ -30,6 +30,28 @@
   var currentExtra = {};
   var currentContext = {};
 
+  // === GUIDED TOUR STATE ===
+  var guidedTourActive = false;
+  var currentDashboard = null;   // 'DB1'–'DB5'
+  var currentGuidedStep = 0;     // 0-5 index into guidedSteps
+  var guidedRules = null;        // loaded from narrator-rules-guided.json
+  var guidedSteps = ['ANCHOR', 'DISRUPT', 'EXPLORE', 'COMPARE', 'EVALUATE', 'REFLECT'];
+  var missedDashboards = [];     // from quiz URL param (?missed=DB1,DB3)
+  var guidedAdvanceTimer = null;
+  var quizAnswered = false;
+
+  var DASHBOARD_NAMES = {
+    'DB1': 'WHO EMITS?',
+    'DB2': "WHAT'S CHANGING?",
+    'DB3': 'ENERGY REALITY',
+    'DB4': 'PROMISES vs REALITY',
+    'DB5': 'CLIMATE JUSTICE'
+  };
+  var DASHBOARD_ICONS = {
+    'DB1': '\uD83C\uDFED', 'DB2': '\uD83D\uDCC8', 'DB3': '\u26A1',
+    'DB4': '\uD83D\uDCCB', 'DB5': '\u2696\uFE0F'
+  };
+
   // ———— Domain helpers ————
 
   function getWeakestDomain(profile) {
@@ -677,6 +699,249 @@
   // Module titles
   var MODULE_TITLES = { 1: 'Overview', 2: 'Profile', 3: 'Explore', 4: 'Comparison' };
 
+  // ================================================================
+  //  GUIDED TOUR — load rules, render steps, quiz, advance
+  // ================================================================
+
+  async function loadGuidedRules() {
+    try {
+      var resp = await fetch('narrator-rules-guided.json?v=1');
+      guidedRules = await resp.json();
+      console.log('[Narrator] Guided rules loaded:', guidedRules.rules.length, 'rules');
+      return guidedRules;
+    } catch (e) {
+      console.warn('[Narrator] Failed to load guided rules:', e);
+      guidedRules = null;
+      return null;
+    }
+  }
+
+  function findGuidedRule(dashboard, stepIndex) {
+    if (!guidedRules || !guidedRules.rules) return null;
+    var stepNum = stepIndex + 1; // JSON uses 1-indexed step
+    for (var i = 0; i < guidedRules.rules.length; i++) {
+      var r = guidedRules.rules[i];
+      if (r.dashboard === dashboard && r.step === stepNum) return r;
+    }
+    return null;
+  }
+
+  function startGuidedTour(dashboard, stepIndex) {
+    guidedTourActive = true;
+    currentDashboard = dashboard;
+    currentGuidedStep = stepIndex || 0;
+    currentMode = 'guided';
+    quizAnswered = false;
+
+    // Sync toggle buttons
+    var allGuided = [
+      document.getElementById('btn-mode-guided-empty'),
+      document.getElementById('btn-mode-guided'),
+    ];
+    var allFree = [
+      document.getElementById('btn-mode-free-empty'),
+      document.getElementById('btn-mode-free'),
+    ];
+    for (var i = 0; i < allGuided.length; i++) {
+      if (allGuided[i]) allGuided[i].classList.add('active');
+    }
+    for (var j = 0; j < allFree.length; j++) {
+      if (allFree[j]) allFree[j].classList.remove('active');
+    }
+
+    var rule = findGuidedRule(dashboard, currentGuidedStep);
+    if (rule) {
+      renderGuidedStep(rule);
+    } else {
+      console.warn('[Narrator] No guided rule for', dashboard, 'step', currentGuidedStep);
+      showEmptyState();
+    }
+  }
+
+  function renderGuidedStep(rule) {
+    showNarratorMain();
+    clearGuidedAdvanceTimer();
+
+    // Header: dashboard info instead of country
+    document.getElementById('narrator-flag').textContent =
+      DASHBOARD_ICONS[currentDashboard] || '\uD83C\uDF0D';
+    document.getElementById('narrator-name').textContent =
+      DASHBOARD_NAMES[currentDashboard] || '';
+    document.getElementById('narrator-meta').textContent =
+      rule.rosling_instinct || guidedSteps[currentGuidedStep];
+
+    var gradeBadge = document.getElementById('narrator-grade-badge');
+    gradeBadge.textContent = (currentGuidedStep + 1) + '/6';
+    gradeBadge.style.background = 'var(--vc-primary-subtle, #E8F0FF)';
+    gradeBadge.style.color = 'var(--vc-primary, #0066FF)';
+    gradeBadge.style.display = '';
+
+    // Insight text
+    document.getElementById('narrator-insight').textContent = rule.narrator_text_ko;
+
+    // So-what / subtext
+    var soWhatEl = document.getElementById('narrator-so-what');
+    if (rule.narrator_subtext_ko) {
+      soWhatEl.textContent = rule.narrator_subtext_ko;
+      soWhatEl.style.display = 'block';
+    } else {
+      soWhatEl.style.display = 'none';
+    }
+
+    // Metric
+    if (rule.metric) {
+      showMetric(rule.metric.value, rule.metric.label);
+    } else {
+      hideMetric();
+    }
+
+    // Quiz buttons (ANCHOR step only)
+    var quizSection = document.getElementById('narrator-quiz-section');
+    if (rule.state === 'ANCHOR' && rule.quiz_options) {
+      quizAnswered = false;
+      renderQuizButtons(rule);
+      quizSection.style.display = 'block';
+      document.getElementById('narrator-action').textContent = '';
+    } else {
+      quizSection.style.display = 'none';
+      quizAnswered = true;
+      // Action text
+      if (rule.state === 'REFLECT') {
+        var nextDb = getNextDashboard();
+        document.getElementById('narrator-action').textContent =
+          nextDb ? '\uD074\uB9AD\uD558\uC5EC \uB2E4\uC74C \uC8FC\uC81C\uB85C \u2192'
+                 : '\uD22C\uC5B4 \uC644\uB8CC. \uAD6D\uAC00\uB97C \uD074\uB9AD\uD574\uC11C \uC790\uC720\uB86D\uAC8C \uD0D0\uC0C9\uD558\uC138\uC694.';
+      } else {
+        document.getElementById('narrator-action').textContent =
+          '\uD074\uB9AD\uD558\uC5EC \uB2E4\uC74C \uB2E8\uACC4\uB85C \u2192';
+      }
+    }
+
+    // Step indicator
+    renderStepIndicator(currentGuidedStep);
+
+    // Module text
+    document.getElementById('narrator-module').textContent =
+      (DASHBOARD_NAMES[currentDashboard] || '') + ' \u00b7 ' + guidedSteps[currentGuidedStep];
+
+    // Execute Tableau actions
+    if (rule.tableau_actions && rule.tableau_actions.length > 0) {
+      NarratorActions.executeActions(rule.tableau_actions);
+    }
+  }
+
+  function renderQuizButtons(rule) {
+    var container = document.getElementById('narrator-quiz-buttons');
+    container.innerHTML = '';
+
+    for (var i = 0; i < rule.quiz_options.length; i++) {
+      var btn = document.createElement('button');
+      btn.className = 'narrator-quiz-btn';
+      btn.textContent = rule.quiz_options[i];
+      btn.dataset.index = i;
+      (function (index) {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          handleQuizAnswer(index, rule);
+        });
+      })(i);
+      container.appendChild(btn);
+    }
+  }
+
+  function handleQuizAnswer(selectedIndex, rule) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+
+    var buttons = document.querySelectorAll('#narrator-quiz-buttons .narrator-quiz-btn');
+    var correct = selectedIndex === rule.correct_answer;
+
+    for (var i = 0; i < buttons.length; i++) {
+      buttons[i].disabled = true;
+      if (i === rule.correct_answer) {
+        buttons[i].classList.add('correct');
+      } else if (i === selectedIndex && !correct) {
+        buttons[i].classList.add('wrong');
+      }
+    }
+
+    // Feedback
+    var feedbackText = correct ? rule.on_correct_ko : rule.on_wrong_ko;
+    document.getElementById('narrator-so-what').textContent = feedbackText;
+    document.getElementById('narrator-so-what').style.display = 'block';
+
+    // Show advance prompt
+    document.getElementById('narrator-action').textContent =
+      '\uD074\uB9AD\uD558\uC5EC \uB2E4\uC74C \uB2E8\uACC4\uB85C \u2192';
+
+    // Auto-advance after 3s
+    guidedAdvanceTimer = setTimeout(function () {
+      advanceGuidedStep();
+    }, 3000);
+  }
+
+  function advanceGuidedStep() {
+    clearGuidedAdvanceTimer();
+    currentGuidedStep++;
+
+    if (currentGuidedStep >= 6) {
+      var nextDb = getNextDashboard();
+      if (nextDb) {
+        currentDashboard = nextDb;
+        currentGuidedStep = 0;
+      } else {
+        // Tour complete
+        guidedTourActive = false;
+        currentGuidedStep = 0;
+        document.getElementById('narrator-quiz-section').style.display = 'none';
+        document.getElementById('narrator-step-indicator').style.display = 'none';
+        if (currentProfile && currentPeer) {
+          currentState = 'WELCOME';
+          renderWelcome(currentProfile, currentPeer);
+        } else {
+          showEmptyState();
+        }
+        return;
+      }
+    }
+
+    var rule = findGuidedRule(currentDashboard, currentGuidedStep);
+    if (rule) {
+      renderGuidedStep(rule);
+    }
+  }
+
+  function getNextDashboard() {
+    if (missedDashboards.length === 0) return null;
+    var idx = missedDashboards.indexOf(currentDashboard);
+    if (idx >= 0 && idx < missedDashboards.length - 1) {
+      return missedDashboards[idx + 1];
+    }
+    return null;
+  }
+
+  function renderStepIndicator(activeStep) {
+    var container = document.getElementById('narrator-step-indicator');
+    if (!container) return;
+    container.innerHTML = '';
+
+    for (var i = 0; i < 6; i++) {
+      var dot = document.createElement('span');
+      dot.className = 'narrator-step-dot';
+      if (i === activeStep) dot.classList.add('active');
+      else if (i < activeStep) dot.classList.add('completed');
+      container.appendChild(dot);
+    }
+    container.style.display = 'flex';
+  }
+
+  function clearGuidedAdvanceTimer() {
+    if (guidedAdvanceTimer) {
+      clearTimeout(guidedAdvanceTimer);
+      guidedAdvanceTimer = null;
+    }
+  }
+
   // ———— Rule matcher ————
 
   function matchRule(state, profile, peer, extra, context) {
@@ -924,7 +1189,27 @@
     setupModeToggle();
 
     var fromQuiz = VC.getUrlParam('from') === 'quiz';
-    var quizScore = VC.getUrlParam('score');
+    var quizScoreParam = VC.getUrlParam('score');
+
+    // === GUIDED TOUR: load rules & check URL params ===
+    var dashboardParam = VC.getUrlParam('dashboard');
+    var stepParam = parseInt(VC.getUrlParam('step') || '1', 10) - 1;
+    var missedParam = VC.getUrlParam('missed');
+
+    await loadGuidedRules();
+
+    if (dashboardParam && guidedRules) {
+      if (missedParam) {
+        missedDashboards = missedParam.split(',').map(function (s) { return s.trim(); });
+      } else {
+        missedDashboards = [dashboardParam];
+      }
+      startGuidedTour(dashboardParam, stepParam >= 0 ? stepParam : 0);
+      VC.onFilterChange(onDashboardChange);
+      VC.onMarkSelection(onDashboardChange);
+      return;
+    }
+    // === END GUIDED TOUR ===
 
     try {
       var iso3 = await VC.detectISO3FromDashboard();
@@ -932,7 +1217,7 @@
       if (!iso3) {
         showEmptyState();
       } else {
-        await onCountryChanged(iso3, fromQuiz, quizScore);
+        await onCountryChanged(iso3, fromQuiz, quizScoreParam);
       }
     } catch (e) {
       console.error('[Narrator] Start error:', e);
@@ -944,6 +1229,8 @@
   }
 
   async function onDashboardChange() {
+    // === GUIDED TOUR: don't interrupt active tour ===
+    if (guidedTourActive) return;
     try {
       var iso3 = await VC.detectISO3FromDashboard();
       if (iso3 && iso3 !== currentISO3) {
@@ -1045,6 +1332,19 @@
   // ———— Click to cycle states (guided mode) ————
 
   document.addEventListener('click', function (e) {
+    // === GUIDED TOUR: click-to-advance ===
+    if (guidedTourActive && currentMode === 'guided') {
+      var mainPanel = document.getElementById('narrator-main');
+      if (!mainPanel.contains(e.target)) return;
+      if (e.target.classList.contains('narrator-mode-btn')) return;
+      if (e.target.classList.contains('narrator-quiz-btn')) return;
+      if (!quizAnswered) return;
+      clearGuidedAdvanceTimer();
+      advanceGuidedStep();
+      return;
+    }
+    // === END GUIDED TOUR ===
+
     if (currentMode !== 'guided' || currentState === 'EMPTY') return;
     if (!currentProfile || !currentPeer) return;
 
@@ -1095,6 +1395,7 @@
   function setMode(mode) {
     currentMode = mode;
     clearTransitionTimers();
+    clearGuidedAdvanceTimer();
 
     var allGuided = [
       document.getElementById('btn-mode-guided-empty'),
@@ -1120,12 +1421,24 @@
 
     if (currentProfile && currentPeer) {
       if (mode === 'guided') {
+        // === GUIDED TOUR: resume tour if active ===
+        if (guidedTourActive) {
+          var rule = findGuidedRule(currentDashboard, currentGuidedStep);
+          if (rule) { renderGuidedStep(rule); return; }
+        }
+        // === END GUIDED TOUR ===
         currentState = 'WELCOME';
         renderWelcome(currentProfile, currentPeer);
       } else {
         renderFreeSummary(currentProfile, currentPeer);
       }
     }
+    // === GUIDED TOUR: handle case with no country selected ===
+    else if (guidedTourActive && mode === 'guided') {
+      var rule = findGuidedRule(currentDashboard, currentGuidedStep);
+      if (rule) renderGuidedStep(rule);
+    }
+    // === END GUIDED TOUR ===
   }
 
   // ———— Misc helpers ————

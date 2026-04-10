@@ -1111,3 +1111,98 @@ body {
   text-align: right;
   flex-shrink: 0;
 }
+
+/* === GUIDED TOUR ADDITIONS === */
+
+/* Quiz buttons */
+.narrator-quiz-section {
+  margin-bottom: var(--sp-3);
+}
+.narrator-quiz-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+.narrator-quiz-btn {
+  display: block;
+  width: 100%;
+  padding: var(--sp-2) var(--sp-3);
+  border: 1.5px solid var(--vc-border);
+  border-radius: var(--radius-md);
+  background: var(--vc-surface);
+  color: var(--vc-text);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--dur-fast) ease,
+              background var(--dur-fast) ease,
+              transform var(--dur-fast) ease;
+}
+.narrator-quiz-btn:hover:not(:disabled) {
+  border-color: var(--vc-primary);
+  background: var(--vc-primary-subtle);
+}
+.narrator-quiz-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+.narrator-quiz-btn.correct {
+  border-color: var(--vc-changer, #00A67E);
+  background: rgba(0, 166, 126, 0.1);
+  color: var(--vc-changer, #00A67E);
+}
+.narrator-quiz-btn.wrong {
+  border-color: var(--vc-talker, #E5484D);
+  background: rgba(229, 72, 77, 0.1);
+  color: var(--vc-talker, #E5484D);
+}
+.narrator-quiz-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+/* Step indicator (●●○○○○) */
+.narrator-step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--sp-2) 0;
+  margin-bottom: var(--sp-2);
+}
+.narrator-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vc-border);
+  transition: background var(--dur-fast) ease,
+              transform var(--dur-fast) ease;
+}
+.narrator-step-dot.active {
+  background: var(--vc-primary);
+  transform: scale(1.3);
+}
+.narrator-step-dot.completed {
+  background: var(--vc-primary);
+  opacity: 0.45;
+}
+
+/* Nudge pulse animation */
+.narrator-nudge-pulse {
+  animation: narratorNudge 2s ease-in-out infinite;
+}
+@keyframes narratorNudge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* Sparkline placeholder */
+.narrator-sparkline {
+  margin-bottom: var(--sp-3);
+  text-align: center;
+}
+.narrator-sparkline svg {
+  width: 100%;
+  max-width: 280px;
+  height: 48px;
+}
