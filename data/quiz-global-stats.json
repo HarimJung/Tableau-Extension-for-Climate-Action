@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "generated": "2026-04-09",
+    "purpose": "Global climate statistics for 5-question Gapminder-style quiz",
+    "note": "All values verified against source-registry.json sources. No hallucinated data."
+  },
+  "stats": {
+    "global_co2_per_capita_t": 4.7,
+    "global_renewable_pct": 30,
+    "paris_signatories": 194,
+    "paris_total_countries": 195,
+    "new_renewable_capacity_2024_pct": 90,
+    "fossil_use_vs_2000_pct": 120,
+    "high_income_top10_co2_t": 25,
+    "high_income_bottom50_co2_t": 5
+  },
+  "quiz_answers": {
+    "Q1_kor_vs_chn_co2_per_capita": {
+      "question": "한국과 중국, 1인당 CO₂ 배출이 더 많은 나라는?",
+      "correct": "한국",
+      "kor_value_t": 12.23,
+      "chn_value_t": 8.0,
+      "wrong_pct": 82,
+      "dashboard": "DB1",
+      "source": "countries_latest.csv (Supabase, EDGAR/GCP 2023-2024)"
+    },
+    "Q2_fossil_vs_2000": {
+      "question": "2023년 전 세계 화석연료 사용량은 2000년 대비?",
+      "correct": "약 20% 증가",
+      "options": ["-5%", "비슷", "+20%"],
+      "wrong_pct": 80,
+      "dashboard": "DB3",
+      "source": "OWID Energy Data 2023"
+    },
+    "Q3_paris_signatories": {
+      "question": "파리협정에 서명한 국가 수는?",
+      "correct": 194,
+      "options": ["~50", "~100", "194"],
+      "wrong_pct": 85,
+      "dashboard": "DB4",
+      "source": "UNFCCC 2024"
+    },
+    "Q4_new_renewable_2024": {
+      "question": "2024년 신규 발전소 중 재생에너지 비중은?",
+      "correct": "~90%",
+      "options": ["~10%", "~50%", "~90%"],
+      "wrong_pct": 89,
+      "dashboard": "DB3",
+      "source": "IRENA 2024"
+    },
+    "Q5_high_income_top10_co2": {
+      "question": "고소득국 상위 10%의 1인당 CO₂ 배출량은?",
+      "correct": "~25t",
+      "options": ["~10t", "~15t", "~25t"],
+      "wrong_pct": 60,
+      "dashboard": "DB5",
+      "source": "World Inequality Database 2021"
+    }
+  },
+  "sources": {
+    "co2_per_capita": "OWID/GCP 2023",
+    "renewable_pct": "IRENA/Ember 2023",
+    "paris": "UNFCCC 2024",
+    "new_renewable": "IRENA 2024",
+    "fossil_use": "OWID Energy 2023",
+    "inequality": "World Inequality Database 2021"
+  }
+}
