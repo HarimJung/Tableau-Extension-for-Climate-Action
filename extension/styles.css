@@ -1206,3 +1206,154 @@ body {
   max-width: 280px;
   height: 48px;
 }
+
+/* === INTERNAL QUIZ (Option C) =================================
+   5-question Gapminder-style quiz rendered INSIDE the Narrator
+   extension before the guided tour starts. Uses `iq` (internal
+   quiz) prefix to avoid collision with the existing ANCHOR-step
+   quiz (`.narrator-quiz-btn`, `#narrator-quiz-section`).
+   ================================================================ */
+#narrator-internal-quiz {
+  padding: var(--sp-4, 16px) var(--sp-3, 12px);
+  text-align: center;
+}
+.narrator-iq-icon {
+  font-size: 36px;
+  line-height: 1;
+  margin-bottom: var(--sp-2, 8px);
+}
+.narrator-iq-progress {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0 4px;
+  font-size: 14px;
+}
+.narrator-iq-progress .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vc-border, #E5E7EB);
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+.narrator-iq-progress .dot.active {
+  background: var(--vc-primary, #0066FF);
+  transform: scale(1.25);
+}
+.narrator-iq-progress .dot.done {
+  background: var(--vc-changer, #00A67E);
+}
+.narrator-iq-counter {
+  font-size: 11px;
+  color: var(--vc-text-muted, #6B7280);
+  margin-bottom: 14px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.narrator-iq-question {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--vc-text, #1A1A2E);
+  text-align: center;
+  line-height: 1.45;
+  padding: 0 8px;
+  margin-bottom: 6px;
+}
+.narrator-iq-hint {
+  font-size: 11px;
+  color: var(--vc-text-muted, #6B7280);
+  text-align: center;
+  margin-bottom: 16px;
+  font-style: italic;
+}
+.narrator-iq-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 8px;
+}
+.narrator-iq-btn {
+  padding: 11px 14px;
+  border: 1.5px solid var(--vc-border, #E5E7EB);
+  border-radius: 8px;
+  background: var(--vc-bg, #FFFFFF);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--vc-text, #1A1A2E);
+  cursor: pointer;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.12s ease;
+  text-align: left;
+  font-family: inherit;
+}
+.narrator-iq-btn:hover:not(:disabled) {
+  border-color: var(--vc-primary, #0066FF);
+  background: rgba(0, 102, 255, 0.04);
+  transform: translateY(-1px);
+}
+.narrator-iq-btn:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+.narrator-iq-btn.correct {
+  border-color: var(--vc-changer, #00A67E) !important;
+  background: rgba(0, 166, 126, 0.10) !important;
+  color: var(--vc-changer, #00A67E) !important;
+  font-weight: 700;
+}
+.narrator-iq-btn.wrong {
+  border-color: var(--vc-talker, #E5484D) !important;
+  background: rgba(229, 72, 77, 0.08) !important;
+  color: var(--vc-talker, #E5484D) !important;
+}
+.narrator-iq-result-score {
+  font-size: 38px;
+  font-weight: 800;
+  color: var(--vc-primary, #0066FF);
+  text-align: center;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  letter-spacing: -1px;
+  margin: 10px 0 6px;
+}
+.narrator-iq-result-msg {
+  font-size: 13px;
+  color: var(--vc-text-secondary, #4B5563);
+  text-align: center;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  padding: 0 8px;
+}
+.narrator-iq-missed {
+  font-size: 11px;
+  color: var(--vc-text-muted, #6B7280);
+  text-align: center;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+.narrator-iq-start-btn {
+  display: block;
+  width: calc(100% - 16px);
+  margin: 0 8px;
+  padding: 13px;
+  background: var(--vc-primary, #0066FF);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s ease, transform 0.12s ease;
+  font-family: inherit;
+}
+.narrator-iq-start-btn:hover {
+  background: #0052CC;
+  transform: translateY(-1px);
+}
+.narrator-iq-footnote {
+  margin-top: 10px;
+  font-size: 10.5px;
+  color: var(--vc-text-muted, #6B7280);
+  text-align: center;
+  line-height: 1.4;
+}
+/* === END INTERNAL QUIZ === */
