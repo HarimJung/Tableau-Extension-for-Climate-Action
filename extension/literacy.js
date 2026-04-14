@@ -22,18 +22,26 @@
       console.warn('[Literacy] param NOT FOUND:', name);
       return;
     }
-    var finalValue;
-  if (name === 'p_Module') {
-    finalValue = parseInt(value, 10);
-  } else {
-    finalValue = String(value);
-  }
-    console.log('[Literacy] SET', name, '=', finalValue, 'dataType=' + param.dataType);
+    // Convert value based on parameter's dataType, not parameter name
+    var finalValue = value;
+    console.log('[Literacy] Parameter DEBUG:', {
+      name: name,
+      dataType: param.dataType,
+      currentValue: param.currentValue.value,
+      allowableValues: param.allowableValues,
+      inputValue: value,
+      inputType: typeof value
+    });
+    if (param.dataType === 'int' || param.dataType === 'float') {
+      finalValue = Number(value);
+    }
+    console.log('[Literacy] SET', name, '=', finalValue, '(type: ' + typeof finalValue + ')');
     try {
       await param.changeValueAsync(finalValue);
       console.log('[Literacy] SET OK:', name);
     } catch (e) {
-      console.error('[Literacy] SET FAIL:', name, '=', finalValue, e);
+      console.error('[Literacy] SET FAIL:', name, '=', finalValue, 'dataType=' + param.dataType, 'error:', e);
+      console.error('[Literacy] Full param object:', param);
     }
   }
 
