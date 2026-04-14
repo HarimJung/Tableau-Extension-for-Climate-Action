@@ -21,17 +21,19 @@
   }
 
   async function setParameter(name, value) {
-    console.log('[Literacy] setParameter:', name, '=', value);
+    console.log('[Literacy] setParameter:', name, '=', value, typeof value);
     const param = await findParameter(name);
     if (param) {
       try {
-        await param.changeValueAsync(value);
-        console.log('[Literacy] setParameter success:', name, '=', value);
+        // Integer 파라미터는 숫자로 변환
+        let finalValue = value;
+        if (name === 'p_Module') {
+          finalValue = parseInt(value, 10);
+        }
+        await param.changeValueAsync(finalValue);
       } catch (e) {
         console.error('[Literacy] setParameter FAILED:', name, '=', value, e.message);
       }
-    } else {
-      console.warn('[Literacy] parameter not found:', name);
     }
   }
 
