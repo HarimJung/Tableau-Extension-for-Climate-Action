@@ -9,11 +9,8 @@
   async function findParameter(name) {
     try {
       const dashboard = tableau.extensions.dashboardContent.dashboard;
-      const worksheets = dashboard.worksheets;
-      if (worksheets.length > 0) {
-        const params = await worksheets[0].getParametersAsync();
-        return params.find(p => p.name === name);
-      }
+      const params = await dashboard.getParametersAsync();
+      return params.find(p => p.name === name);
     } catch (e) {
       // standalone mode — no Tableau
     }
@@ -25,10 +22,10 @@
     const param = await findParameter(name);
     if (param) {
       try {
+        var finalValue = value;
         // Integer 파라미터는 숫자로 변환
-        let finalValue = value;
-        if (name === 'p_Module') {
-          finalValue = parseInt(value, 10);
+        if (param.dataType === 'int' || param.dataType === 'float') {
+          finalValue = Number(value);
         }
         await param.changeValueAsync(finalValue);
       } catch (e) {

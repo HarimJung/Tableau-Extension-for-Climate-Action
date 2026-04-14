@@ -106,8 +106,13 @@
         console.warn('[NarratorActions] Parameter not found:', paramName);
         return false;
       }
-      await param.changeValueAsync(value);
-      console.log('[NarratorActions] setParameter OK:', paramName, value);
+      // Integer/float 파라미터는 숫자로 변환
+      var finalValue = value;
+      if (param.dataType === 'int' || param.dataType === 'float') {
+        finalValue = Number(value);
+      }
+      await param.changeValueAsync(finalValue);
+      console.log('[NarratorActions] setParameter OK:', paramName, finalValue);
       return true;
     } catch (err) {
       console.error('[NarratorActions] setParameter failed:', err);
