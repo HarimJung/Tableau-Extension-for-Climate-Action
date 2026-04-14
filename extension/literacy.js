@@ -5,6 +5,32 @@
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
 
+  // ———— Debug Panel ————
+  function debugLog(message, data) {
+    console.log('[Literacy]', message, data || '');
+    var panel = document.getElementById('debug-panel');
+    if (panel) {
+      var time = new Date().toLocaleTimeString();
+      var line = time + ' | ' + message;
+      if (data) {
+        line += ' | ' + JSON.stringify(data, null, 2);
+      }
+      panel.innerHTML += line + '\n';
+      panel.scrollTop = panel.scrollHeight;
+    }
+  }
+
+  // Toggle debug panel with Ctrl+D or Cmd+D
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+      e.preventDefault();
+      var panel = document.getElementById('debug-panel');
+      if (panel) {
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+    }
+  });
+
   // ———— Tableau parameter control ————
   async function findParameter(name) {
     try {
@@ -19,29 +45,40 @@
   async function setParameter(name, value) {
     var param = await findParameter(name);
     if (!param) {
-      console.warn('[Literacy] param NOT FOUND:', name);
+      debugLog('⚠️ PARAM NOT FOUND: ' + name);
       return;
     }
     // Convert value based on parameter's dataType, not parameter name
     var finalValue = value;
-    console.log('[Literacy] Parameter DEBUG:', {
+    var debugInfo = {
       name: name,
       dataType: param.dataType,
       currentValue: param.currentValue.value,
       allowableValues: param.allowableValues,
       inputValue: value,
       inputType: typeof value
-    });
+    };
+    debugLog('📋 Parameter Info', debugInfo);
+
     if (param.dataType === 'int' || param.dataType === 'float') {
       finalValue = Number(value);
+      debugLog('🔢 Converted to Number: ' + finalValue);
     }
-    console.log('[Literacy] SET', name, '=', finalValue, '(type: ' + typeof finalValue + ')');
+
+    debugLog('➡️ Setting ' + name + ' = ' + finalValue + ' (type: ' + typeof finalValue + ')');
     try {
       await param.changeValueAsync(finalValue);
-      console.log('[Literacy] SET OK:', name);
+      debugLog('✅ SET OK: ' + name);
     } catch (e) {
-      console.error('[Literacy] SET FAIL:', name, '=', finalValue, 'dataType=' + param.dataType, 'error:', e);
-      console.error('[Literacy] Full param object:', param);
+      debugLog('❌ SET FAILED: ' + name, {
+        value: finalValue,
+        valueType: typeof finalValue,
+        dataType: param.dataType,
+        error: e.message || e.toString(),
+        errorDetails: e
+      });
+      // Show alert for critical errors
+      alert('Parameter Error!\n\nName: ' + name + '\nValue: ' + finalValue + '\nType: ' + typeof finalValue + '\nDataType: ' + param.dataType + '\n\nError: ' + (e.message || e.toString()) + '\n\nPress Ctrl+D to see debug panel');
     }
   }
 
@@ -416,8 +453,73 @@
       startLiteracy();
       return;
     }
-    tableau.extensions.initializeAsync().then(startLiteracy);
+    tableau.extensions.initializeAsync().then(function () {
+      runParameterDiagnostic().then(function () {
+        startLiteracy();
+      });
+    });
   });
+
+  // ———— Diagnostic: test each parameter individually ————
+  async function runParameterDiagnostic() {
+    var panel = document.getElementById('literacy-panel');
+    panel.innerHTML = '<div style="padding:16px; font-family:monospace; font-size:11px; line-height:1.6;">' +
+      '<b>Parameter Diagnostic</b><br>Testing each parameter...<br><br>' +
+      '<div id="diag-log"></div></div>';
+    var log = document.getElementById('diag-log');
+
+    function addLog(msg) {
+      log.innerHTML += msg + '<br>';
+    }
+
+    // List all parameters first
+    try {
+      var params = await tableau.extensions.dashboardContent.dashboard.getParametersAsync();
+      addLog('Found ' + params.length + ' parameters:');
+      for (var i = 0; i < params.length; i++) {
+        var p = params[i];
+        var av = p.allowableValues;
+        var avStr = av.type;
+        if (av.type === 'list' && av.allowableValues) {
+          avStr += ': [' + av.allowableValues.map(function(v) { return v.value; }).join(', ') + ']';
+        }
+        addLog('  &bull; <b>' + p.name + '</b> dataType=' + p.dataType +
+          ' current=' + p.currentValue.value + ' allowable=' + avStr);
+      }
+      addLog('');
+    } catch (e) {
+      addLog('❌ Failed to list parameters: ' + e.message);
+    }
+
+    // Test each parameter one by one
+    var tests = [
+      { name: 'p_Module', value: 1, note: 'integer param, number value' },
+      { name: 'p_Module', value: '1', note: 'integer param, STRING value' },
+      { name: 'p_Phase', value: 'question', note: 'string param' },
+      { name: 'p_Measure', value: 'GHG_PER_CAPITA', note: 'string param' },
+    ];
+
+    for (var t = 0; t < tests.length; t++) {
+      var test = tests[t];
+      addLog('Test ' + (t+1) + ': ' + test.name + ' = ' + test.value + ' (' + test.note + ')');
+      try {
+        var param = await findParameter(test.name);
+        if (!param) {
+          addLog('  ⚠️ Parameter not found!');
+          continue;
+        }
+        await param.changeValueAsync(test.value);
+        addLog('  ✅ OK');
+      } catch (e) {
+        addLog('  ❌ FAILED: ' + (e.message || e.toString()));
+      }
+      // Small delay between tests
+      await new Promise(function(r) { setTimeout(r, 300); });
+    }
+
+    addLog('<br><b>Diagnostic complete.</b> Waiting 5 seconds then starting...');
+    await new Promise(function(r) { setTimeout(r, 5000); });
+  }
 
   async function startLiteracy() {
     currentModule = 0;
