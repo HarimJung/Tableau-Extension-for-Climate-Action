@@ -8,13 +8,12 @@
   // ———— Tableau parameter control ————
   async function findParameter(name) {
     try {
-      const dashboard = tableau.extensions.dashboardContent.dashboard;
-      const params = await dashboard.getParametersAsync();
-      return params.find(p => p.name === name);
+      const params = await tableau.extensions.dashboardContent.dashboard.getParametersAsync();
+      return params.find(p => p.name === name) || null;
     } catch (e) {
-      // standalone mode — no Tableau
+      console.warn('[Literacy] findParameter failed:', name, e.message);
+      return null;
     }
-    return null;
   }
 
   async function setParameter(name, value) {
