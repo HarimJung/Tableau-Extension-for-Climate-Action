@@ -21,9 +21,17 @@
   }
 
   async function setParameter(name, value) {
+    console.log('[Literacy] setParameter:', name, '=', value);
     const param = await findParameter(name);
     if (param) {
-      await param.changeValueAsync(value);
+      try {
+        await param.changeValueAsync(value);
+        console.log('[Literacy] setParameter success:', name, '=', value);
+      } catch (e) {
+        console.error('[Literacy] setParameter FAILED:', name, '=', value, e.message);
+      }
+    } else {
+      console.warn('[Literacy] parameter not found:', name);
     }
   }
 
@@ -258,6 +266,7 @@
   }
 
   async function renderReveal(mod) {
+    console.log('[Literacy] renderReveal module:', mod.id, 'params:', mod.reveal.params);
     for (var key in mod.reveal.params) {
       await setParameter(key, mod.reveal.params[key]);
     }
@@ -283,6 +292,7 @@
   }
 
   async function renderExplore(mod) {
+    console.log('[Literacy] renderExplore module:', mod.id, 'params:', mod.explore.params);
     for (var key in mod.explore.params) {
       await setParameter(key, mod.explore.params[key]);
     }
@@ -358,6 +368,15 @@
     currentPhase = phase;
     if (phase === 'question') {
       await clearActiveFilters();
+      var mod = MODULES[currentModule];
+      await setParameter('p_Module', mod.id);
+      if (mod.sheet === 'M1 Scatter') {
+        await setParameter('p_Measure', 'GHG_PER_CAPITA');
+      } else if (mod.sheet === 'M2 Line') {
+        await setParameter('p_TimeMeasure', 'OWID.CO2');
+      } else if (mod.sheet === 'M3 Map') {
+        await setParameter('p_Measure', 'RENEWABLE_PCT');
+      }
     }
     await setParameter('p_Phase', phase);
     var mod = MODULES[currentModule];
