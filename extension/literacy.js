@@ -18,19 +18,18 @@
   }
 
   async function setParameter(name, value) {
-    console.log('[Literacy] setParameter:', name, '=', value, typeof value);
-    const param = await findParameter(name);
-    if (param) {
-      try {
-        var finalValue = value;
-        // Integer 파라미터는 숫자로 변환
-        if (param.dataType === 'int' || param.dataType === 'float') {
-          finalValue = Number(value);
-        }
-        await param.changeValueAsync(finalValue);
-      } catch (e) {
-        console.error('[Literacy] setParameter FAILED:', name, '=', value, e.message);
-      }
+    var param = await findParameter(name);
+    if (!param) {
+      console.warn('[Literacy] param NOT FOUND:', name);
+      return;
+    }
+    var finalValue = String(value);
+    console.log('[Literacy] SET', name, '=', finalValue, 'dataType=' + param.dataType);
+    try {
+      await param.changeValueAsync(finalValue);
+      console.log('[Literacy] SET OK:', name);
+    } catch (e) {
+      console.error('[Literacy] SET FAIL:', name, '=', finalValue, e);
     }
   }
 
