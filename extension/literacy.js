@@ -22,7 +22,12 @@
       console.warn('[Literacy] param NOT FOUND:', name);
       return;
     }
-    var finalValue = String(value);
+    var finalValue;
+  if (name === 'p_Module') {
+    finalValue = parseInt(value, 10);
+  } else {
+    finalValue = String(value);
+  }
     console.log('[Literacy] SET', name, '=', finalValue, 'dataType=' + param.dataType);
     try {
       await param.changeValueAsync(finalValue);
