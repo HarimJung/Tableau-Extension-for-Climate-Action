@@ -1488,57 +1488,75 @@
   }
 
   // ================================================================
-  //  === INTERNAL QUIZ (Option C) ===
-  //  5-question Gapminder-style quiz that runs INSIDE the narrator
-  //  extension when no ?dashboard= URL param is provided. After the
-  //  quiz completes, sessionStorage carries the result and the
-  //  existing startGuidedTour() is invoked on the missed topics.
+  //  === INTERNAL QUIZ (Option C) — Editorial Factfulness test ===
+  //  Five English questions rendered INSIDE the narrator extension
+  //  as a Hans-Rosling-inspired data-journalism moment before the
+  //  guided tour starts. Warm paper palette, Fraunces serif,
+  //  left-aligned editorial layout. Uses its own `.iq-*` classes
+  //  and the `#narrator-internal-quiz` DOM node, separate from the
+  //  guided tour's ANCHOR quiz (`#narrator-quiz-section`).
   //
-  //  Uses the separate DOM node #narrator-internal-quiz and the
-  //  `.narrator-iq-*` CSS classes to avoid colliding with the
-  //  existing ANCHOR-step quiz (`#narrator-quiz-section`,
-  //  `.narrator-quiz-btn`, handleQuizAnswer()).
+  //  Data backing every question is stored in
+  //  data/quiz-global-stats.json (OWID, IRENA, UNFCCC, WID).
   // ================================================================
 
   var INTERNAL_QUIZ_QUESTIONS = [
     {
       id: 'Q1', dashboard: 'DB1',
-      text: '\uD55C\uAD6D\uACFC \uC911\uAD6D, 1\uC778\uB2F9 CO\u2082 \uBC30\uCD9C\uC774 \uB354 \uB9CE\uC740 \uB098\uB77C\uB294?',
-      options: ['\uD55C\uAD6D', '\uC911\uAD6D', '\uBE44\uC2B7\uD558\uB2E4'],
-      correct: 0, wrong_pct: 82
+      text: 'Between South Korea and China, which emits more CO\u2082 per person?',
+      options: ['South Korea', 'China', 'About the same'],
+      correct: 0,
+      right_pct: 18,
+      fact: '<strong>12.2</strong> vs <strong>8.0</strong> tonnes per capita. South Korea\u2019s heavy industry and coal-leaning grid push it well above China \u2014 which people rarely expect.'
     },
     {
       id: 'Q2', dashboard: 'DB3',
-      text: '2023\uB144 \uC138\uACC4 \uD654\uC11D\uC5F0\uB8CC \uC0AC\uC6A9\uB7C9\uC740 2000\uB144 \uB300\uBE44?',
-      options: ['5% \uAC10\uC18C', '\uBE44\uC2B7', '20% \uC99D\uAC00'],
-      correct: 2, wrong_pct: 80
+      text: 'Global fossil-fuel use in 2023, compared to the year 2000?',
+      options: ['5% lower', 'About the same', '20% higher'],
+      correct: 2,
+      right_pct: 20,
+      fact: 'Global fossil-fuel consumption is roughly <strong>+20%</strong> higher than in 2000. Renewables are growing fast \u2014 but so far they have mostly added on top of fossils, not replaced them.'
     },
     {
       id: 'Q3', dashboard: 'DB4',
-      text: '195\uAC1C UN \uD68C\uC6D0\uAD6D \uC911 \uD30C\uB9AC\uD611\uC815 \uC11C\uBA85\uAD6D\uC740?',
-      options: ['\uC57D 50\uAC1C\uAD6D', '\uC57D 100\uAC1C\uAD6D', '194\uAC1C\uAD6D'],
-      correct: 2, wrong_pct: 85
+      text: 'Of the 195 UN member states, how many signed the Paris Agreement?',
+      options: ['About 50', 'About 100', '194'],
+      correct: 2,
+      right_pct: 15,
+      fact: '<strong>194</strong> countries signed. The only holdout is Iran. Near-universal signing \u2014 but meeting the targets is a different story.'
     },
     {
       id: 'Q4', dashboard: 'DB3',
-      text: '2024\uB144 \uC2E0\uADDC \uBC1C\uC804\uC18C \uC911 \uC7AC\uC0DD\uC5D0\uB108\uC9C0 \uBE44\uC911\uC740?',
-      options: ['\uC57D 10%', '\uC57D 50%', '\uC57D 90%'],
-      correct: 2, wrong_pct: 89
+      text: 'Of the new power plants built in 2024, what share was renewable?',
+      options: ['About 10%', 'About 50%', 'About 90%'],
+      correct: 2,
+      right_pct: 11,
+      fact: 'About <strong>90%</strong> of new capacity added in 2024 was renewable (IRENA). The transition is happening faster than public perception suggests.'
     },
     {
       id: 'Q5', dashboard: 'DB5',
-      text: '\uACE0\uC18C\uB4DD\uAD6D \uC0C1\uC704 10%\uC758 1\uC778\uB2F9 CO\u2082 \uBC30\uCD9C\uB7C9\uC740?',
-      options: ['\uC57D 10\uD1A4', '\uC57D 15\uD1A4', '\uC57D 25\uD1A4'],
-      correct: 2, wrong_pct: 60
+      text: 'In high-income countries, how much CO\u2082 does the top 10% emit per person each year?',
+      options: ['About 10 tonnes', 'About 15 tonnes', 'About 25 tonnes'],
+      correct: 2,
+      right_pct: 40,
+      fact: 'About <strong>25</strong> tonnes \u2014 roughly five times the bottom half of the same countries. Inequality inside countries now rivals the gap between them.'
     }
   ];
 
   var internalQuizState = { current: 0, score: 0, missed: [] };
+  var iqAdvanceTimer = null;
+
+  function iqPad2(n) { return n < 10 ? '0' + n : String(n); }
+
+  function clearIqAdvanceTimer() {
+    if (iqAdvanceTimer) { clearTimeout(iqAdvanceTimer); iqAdvanceTimer = null; }
+  }
 
   function showInternalQuiz() {
     currentState = 'INTERNAL_QUIZ';
     clearTransitionTimers();
     clearGuidedAdvanceTimer();
+    clearIqAdvanceTimer();
 
     document.getElementById('narrator-loading').style.display = 'none';
     document.getElementById('narrator-empty').style.display = 'none';
@@ -1561,6 +1579,7 @@
   function renderInternalQuizQuestion() {
     var section = document.getElementById('narrator-internal-quiz');
     if (!section) return;
+    clearIqAdvanceTimer();
 
     if (internalQuizState.current >= INTERNAL_QUIZ_QUESTIONS.length) {
       finishInternalQuiz();
@@ -1568,34 +1587,35 @@
     }
 
     var q = INTERNAL_QUIZ_QUESTIONS[internalQuizState.current];
-
-    var dotsHtml = '';
-    for (var i = 0; i < INTERNAL_QUIZ_QUESTIONS.length; i++) {
-      var cls = 'dot';
-      if (i < internalQuizState.current) cls += ' done';
-      else if (i === internalQuizState.current) cls += ' active';
-      dotsHtml += '<span class="' + cls + '"></span>';
-    }
+    var num = internalQuizState.current + 1;
+    var total = INTERNAL_QUIZ_QUESTIONS.length;
 
     var optsHtml = '';
     for (var j = 0; j < q.options.length; j++) {
-      optsHtml += '<button type="button" class="narrator-iq-btn" data-index="' +
-        j + '">' + q.options[j] + '</button>';
+      optsHtml +=
+        '<li class="iq-option" data-index="' + j + '">' +
+          '<span class="iq-option-num">' + iqPad2(j + 1) + '</span>' +
+          '<span class="iq-option-text">' + q.options[j] + '</span>' +
+        '</li>';
     }
 
     section.innerHTML =
-      '<div class="narrator-iq-icon">\uD83C\uDF0D</div>' +
-      '<div class="narrator-iq-progress">' + dotsHtml + '</div>' +
-      '<div class="narrator-iq-counter">Question ' + (internalQuizState.current + 1) +
-        ' / ' + INTERNAL_QUIZ_QUESTIONS.length + '</div>' +
-      '<div class="narrator-iq-question">' + q.text + '</div>' +
-      '<div class="narrator-iq-hint">' + q.wrong_pct +
-        '%\uC758 \uC0AC\uB78C\uC774 \uC774 \uC9C8\uBB38\uC744 \uD2C0\uB9BD\uB2C8\uB2E4</div>' +
-      '<div class="narrator-iq-options">' + optsHtml + '</div>';
+      '<div class="iq-frame">' +
+        '<div class="iq-eyebrow">' +
+          '<span class="iq-eyebrow-title">Factfulness</span>' +
+          '<span class="iq-eyebrow-rule"></span>' +
+          '<span class="iq-eyebrow-count">' + iqPad2(num) + ' / ' + iqPad2(total) + '</span>' +
+        '</div>' +
+        '<h2 class="iq-question">' + q.text + '</h2>' +
+        '<p class="iq-hook">Only <em>' + q.right_pct + '%</em> get this right.</p>' +
+        '<ol class="iq-options">' + optsHtml + '</ol>' +
+        '<div class="iq-fact-slot" aria-hidden="true"><p></p></div>' +
+        '<div class="iq-continue">Continue \u2192</div>' +
+      '</div>';
 
-    var buttons = section.querySelectorAll('.narrator-iq-btn');
-    for (var k = 0; k < buttons.length; k++) {
-      buttons[k].addEventListener('click', function (ev) {
+    var options = section.querySelectorAll('.iq-option');
+    for (var k = 0; k < options.length; k++) {
+      options[k].addEventListener('click', function (ev) {
         ev.stopPropagation();
         var idx = parseInt(this.getAttribute('data-index'), 10);
         handleInternalQuizAnswer(idx);
@@ -1608,17 +1628,38 @@
     if (!q) return;
 
     var section = document.getElementById('narrator-internal-quiz');
-    var buttons = section.querySelectorAll('.narrator-iq-btn');
+    var options = section.querySelectorAll('.iq-option');
     var isCorrect = selectedIndex === q.correct;
 
-    for (var i = 0; i < buttons.length; i++) {
-      buttons[i].disabled = true;
-      var btnIdx = parseInt(buttons[i].getAttribute('data-index'), 10);
+    for (var i = 0; i < options.length; i++) {
+      options[i].classList.add('disabled');
+      var btnIdx = parseInt(options[i].getAttribute('data-index'), 10);
       if (btnIdx === q.correct) {
-        buttons[i].classList.add('correct');
+        options[i].classList.add('correct');
       } else if (btnIdx === selectedIndex && !isCorrect) {
-        buttons[i].classList.add('wrong');
+        options[i].classList.add('wrong');
+      } else {
+        options[i].classList.add('dim');
       }
+    }
+
+    // Reveal the fact line a beat later
+    var factSlot = section.querySelector('.iq-fact-slot');
+    if (factSlot) {
+      factSlot.querySelector('p').innerHTML = q.fact;
+      setTimeout(function () { factSlot.classList.add('revealed'); }, 180);
+    }
+
+    // Reveal the "Continue →" indicator and wire it for early advance
+    var cont = section.querySelector('.iq-continue');
+    if (cont) {
+      setTimeout(function () { cont.classList.add('revealed'); }, 500);
+      cont.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        clearIqAdvanceTimer();
+        internalQuizState.current++;
+        renderInternalQuizQuestion();
+      });
     }
 
     if (isCorrect) {
@@ -1627,15 +1668,17 @@
       internalQuizState.missed.push(q.dashboard);
     }
 
-    setTimeout(function () {
+    iqAdvanceTimer = setTimeout(function () {
+      iqAdvanceTimer = null;
       internalQuizState.current++;
       renderInternalQuizQuestion();
-    }, 1500);
+    }, 2800);
   }
 
   function finishInternalQuiz() {
     var section = document.getElementById('narrator-internal-quiz');
     if (!section) return;
+    clearIqAdvanceTimer();
 
     var total = INTERNAL_QUIZ_QUESTIONS.length;
     var score = internalQuizState.score;
@@ -1651,29 +1694,40 @@
       console.warn('[Narrator] sessionStorage write failed:', e);
     }
 
-    var scoreText = score + ' / ' + total;
-    var msgText;
+    var verdictHtml, chimpHtml;
     if (score <= 1) {
-      msgText = '\uB300\uBD80\uBD84\uC758 \uC804\uBB38\uAC00\uB3C4 \uCE68\uD32C\uC9C0\uBCF4\uB2E4 \uBABB\uD569\uB2C8\uB2E4.';
+      verdictHtml = 'Most experts score <em>worse than random guessing</em>.';
+      chimpHtml = 'A chimpanzee picking answers blindly would average <strong>1.7</strong> \u2014 slightly above the human average.';
     } else if (score <= 3) {
-      msgText = '\uD3C9\uADE0\uBCF4\uB2E4 \uB0AB\uC9C0\uB9CC, \uC544\uC9C1 \uC624\uD574\uAC00 \uB0A8\uC544 \uC788\uC2B5\uB2C8\uB2E4.';
+      verdictHtml = 'Better than most \u2014 but climate data still <em>surprises almost everyone</em>.';
+      chimpHtml = 'Climate journalists average <strong>2.4</strong> on tests like this. Chimpanzees: <strong>1.7</strong>.';
     } else {
-      msgText = '\uC0C1\uC704 5%! \uD558\uC9C0\uB9CC \uB370\uC774\uD130\uB85C \uC9C1\uC811 \uD655\uC778\uD574\uBCF4\uC138\uC694.';
+      verdictHtml = 'You read the data like <em>someone who works with it daily</em>.';
+      chimpHtml = 'Top <strong>5%</strong>. Most experts score <strong>2</strong> of 5. Chimpanzees: <strong>1.7</strong>.';
     }
 
-    var missedText = internalQuizState.missed.length > 0
-      ? '\uD2C0\uB9B0 \uC8FC\uC81C: ' + missed.join(', ')
-      : '\uBAA8\uB450 \uB9DE\uD614\uC2B5\uB2C8\uB2E4!';
+    var missedDisplay = internalQuizState.missed.length > 0
+      ? missed.join('  \u00B7  ')
+      : 'None';
 
     section.innerHTML =
-      '<div class="narrator-iq-icon">\uD83C\uDF0D</div>' +
-      '<div class="narrator-iq-result-score">' + scoreText + '</div>' +
-      '<div class="narrator-iq-result-msg">' + msgText + '</div>' +
-      '<div class="narrator-iq-missed">' + missedText + '</div>' +
-      '<button type="button" class="narrator-iq-start-btn" id="btn-iq-start-tour">' +
-        '\uB370\uC774\uD130\uB85C \uD655\uC778\uD558\uAE30 \u2192</button>' +
-      '<div class="narrator-iq-footnote">' +
-        '\uB300\uC2DC\uBCF4\uB4DC\uC5D0\uC11C \uAD6D\uAC00\uB97C \uD074\uB9AD\uD558\uBA74 \uAC00\uC774\uB4DC \uD22C\uC5B4\uAC00 \uC9C4\uD589\uB429\uB2C8\uB2E4.</div>';
+      '<div class="iq-frame iq-result">' +
+        '<div class="iq-eyebrow">' +
+          '<span class="iq-eyebrow-title">Factfulness \u00B7 Result</span>' +
+          '<span class="iq-eyebrow-rule"></span>' +
+        '</div>' +
+        '<div class="iq-score">' +
+          '<span class="iq-score-num">' + iqPad2(score) + '</span>' +
+          '<span class="iq-score-denom">/ ' + iqPad2(total) + '</span>' +
+        '</div>' +
+        '<p class="iq-verdict">' + verdictHtml + '</p>' +
+        '<p class="iq-chimp">' + chimpHtml + '</p>' +
+        '<div class="iq-missed-block">' +
+          '<div class="iq-missed-label">You missed</div>' +
+          '<div class="iq-missed-values">' + missedDisplay + '</div>' +
+        '</div>' +
+        '<button type="button" class="iq-cta" id="btn-iq-start-tour">See the data \u2192</button>' +
+      '</div>';
 
     var startBtn = document.getElementById('btn-iq-start-tour');
     if (startBtn) {
