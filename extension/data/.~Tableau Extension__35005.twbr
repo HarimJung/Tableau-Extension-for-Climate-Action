@@ -1,0 +1,2099 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20253.25.1117.1115                               -->
+<workbook original-version='18.1' source-build='2025.3.0 (20253.25.1117.1115)' source-platform='mac' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <AccessibleZoneTabOrder />
+    <AnimationOnByDefault />
+    <AutoCreateAndUpdateDSDPhoneLayouts />
+    <DatagraphCoreV1 />
+    <DatagraphNodeAxisTitle />
+    <DatagraphNodeDashboardZoneVisibilityV1 />
+    <DatagraphNodeSingleValueFieldV1 />
+    <Extensions />
+    <MapboxVectorStylesAndLayers />
+    <MarkAnimation />
+    <ObjectModelEncapsulateLegacy />
+    <ObjectModelExtractV2 />
+    <ObjectModelTableType />
+    <SchemaViewerObjectModel />
+    <SetMembershipControl />
+    <SheetIdentifierTracking />
+    <_.fcp.VConnDownstreamExtractsWithWarnings.true...VConnDownstreamExtractsWithWarnings />
+    <WindowsPersistSimpleIdentifiers />
+    <ZoneBackgroundTransparency />
+    <ZoneVisibilityControl />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource hasconnection='false' inline='true' name='Parameters' version='18.1'>
+      <aliases enabled='yes' />
+      <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+        <calculation class='tableau' formula='2' />
+        <members>
+          <member value='0' />
+          <member value='1' />
+          <member value='2' />
+          <member value='3' />
+          <member value='4' />
+          <member value='5' />
+        </members>
+      </column>
+      <column caption='p_Measure' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;TOTAL_GHG&quot;'>
+        <calculation class='tableau' formula='&quot;TOTAL_GHG&quot;' />
+        <members>
+          <member value='&quot;GHG_PER_CAPITA&quot;' />
+          <member value='&quot;TOTAL_GHG&quot;' />
+          <member value='&quot;CO2&quot;' />
+          <member value='&quot;COAL_CO2&quot;' />
+          <member value='&quot;RENEWABLE_PCT&quot;' />
+          <member value='&quot;CARBON_INTENSITY&quot;' />
+          <member value='&quot;VULNERABILITY&quot;' />
+        </members>
+      </column>
+      <column caption='p_Phase' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;question&quot;'>
+        <calculation class='tableau' formula='&quot;question&quot;' />
+        <members>
+          <member value='&quot;question&quot;' />
+          <member value='&quot;reveal&quot;' />
+          <member value='&quot;explore&quot;' />
+          <member value='&quot;nameit&quot;' />
+        </members>
+      </column>
+      <column alias='Total GHG' caption='p_TimeMeasure' datatype='string' name='[Parameter 4]' param-domain-type='list' role='measure' type='nominal' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;'>
+        <calculation class='tableau' formula='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+        <aliases>
+          <alias key='&quot;EMBER.CARBON.INTENSITY&quot;' value='Carbon Intensity' />
+          <alias key='&quot;EMBER.RENEWABLE.PCT&quot;' value='Renewable Pct' />
+          <alias key='&quot;OWID.CO2&quot;' value='CO2 Emissions' />
+          <alias key='&quot;OWID.COAL_CO2&quot;' value='Coal CO2' />
+          <alias key='&quot;OWID.GHG_PER_CAPITA&quot;' value='GHG per Capita' />
+          <alias key='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' value='Total GHG' />
+        </aliases>
+        <members>
+          <member alias='Carbon Intensity' value='&quot;EMBER.CARBON.INTENSITY&quot;' />
+          <member alias='Renewable Pct' value='&quot;EMBER.RENEWABLE.PCT&quot;' />
+          <member alias='CO2 Emissions' value='&quot;OWID.CO2&quot;' />
+          <member alias='Coal CO2' value='&quot;OWID.COAL_CO2&quot;' />
+          <member alias='GHG per Capita' value='&quot;OWID.GHG_PER_CAPITA&quot;' />
+          <member alias='Total GHG' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+        </members>
+      </column>
+    </datasource>
+    <datasource caption='timeseries_all+' inline='true' name='federated.1bhwxmf1rwdsec16o9eq503mekyk' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='timeseries_all' name='textscan.1bhg7n605q59f21ett9yn11ufu96'>
+            <connection class='textscan' directory='/Users/harimgemmajung/Documents/Tableau for Climate Action/extension/data' filename='timeseries_all.csv' password='' server='' />
+          </named-connection>
+          <named-connection caption='countries_latest' name='textscan.09q6lr215t3vy71276uxf16rbhhi'>
+            <connection class='textscan' directory='/Users/harimgemmajung/Documents/Tableau for Climate Action/extension/data' filename='countries_latest.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <relation type='collection'>
+          <relation connection='textscan.09q6lr215t3vy71276uxf16rbhhi' name='countries_latest.csv' table='[countries_latest#csv]' type='table'>
+            <columns character-set='UTF-8' header='yes' locale='en_CA' separator=','>
+              <column datatype='string' name='iso3' ordinal='0' />
+              <column datatype='string' name='name' ordinal='1' />
+              <column datatype='string' name='region' ordinal='2' />
+              <column datatype='string' name='income_group' ordinal='3' />
+              <column datatype='integer' name='population' ordinal='4' />
+              <column datatype='real' name='ghg_per_capita' ordinal='5' />
+              <column datatype='real' name='total_ghg' ordinal='6' />
+              <column datatype='string' name='gdp_per_capita' ordinal='7' />
+              <column datatype='real' name='co2' ordinal='8' />
+              <column datatype='real' name='coal_co2' ordinal='9' />
+              <column datatype='real' name='renewable_pct' ordinal='10' />
+              <column datatype='real' name='carbon_intensity' ordinal='11' />
+              <column datatype='real' name='vulnerability' ordinal='12' />
+              <column datatype='real' name='readiness' ordinal='13' />
+              <column datatype='real' name='total_score' ordinal='14' />
+              <column datatype='integer' name='grade' ordinal='15' />
+            </columns>
+          </relation>
+          <relation connection='textscan.09q6lr215t3vy71276uxf16rbhhi' name='timeseries_all.csv' table='[timeseries_all#csv]' type='table'>
+            <columns character-set='UTF-8' header='yes' locale='en_CA' separator=','>
+              <column datatype='string' name='iso3' ordinal='0' />
+              <column datatype='string' name='name' ordinal='1' />
+              <column datatype='integer' name='year' ordinal='2' />
+              <column datatype='string' name='indicator_code' ordinal='3' />
+              <column datatype='real' name='value' ordinal='4' />
+            </columns>
+          </relation>
+        </relation>
+        <cols>
+          <map key='[carbon_intensity]' value='[countries_latest.csv].[carbon_intensity]' />
+          <map key='[co2]' value='[countries_latest.csv].[co2]' />
+          <map key='[coal_co2]' value='[countries_latest.csv].[coal_co2]' />
+          <map key='[gdp_per_capita]' value='[countries_latest.csv].[gdp_per_capita]' />
+          <map key='[ghg_per_capita]' value='[countries_latest.csv].[ghg_per_capita]' />
+          <map key='[grade]' value='[countries_latest.csv].[grade]' />
+          <map key='[income_group]' value='[countries_latest.csv].[income_group]' />
+          <map key='[indicator_code]' value='[timeseries_all.csv].[indicator_code]' />
+          <map key='[iso3 (timeseries_all.csv)]' value='[timeseries_all.csv].[iso3]' />
+          <map key='[iso3]' value='[countries_latest.csv].[iso3]' />
+          <map key='[name (timeseries_all.csv)]' value='[timeseries_all.csv].[name]' />
+          <map key='[name]' value='[countries_latest.csv].[name]' />
+          <map key='[population]' value='[countries_latest.csv].[population]' />
+          <map key='[readiness]' value='[countries_latest.csv].[readiness]' />
+          <map key='[region]' value='[countries_latest.csv].[region]' />
+          <map key='[renewable_pct]' value='[countries_latest.csv].[renewable_pct]' />
+          <map key='[total_ghg]' value='[countries_latest.csv].[total_ghg]' />
+          <map key='[total_score]' value='[countries_latest.csv].[total_score]' />
+          <map key='[value]' value='[timeseries_all.csv].[value]' />
+          <map key='[vulnerability]' value='[countries_latest.csv].[vulnerability]' />
+          <map key='[year]' value='[timeseries_all.csv].[year]' />
+        </cols>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_GB&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_CA&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_GB&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_CA&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>iso3</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[iso3]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>iso3</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>name</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[name]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>name</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>region</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[region]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>region</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>income_group</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[income_group]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>income_group</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>population</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[population]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>population</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>ghg_per_capita</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[ghg_per_capita]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>ghg_per_capita</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_ghg</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[total_ghg]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>total_ghg</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>gdp_per_capita</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[gdp_per_capita]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>gdp_per_capita</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>co2</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[co2]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>co2</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>coal_co2</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[coal_co2]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>coal_co2</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>renewable_pct</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[renewable_pct]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>renewable_pct</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>carbon_intensity</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[carbon_intensity]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>carbon_intensity</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>vulnerability</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[vulnerability]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>vulnerability</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>readiness</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[readiness]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>readiness</remote-alias>
+            <ordinal>13</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>total_score</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[total_score]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>total_score</remote-alias>
+            <ordinal>14</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>grade</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[grade]</local-name>
+            <parent-name>[countries_latest.csv]</parent-name>
+            <remote-alias>grade</remote-alias>
+            <ordinal>15</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>iso3</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[iso3 (timeseries_all.csv)]</local-name>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias>iso3</remote-alias>
+            <ordinal>16</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>name</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[name (timeseries_all.csv)]</local-name>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias>name</remote-alias>
+            <ordinal>17</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>year</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[year]</local-name>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias>year</remote-alias>
+            <ordinal>18</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>indicator_code</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[indicator_code]</local-name>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias>indicator_code</remote-alias>
+            <ordinal>19</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RGB' />
+            <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>value</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[value]</local-name>
+            <parent-name>[timeseries_all.csv]</parent-name>
+            <remote-alias>value</remote-alias>
+            <ordinal>20</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+            <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column caption='Display Measure' datatype='real' name='[Calculation_0678801713422336]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='CASE [Parameters].[Parameter 2]&#10;  WHEN &quot;GHG_PER_CAPITA&quot; THEN [ghg_per_capita]&#10;  WHEN &quot;TOTAL_GHG&quot; THEN [total_ghg]&#10;  WHEN &quot;CO2&quot; THEN [co2]&#10;  WHEN &quot;COAL_CO2&quot; THEN [coal_co2]&#10;  WHEN &quot;RENEWABLE_PCT&quot; THEN [renewable_pct]&#10;  WHEN &quot;CARBON_INTENSITY&quot; THEN [carbon_intensity]&#10;  WHEN &quot;VULNERABILITY&quot; THEN [vulnerability]&#10;END' />
+      </column>
+      <column caption='Display Measure Label' datatype='string' name='[Calculation_0678801713528833]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='CASE [Parameters].[Parameter 2]&#10;  WHEN &quot;GHG_PER_CAPITA&quot; THEN &quot;GHG Per Capita (tCO₂eq/person)&quot;&#10;  WHEN &quot;TOTAL_GHG&quot; THEN &quot;Total GHG (MtCO₂eq)&quot;&#10;  WHEN &quot;CO2&quot; THEN &quot;CO₂ Emissions (Mt)&quot;&#10;  WHEN &quot;COAL_CO2&quot; THEN &quot;Coal CO₂ (Mt)&quot;&#10;  WHEN &quot;RENEWABLE_PCT&quot; THEN &quot;Renewable Electricity (%)&quot;&#10;  WHEN &quot;CARBON_INTENSITY&quot; THEN &quot;Carbon Intensity (gCO₂/kWh)&quot;&#10;  WHEN &quot;VULNERABILITY&quot; THEN &quot;ND-GAIN Vulnerability Index&quot;&#10;END' />
+      </column>
+      <column caption='Mark Color' datatype='string' name='[Calculation_0678801713577986]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='IF [Parameters].[Parameter 3] = &quot;question&quot; THEN &quot;Muted&quot;&#10;ELSE [region]&#10;END' />
+      </column>
+      <column caption='Show Intro' datatype='boolean' name='[Calculation_0678801713664003]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1] = 0' />
+      </column>
+      <column caption='Show Scatter' datatype='boolean' name='[Calculation_0678801713750020]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1] = 1 OR [Parameters].[Parameter 1] = 5' />
+      </column>
+      <column caption='Show Line' datatype='boolean' name='[Calculation_0678801713803269]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1] = 2' />
+      </column>
+      <column caption='Show Map' datatype='boolean' name='[Calculation_0678801713831942]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1] = 3' />
+      </column>
+      <column caption='Show NDC' datatype='boolean' name='[Calculation_0678801713889287]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[Parameters].[Parameter 1] = 4' />
+      </column>
+      <column caption='Indicator TF' datatype='boolean' name='[Calculation_0724775051276289]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='[indicator_code]=[Parameters].[Parameter 4]' />
+      </column>
+      <column caption='Display Time Measure Label' datatype='string' name='[Calculation_0724775056207874]' role='dimension' type='nominal'>
+        <calculation class='tableau' formula='CASE [Parameters].[Parameter 4]&#10;  WHEN &quot;OWID.CO2&quot; THEN &quot;CO₂ Emissions (Mt)&quot;&#10;  WHEN &quot;OWID.COAL_CO2&quot; THEN &quot;Coal CO₂ (Mt)&quot;&#10;  WHEN &quot;OWID.GHG_PER_CAPITA&quot; THEN &quot;GHG Per Capita (tCO₂eq/person)&quot;&#10;  WHEN &quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot; THEN &quot;Total GHG (MtCO₂eq)&quot;&#10;  WHEN &quot;EMBER.RENEWABLE.PCT&quot; THEN &quot;Renewable Electricity (%)&quot;&#10;  WHEN &quot;EMBER.CARBON.INTENSITY&quot; THEN &quot;Carbon Intensity (gCO₂/kWh)&quot;&#10;END' />
+      </column>
+      <column caption='Indicator Value' datatype='real' name='[Indicator TF (copy)_2405584987869184]' role='measure' type='quantitative'>
+        <calculation class='tableau' formula='if [indicator_code]=[Parameters].[Parameter 4] THEN [value] END' />
+      </column>
+      <column caption='countries_latest.csv' datatype='table' name='[__tableau_internal_object_id__].[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]' role='measure' type='quantitative' />
+      <column caption='timeseries_all.csv' datatype='table' name='[__tableau_internal_object_id__].[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]' role='measure' type='quantitative' />
+      <column caption='Carbon Intensity' datatype='real' name='[carbon_intensity]' role='measure' type='quantitative' />
+      <column caption='Co2' datatype='real' name='[co2]' role='measure' type='quantitative' />
+      <column caption='Coal Co2' datatype='real' name='[coal_co2]' role='measure' type='quantitative' />
+      <column aggregation='CountD' caption='Gdp Per Capita' datatype='integer' datatype-customized='true' name='[gdp_per_capita]' role='measure' type='quantitative' />
+      <column caption='Ghg Per Capita' datatype='real' name='[ghg_per_capita]' role='measure' type='quantitative' />
+      <column caption='Grade' datatype='integer' name='[grade]' role='measure' type='quantitative' />
+      <column caption='Income Group' datatype='string' name='[income_group]' role='dimension' type='nominal' />
+      <column caption='Indicator Code' datatype='string' name='[indicator_code]' role='dimension' type='nominal' />
+      <column caption='Iso3 (Timeseries All.Csv)' datatype='string' name='[iso3 (timeseries_all.csv)]' role='dimension' type='nominal' />
+      <column caption='Iso3' datatype='string' name='[iso3]' role='dimension' type='nominal' />
+      <column caption='Name (Timeseries All.Csv)' datatype='string' name='[name (timeseries_all.csv)]' role='dimension' type='nominal' />
+      <column caption='Name' datatype='string' name='[name]' role='dimension' semantic-role='[Country].[Name]' type='nominal' />
+      <column caption='Population' datatype='integer' name='[population]' role='measure' type='quantitative' />
+      <column caption='Readiness' datatype='real' name='[readiness]' role='measure' type='quantitative' />
+      <column caption='Region' datatype='string' name='[region]' role='dimension' type='nominal' />
+      <column caption='Renewable Pct' datatype='real' name='[renewable_pct]' role='measure' type='quantitative' />
+      <column caption='Total Ghg' datatype='real' name='[total_ghg]' role='measure' type='quantitative' />
+      <column caption='Total Score' datatype='real' name='[total_score]' role='measure' type='quantitative' />
+      <column caption='Value' datatype='real' name='[value]' role='measure' type='quantitative' />
+      <column caption='Vulnerability' datatype='real' name='[vulnerability]' role='measure' type='quantitative' />
+      <column caption='Year' datatype='integer' name='[year]' role='dimension' type='quantitative' />
+      <column-instance column='[Calculation_0678801713577986]' derivation='None' name='[none:Calculation_0678801713577986:nk]' pivot='key' type='nominal' />
+      <column-instance column='[name (timeseries_all.csv)]' derivation='None' name='[none:name (timeseries_all.csv):nk]' pivot='key' type='nominal' />
+      <extract _.fcp.VConnDownstreamExtractsWithWarnings.true...user-specific='false' count='-1' enabled='true' object-id='' units='records'>
+        <connection access_mode='readonly' author-locale='en_US' class='hyper' dbname='Data/tableau-temp/#TableauTemp_1g1wepf0xguzg918o2v891gcyu6i.hyper' default-settings='hyper' schema='Extract' sslmode='' tablename='Extract' update-time='04/13/2026 10:49:01 PM' username='tableau_internal_user'>
+          <relation type='collection'>
+            <relation name='countries_latest.csv_3BBADA5783174996BDEF83F6985C4361' table='[Extract].[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]' type='table' />
+            <relation name='timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335' table='[Extract].[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]' type='table' />
+          </relation>
+          <cols>
+            <map key='[carbon_intensity]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[carbon_intensity]' />
+            <map key='[co2]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[co2]' />
+            <map key='[coal_co2]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[coal_co2]' />
+            <map key='[gdp_per_capita]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[gdp_per_capita]' />
+            <map key='[ghg_per_capita]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[ghg_per_capita]' />
+            <map key='[grade]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[grade]' />
+            <map key='[income_group]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[income_group]' />
+            <map key='[indicator_code]' value='[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335].[indicator_code]' />
+            <map key='[iso3 (timeseries_all.csv)]' value='[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335].[iso3]' />
+            <map key='[iso3]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[iso3]' />
+            <map key='[name (timeseries_all.csv)]' value='[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335].[name]' />
+            <map key='[name]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[name]' />
+            <map key='[population]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[population]' />
+            <map key='[readiness]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[readiness]' />
+            <map key='[region]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[region]' />
+            <map key='[renewable_pct]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[renewable_pct]' />
+            <map key='[total_ghg]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[total_ghg]' />
+            <map key='[total_score]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[total_score]' />
+            <map key='[value]' value='[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335].[value]' />
+            <map key='[vulnerability]' value='[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361].[vulnerability]' />
+            <map key='[year]' value='[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335].[year]' />
+          </cols>
+          <metadata-records>
+            <metadata-record class='column'>
+              <remote-name>iso3</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[iso3]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>iso3</remote-alias>
+              <ordinal>0</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>250</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>name</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[name]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>name</remote-alias>
+              <ordinal>1</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>250</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>region</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[region]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>region</remote-alias>
+              <ordinal>2</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>12</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>income_group</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[income_group]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>income_group</remote-alias>
+              <ordinal>3</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>4</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>population</remote-name>
+              <remote-type>20</remote-type>
+              <local-name>[population]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>population</remote-alias>
+              <ordinal>4</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>integer</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>246</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>ghg_per_capita</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[ghg_per_capita]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>ghg_per_capita</remote-alias>
+              <ordinal>5</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>200</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>total_ghg</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[total_ghg]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>total_ghg</remote-alias>
+              <ordinal>6</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>199</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>gdp_per_capita</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[gdp_per_capita]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>gdp_per_capita</remote-alias>
+              <ordinal>7</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>213</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>co2</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[co2]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>co2</remote-alias>
+              <ordinal>8</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>215</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>coal_co2</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[coal_co2]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>coal_co2</remote-alias>
+              <ordinal>9</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>132</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>renewable_pct</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[renewable_pct]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>renewable_pct</remote-alias>
+              <ordinal>10</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>186</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>carbon_intensity</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[carbon_intensity]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>carbon_intensity</remote-alias>
+              <ordinal>11</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>198</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>vulnerability</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[vulnerability]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>vulnerability</remote-alias>
+              <ordinal>12</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>21</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>readiness</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[readiness]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>readiness</remote-alias>
+              <ordinal>13</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>21</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>total_score</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[total_score]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>total_score</remote-alias>
+              <ordinal>14</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>153</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>grade</remote-name>
+              <remote-type>20</remote-type>
+              <local-name>[grade]</local-name>
+              <parent-name>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</parent-name>
+              <remote-alias>grade</remote-alias>
+              <ordinal>15</ordinal>
+              <family>countries_latest.csv</family>
+              <local-type>integer</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>7</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>iso3</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[iso3 (timeseries_all.csv)]</local-name>
+              <parent-name>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</parent-name>
+              <remote-alias>iso3</remote-alias>
+              <ordinal>16</ordinal>
+              <family>timeseries_all.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>30</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>name</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[name (timeseries_all.csv)]</local-name>
+              <parent-name>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</parent-name>
+              <remote-alias>name</remote-alias>
+              <ordinal>17</ordinal>
+              <family>timeseries_all.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>30</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>year</remote-name>
+              <remote-type>20</remote-type>
+              <local-name>[year]</local-name>
+              <parent-name>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</parent-name>
+              <remote-alias>year</remote-alias>
+              <ordinal>18</ordinal>
+              <family>timeseries_all.csv</family>
+              <local-type>integer</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>24</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>indicator_code</remote-name>
+              <remote-type>129</remote-type>
+              <local-name>[indicator_code]</local-name>
+              <parent-name>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</parent-name>
+              <remote-alias>indicator_code</remote-alias>
+              <ordinal>19</ordinal>
+              <family>timeseries_all.csv</family>
+              <local-type>string</local-type>
+              <aggregation>Count</aggregation>
+              <approx-count>6</approx-count>
+              <contains-null>true</contains-null>
+              <collation flag='0' name='LEN_RGB' />
+              <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+            </metadata-record>
+            <metadata-record class='column'>
+              <remote-name>value</remote-name>
+              <remote-type>5</remote-type>
+              <local-name>[value]</local-name>
+              <parent-name>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</parent-name>
+              <remote-alias>value</remote-alias>
+              <ordinal>20</ordinal>
+              <family>timeseries_all.csv</family>
+              <local-type>real</local-type>
+              <aggregation>Sum</aggregation>
+              <approx-count>4050</approx-count>
+              <contains-null>true</contains-null>
+              <object-id>[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]</object-id>
+            </metadata-record>
+          </metadata-records>
+        </connection>
+      </extract>
+      <layout common-percentage='0.853902' dim-ordering='alphabetic' measure-ordering='alphabetic' parameter-percentage='0.146098' show-structure='true' user-set-layout-v2='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[none:Calculation_0678801713577986:nk]' palette='cyclic_10_0' type='palette'>
+            <map to='#1ba3c6'>
+              <bucket>&quot;Africa&quot;</bucket>
+            </map>
+            <map to='#25ab74'>
+              <bucket>&quot;Antarctic&quot;</bucket>
+            </map>
+            <map to='#34bfb7'>
+              <bucket>&quot;Americas&quot;</bucket>
+            </map>
+            <map to='#4f7cba'>
+              <bucket>&quot;Sub-Saharan Africa&quot;</bucket>
+            </map>
+            <map to='#65a734'>
+              <bucket>&quot;Asia&quot;</bucket>
+            </map>
+            <map to='#966ec3'>
+              <bucket>&quot;South Asia&quot;</bucket>
+            </map>
+            <map to='#d1bb21'>
+              <bucket>&quot;East Asia &amp; Pacific&quot;</bucket>
+            </map>
+            <map to='#dcdcdc'>
+              <bucket>&quot;Muted&quot;</bucket>
+            </map>
+            <map to='#dd6cba'>
+              <bucket>&quot;Oceania&quot;</bucket>
+            </map>
+            <map to='#ea541e'>
+              <bucket>&quot;Europe &amp; Central Asia&quot;</bucket>
+            </map>
+            <map to='#ec374d'>
+              <bucket>&quot;Latin America &amp; Caribbean&quot;</bucket>
+            </map>
+            <map to='#f89f1a'>
+              <bucket>&quot;Europe&quot;</bucket>
+            </map>
+            <map to='#fb6a96'>
+              <bucket>&quot;North America&quot;</bucket>
+            </map>
+          </encoding>
+          <encoding attr='color' field='[none:name (timeseries_all.csv):nk]' type='palette'>
+            <map to='#499894'>
+              <bucket>&quot;France&quot;</bucket>
+            </map>
+            <map to='#499894'>
+              <bucket>&quot;United States&quot;</bucket>
+            </map>
+            <map to='#4e79a7'>
+              <bucket>&quot;Australia&quot;</bucket>
+            </map>
+            <map to='#4e79a7'>
+              <bucket>&quot;Saudi Arabia&quot;</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>&quot;China&quot;</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>&quot;Sweden&quot;</bucket>
+            </map>
+            <map to='#79706e'>
+              <bucket>&quot;Italy&quot;</bucket>
+            </map>
+            <map to='#86bcb6'>
+              <bucket>&quot;Germany&quot;</bucket>
+            </map>
+            <map to='#86bcb6'>
+              <bucket>&quot;Vietnam&quot;</bucket>
+            </map>
+            <map to='#8cd17d'>
+              <bucket>&quot;Denmark&quot;</bucket>
+            </map>
+            <map to='#8cd17d'>
+              <bucket>&quot;Thailand&quot;</bucket>
+            </map>
+            <map to='#9d7660'>
+              <bucket>&quot;Poland&quot;</bucket>
+            </map>
+            <map to='#a0cbe8'>
+              <bucket>&quot;Bangladesh&quot;</bucket>
+            </map>
+            <map to='#a0cbe8'>
+              <bucket>&quot;South Africa&quot;</bucket>
+            </map>
+            <map to='#b07aa1'>
+              <bucket>&quot;Nigeria&quot;</bucket>
+            </map>
+            <map to='#b6992d'>
+              <bucket>&quot;Egypt&quot;</bucket>
+            </map>
+            <map to='#b6992d'>
+              <bucket>&quot;Turkey&quot;</bucket>
+            </map>
+            <map to='#bab0ac'>
+              <bucket>&quot;Japan&quot;</bucket>
+            </map>
+            <map to='#d37295'>
+              <bucket>&quot;Kenya&quot;</bucket>
+            </map>
+            <map to='#d4a6c8'>
+              <bucket>&quot;Norway&quot;</bucket>
+            </map>
+            <map to='#d7b5a6'>
+              <bucket>&quot;Russia&quot;</bucket>
+            </map>
+            <map to='#e15759'>
+              <bucket>&quot;India&quot;</bucket>
+            </map>
+            <map to='#f1ce63'>
+              <bucket>&quot;Ethiopia&quot;</bucket>
+            </map>
+            <map to='#f1ce63'>
+              <bucket>&quot;United Kingdom&quot;</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>&quot;Brazil&quot;</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>&quot;South Korea&quot;</bucket>
+            </map>
+            <map to='#fabfd2'>
+              <bucket>&quot;Mexico&quot;</bucket>
+            </map>
+            <map to='#ff9d9a'>
+              <bucket>&quot;Indonesia&quot;</bucket>
+            </map>
+            <map to='#ffbe7d'>
+              <bucket>&quot;Canada&quot;</bucket>
+            </map>
+            <map to='#ffbe7d'>
+              <bucket>&quot;Spain&quot;</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;Canada&quot;' />
+      </semantic-values>
+      <datasource-dependencies datasource='Parameters'>
+        <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+          <calculation class='tableau' formula='2' />
+        </column>
+        <column caption='p_Measure' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;TOTAL_GHG&quot;'>
+          <calculation class='tableau' formula='&quot;TOTAL_GHG&quot;' />
+        </column>
+        <column caption='p_Phase' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;question&quot;'>
+          <calculation class='tableau' formula='&quot;question&quot;' />
+        </column>
+        <column alias='Total GHG' caption='p_TimeMeasure' datatype='string' name='[Parameter 4]' param-domain-type='list' role='measure' type='nominal' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;'>
+          <calculation class='tableau' formula='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+          <aliases>
+            <alias key='&quot;EMBER.CARBON.INTENSITY&quot;' value='Carbon Intensity' />
+            <alias key='&quot;EMBER.RENEWABLE.PCT&quot;' value='Renewable Pct' />
+            <alias key='&quot;OWID.CO2&quot;' value='CO2 Emissions' />
+            <alias key='&quot;OWID.COAL_CO2&quot;' value='Coal CO2' />
+            <alias key='&quot;OWID.GHG_PER_CAPITA&quot;' value='GHG per Capita' />
+            <alias key='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' value='Total GHG' />
+          </aliases>
+        </column>
+      </datasource-dependencies>
+      <object-graph>
+        <objects>
+          <object caption='countries_latest.csv' id='countries_latest.csv_3BBADA5783174996BDEF83F6985C4361'>
+            <properties context=''>
+              <relation connection='textscan.09q6lr215t3vy71276uxf16rbhhi' name='countries_latest.csv' table='[countries_latest#csv]' type='table'>
+                <columns character-set='UTF-8' header='yes' locale='en_CA' separator=','>
+                  <column datatype='string' name='iso3' ordinal='0' />
+                  <column datatype='string' name='name' ordinal='1' />
+                  <column datatype='string' name='region' ordinal='2' />
+                  <column datatype='string' name='income_group' ordinal='3' />
+                  <column datatype='integer' name='population' ordinal='4' />
+                  <column datatype='real' name='ghg_per_capita' ordinal='5' />
+                  <column datatype='real' name='total_ghg' ordinal='6' />
+                  <column datatype='string' name='gdp_per_capita' ordinal='7' />
+                  <column datatype='real' name='co2' ordinal='8' />
+                  <column datatype='real' name='coal_co2' ordinal='9' />
+                  <column datatype='real' name='renewable_pct' ordinal='10' />
+                  <column datatype='real' name='carbon_intensity' ordinal='11' />
+                  <column datatype='real' name='vulnerability' ordinal='12' />
+                  <column datatype='real' name='readiness' ordinal='13' />
+                  <column datatype='real' name='total_score' ordinal='14' />
+                  <column datatype='integer' name='grade' ordinal='15' />
+                </columns>
+              </relation>
+            </properties>
+            <properties context='extract'>
+              <relation name='countries_latest.csv_3BBADA5783174996BDEF83F6985C4361' table='[Extract].[countries_latest.csv_3BBADA5783174996BDEF83F6985C4361]' type='table' />
+            </properties>
+          </object>
+          <object caption='timeseries_all.csv' id='timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335'>
+            <properties context=''>
+              <relation connection='textscan.09q6lr215t3vy71276uxf16rbhhi' name='timeseries_all.csv' table='[timeseries_all#csv]' type='table'>
+                <columns character-set='UTF-8' header='yes' locale='en_CA' separator=','>
+                  <column datatype='string' name='iso3' ordinal='0' />
+                  <column datatype='string' name='name' ordinal='1' />
+                  <column datatype='integer' name='year' ordinal='2' />
+                  <column datatype='string' name='indicator_code' ordinal='3' />
+                  <column datatype='real' name='value' ordinal='4' />
+                </columns>
+              </relation>
+            </properties>
+            <properties context='extract'>
+              <relation name='timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335' table='[Extract].[timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335]' type='table' />
+            </properties>
+          </object>
+        </objects>
+        <relationships>
+          <relationship>
+            <expression op='='>
+              <expression op='[iso3]' />
+              <expression op='[iso3 (timeseries_all.csv)]' />
+            </expression>
+            <first-end-point object-id='countries_latest.csv_3BBADA5783174996BDEF83F6985C4361' />
+            <second-end-point object-id='timeseries_all.csv_60881FFF1A054D99BCEBBB84F03A7335' />
+          </relationship>
+        </relationships>
+      </object-graph>
+    </datasource>
+  </datasources>
+  <mapsources>
+    <mapsource name='Tableau' />
+  </mapsources>
+  <worksheets>
+    <worksheet name='Intro Map'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='timeseries_all+' name='federated.1bhwxmf1rwdsec16o9eq503mekyk' />
+            <datasource name='Parameters' />
+          </datasources>
+          <mapsources>
+            <mapsource name='Tableau' />
+          </mapsources>
+          <datasource-dependencies datasource='Parameters'>
+            <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+              <calculation class='tableau' formula='2' />
+            </column>
+          </datasource-dependencies>
+          <datasource-dependencies datasource='federated.1bhwxmf1rwdsec16o9eq503mekyk'>
+            <column caption='Show Intro' datatype='boolean' name='[Calculation_0678801713664003]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1] = 0' />
+            </column>
+            <column caption='Iso3' datatype='string' name='[iso3]' role='dimension' type='nominal' />
+            <column caption='Name' datatype='string' name='[name]' role='dimension' semantic-role='[Country].[Name]' type='nominal' />
+            <column-instance column='[Calculation_0678801713664003]' derivation='None' name='[none:Calculation_0678801713664003:nk]' pivot='key' type='nominal' />
+            <column-instance column='[iso3]' derivation='None' name='[none:iso3:nk]' pivot='key' type='nominal' />
+            <column-instance column='[name]' derivation='None' name='[none:name:nk]' pivot='key' type='nominal' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='map-layer'>
+            <format attr='enabled' id='admin-0-boundaries-bg' value='false' />
+            <format attr='enabled' id='admin-0-boundaries' value='false' />
+            <format attr='enabled' id='admin-0-boundaries-dispute' value='false' />
+            <format attr='enabled' id='admin-0-label-5th-tier' value='false' />
+            <format attr='enabled' id='admin-0-label-4th-tier' value='false' />
+            <format attr='enabled' id='admin-0-label-3rd-tier' value='false' />
+            <format attr='enabled' id='admin-0-label-2nd-tier' value='false' />
+            <format attr='enabled' id='admin-0-label-1st-tier' value='false' />
+            <format attr='enabled' id='admin-0-boundaries-bg-sub' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-supress-bg' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-sm-parents-bg' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-md-parents-bg' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-lg-parents-bg' value='false' />
+            <format attr='enabled' id='admin-0-boundaries-dispute-sub' value='false' />
+            <format attr='enabled' id='admin-0-boundaries-sub' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-supress' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-sm-parents' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-md-parents' value='false' />
+            <format attr='enabled' id='admin-1-boundaries-lg-parents' value='false' />
+            <format attr='enabled' id='admin1-water-lines-usa-tableau' value='false' />
+            <format attr='enabled' id='9-dash-line-casing' value='false' />
+            <format attr='enabled' id='9-dash-line' value='false' />
+            <format attr='enabled' id='admin-1-label-9th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-8th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-7th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-6th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-5th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-4th-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-3rd-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-2nd-tier' value='false' />
+            <format attr='enabled' id='admin-1-label-1st-tier' value='false' />
+            <format attr='enabled' id='us-admin-1-label-abbr-3rd-tier' value='false' />
+            <format attr='enabled' id='us-admin-1-label-abbr-2nd-tier' value='false' />
+            <format attr='enabled' id='us-admin-1-label-abbr-1st-tier' value='false' />
+          </style-rule>
+          <style-rule element='map'>
+            <format attr='washout' value='0.0' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Multipolygon' />
+            <encodings>
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:iso3:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713664003:nk]' />
+              <geometry column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Geometry (generated)]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-color' value='#e6e6e6' />
+                <format attr='has-stroke' value='false' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Latitude (generated)]</rows>
+        <cols>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Longitude (generated)]</cols>
+      </table>
+      <simple-id uuid='{BCA919F2-3E0E-42F0-A940-E2D81D4F6B62}' />
+    </worksheet>
+    <worksheet name='M1 Scatter'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='timeseries_all+' name='federated.1bhwxmf1rwdsec16o9eq503mekyk' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='Parameters'>
+            <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+              <calculation class='tableau' formula='2' />
+            </column>
+            <column caption='p_Measure' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;TOTAL_GHG&quot;'>
+              <calculation class='tableau' formula='&quot;TOTAL_GHG&quot;' />
+            </column>
+            <column caption='p_Phase' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;question&quot;'>
+              <calculation class='tableau' formula='&quot;question&quot;' />
+            </column>
+          </datasource-dependencies>
+          <datasource-dependencies datasource='federated.1bhwxmf1rwdsec16o9eq503mekyk'>
+            <column caption='Display Measure' datatype='real' name='[Calculation_0678801713422336]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='CASE [Parameters].[Parameter 2]&#10;  WHEN &quot;GHG_PER_CAPITA&quot; THEN [ghg_per_capita]&#10;  WHEN &quot;TOTAL_GHG&quot; THEN [total_ghg]&#10;  WHEN &quot;CO2&quot; THEN [co2]&#10;  WHEN &quot;COAL_CO2&quot; THEN [coal_co2]&#10;  WHEN &quot;RENEWABLE_PCT&quot; THEN [renewable_pct]&#10;  WHEN &quot;CARBON_INTENSITY&quot; THEN [carbon_intensity]&#10;  WHEN &quot;VULNERABILITY&quot; THEN [vulnerability]&#10;END' />
+            </column>
+            <column caption='Mark Color' datatype='string' name='[Calculation_0678801713577986]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='IF [Parameters].[Parameter 3] = &quot;question&quot; THEN &quot;Muted&quot;&#10;ELSE [region]&#10;END' />
+            </column>
+            <column caption='Show Scatter' datatype='boolean' name='[Calculation_0678801713750020]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1] = 1 OR [Parameters].[Parameter 1] = 5' />
+            </column>
+            <column-instance column='[gdp_per_capita]' derivation='Avg' name='[avg:gdp_per_capita:qk]' pivot='key' type='quantitative' />
+            <column caption='Carbon Intensity' datatype='real' name='[carbon_intensity]' role='measure' type='quantitative' />
+            <column caption='Co2' datatype='real' name='[co2]' role='measure' type='quantitative' />
+            <column caption='Coal Co2' datatype='real' name='[coal_co2]' role='measure' type='quantitative' />
+            <column aggregation='CountD' caption='Gdp Per Capita' datatype='integer' datatype-customized='true' name='[gdp_per_capita]' role='measure' type='quantitative' />
+            <column caption='Ghg Per Capita' datatype='real' name='[ghg_per_capita]' role='measure' type='quantitative' />
+            <column caption='Iso3' datatype='string' name='[iso3]' role='dimension' type='nominal' />
+            <column caption='Name' datatype='string' name='[name]' role='dimension' semantic-role='[Country].[Name]' type='nominal' />
+            <column-instance column='[Calculation_0678801713577986]' derivation='None' name='[none:Calculation_0678801713577986:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_0678801713750020]' derivation='None' name='[none:Calculation_0678801713750020:nk]' pivot='key' type='nominal' />
+            <column-instance column='[iso3]' derivation='None' name='[none:iso3:nk]' pivot='key' type='nominal' />
+            <column-instance column='[name]' derivation='None' name='[none:name:nk]' pivot='key' type='nominal' />
+            <column caption='Population' datatype='integer' name='[population]' role='measure' type='quantitative' />
+            <column caption='Region' datatype='string' name='[region]' role='dimension' type='nominal' />
+            <column caption='Renewable Pct' datatype='real' name='[renewable_pct]' role='measure' type='quantitative' />
+            <column-instance column='[Calculation_0678801713422336]' derivation='Sum' name='[sum:Calculation_0678801713422336:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[population]' derivation='Sum' name='[sum:population:qk]' pivot='key' type='quantitative' />
+            <column caption='Total Ghg' datatype='real' name='[total_ghg]' role='measure' type='quantitative' />
+            <column caption='Vulnerability' datatype='real' name='[vulnerability]' role='measure' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <format attr='title' class='0' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Calculation_0678801713422336:qk]' scope='rows' value='Total GHG (MtCO₂eq)' />
+            <format attr='title' class='0' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:gdp_per_capita:qk]' scope='cols' value='Gdp Per Capita' />
+          </style-rule>
+          <style-rule element='mark'>
+            <encoding attr='size' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:population:qk]' field-type='quantitative' max-size='1' min-size='0.140222' type='quantsize' />
+          </style-rule>
+          <style-rule element='table'>
+            <format attr='omit-on-special' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Calculation_0678801713422336:qk]' value='false' />
+            <format attr='break-on-special' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Calculation_0678801713422336:qk]' value='false' />
+            <format attr='show-null-value-warning' value='false' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Circle' />
+            <mark-sizing mark-sizing-setting='marks-scaling-off' />
+            <encodings>
+              <color column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713577986:nk]' />
+              <size column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:population:qk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:iso3:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713750020:nk]' />
+              <lod column='[Parameters].[Parameter 3]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='size' value='2.2382433414459229' />
+                <format attr='mark-transparency' value='109' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Calculation_0678801713422336:qk]</rows>
+        <cols>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:gdp_per_capita:qk]</cols>
+      </table>
+      <simple-id uuid='{689873EC-9C98-4AB3-A266-E45D054F493B}' />
+    </worksheet>
+    <worksheet name='M2 Line'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='timeseries_all+' name='federated.1bhwxmf1rwdsec16o9eq503mekyk' />
+            <datasource name='Parameters' />
+          </datasources>
+          <datasource-dependencies datasource='Parameters'>
+            <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+              <calculation class='tableau' formula='2' />
+            </column>
+            <column alias='Total GHG' caption='p_TimeMeasure' datatype='string' name='[Parameter 4]' param-domain-type='list' role='measure' type='nominal' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;'>
+              <calculation class='tableau' formula='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+              <aliases>
+                <alias key='&quot;EMBER.CARBON.INTENSITY&quot;' value='Carbon Intensity' />
+                <alias key='&quot;EMBER.RENEWABLE.PCT&quot;' value='Renewable Pct' />
+                <alias key='&quot;OWID.CO2&quot;' value='CO2 Emissions' />
+                <alias key='&quot;OWID.COAL_CO2&quot;' value='Coal CO2' />
+                <alias key='&quot;OWID.GHG_PER_CAPITA&quot;' value='GHG per Capita' />
+                <alias key='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' value='Total GHG' />
+              </aliases>
+            </column>
+          </datasource-dependencies>
+          <datasource-dependencies datasource='federated.1bhwxmf1rwdsec16o9eq503mekyk'>
+            <column caption='Show Line' datatype='boolean' name='[Calculation_0678801713803269]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1] = 2' />
+            </column>
+            <column caption='Indicator Value' datatype='real' name='[Indicator TF (copy)_2405584987869184]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='if [indicator_code]=[Parameters].[Parameter 4] THEN [value] END' />
+            </column>
+            <column caption='Indicator Code' datatype='string' name='[indicator_code]' role='dimension' type='nominal' />
+            <column caption='Iso3' datatype='string' name='[iso3]' role='dimension' type='nominal' />
+            <column caption='Name (Timeseries All.Csv)' datatype='string' name='[name (timeseries_all.csv)]' role='dimension' type='nominal' />
+            <column-instance column='[Calculation_0678801713803269]' derivation='None' name='[none:Calculation_0678801713803269:nk]' pivot='key' type='nominal' />
+            <column-instance column='[iso3]' derivation='None' name='[none:iso3:nk]' pivot='key' type='nominal' />
+            <column-instance column='[name (timeseries_all.csv)]' derivation='None' name='[none:name (timeseries_all.csv):nk]' pivot='key' type='nominal' />
+            <column-instance column='[year]' derivation='None' name='[none:year:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Indicator TF (copy)_2405584987869184]' derivation='Sum' name='[sum:Indicator TF (copy)_2405584987869184:qk]' pivot='key' type='quantitative' />
+            <column caption='Value' datatype='real' name='[value]' role='measure' type='quantitative' />
+            <column caption='Year' datatype='integer' name='[year]' role='dimension' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <format attr='title' class='0' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Indicator TF (copy)_2405584987869184:qk]' scope='rows' value='Total GHG (MtCO₂eq)' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <mark-sizing mark-sizing-setting='marks-scaling-off' />
+            <encodings>
+              <color column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name (timeseries_all.csv):nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713803269:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:iso3:nk]' />
+              <lod column='[Parameters].[Parameter 4]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='size' value='0.0099999997764825821' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Indicator TF (copy)_2405584987869184:qk]</rows>
+        <cols>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:year:qk]</cols>
+      </table>
+      <simple-id uuid='{6E9C7108-5149-46B8-961B-0664751681A4}' />
+    </worksheet>
+    <worksheet name='M3 Map'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='timeseries_all+' name='federated.1bhwxmf1rwdsec16o9eq503mekyk' />
+            <datasource name='Parameters' />
+          </datasources>
+          <mapsources>
+            <mapsource name='Tableau' />
+          </mapsources>
+          <datasource-dependencies datasource='Parameters'>
+            <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+              <calculation class='tableau' formula='2' />
+            </column>
+            <column caption='p_Measure' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;TOTAL_GHG&quot;'>
+              <calculation class='tableau' formula='&quot;TOTAL_GHG&quot;' />
+            </column>
+          </datasource-dependencies>
+          <datasource-dependencies datasource='federated.1bhwxmf1rwdsec16o9eq503mekyk'>
+            <column caption='Display Measure' datatype='real' name='[Calculation_0678801713422336]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='CASE [Parameters].[Parameter 2]&#10;  WHEN &quot;GHG_PER_CAPITA&quot; THEN [ghg_per_capita]&#10;  WHEN &quot;TOTAL_GHG&quot; THEN [total_ghg]&#10;  WHEN &quot;CO2&quot; THEN [co2]&#10;  WHEN &quot;COAL_CO2&quot; THEN [coal_co2]&#10;  WHEN &quot;RENEWABLE_PCT&quot; THEN [renewable_pct]&#10;  WHEN &quot;CARBON_INTENSITY&quot; THEN [carbon_intensity]&#10;  WHEN &quot;VULNERABILITY&quot; THEN [vulnerability]&#10;END' />
+            </column>
+            <column caption='Show Map' datatype='boolean' name='[Calculation_0678801713831942]' role='dimension' type='nominal'>
+              <calculation class='tableau' formula='[Parameters].[Parameter 1] = 3' />
+            </column>
+            <column-instance column='[Calculation_0678801713422336]' derivation='Avg' name='[avg:Calculation_0678801713422336:qk]' pivot='key' type='quantitative' />
+            <column caption='Carbon Intensity' datatype='real' name='[carbon_intensity]' role='measure' type='quantitative' />
+            <column caption='Co2' datatype='real' name='[co2]' role='measure' type='quantitative' />
+            <column caption='Coal Co2' datatype='real' name='[coal_co2]' role='measure' type='quantitative' />
+            <column caption='Ghg Per Capita' datatype='real' name='[ghg_per_capita]' role='measure' type='quantitative' />
+            <column caption='Iso3' datatype='string' name='[iso3]' role='dimension' type='nominal' />
+            <column caption='Name' datatype='string' name='[name]' role='dimension' semantic-role='[Country].[Name]' type='nominal' />
+            <column-instance column='[Calculation_0678801713831942]' derivation='None' name='[none:Calculation_0678801713831942:nk]' pivot='key' type='nominal' />
+            <column-instance column='[iso3]' derivation='None' name='[none:iso3:nk]' pivot='key' type='nominal' />
+            <column-instance column='[name]' derivation='None' name='[none:name:nk]' pivot='key' type='nominal' />
+            <column caption='Renewable Pct' datatype='real' name='[renewable_pct]' role='measure' type='quantitative' />
+            <column caption='Total Ghg' datatype='real' name='[total_ghg]' role='measure' type='quantitative' />
+            <column caption='Vulnerability' datatype='real' name='[vulnerability]' role='measure' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='mark'>
+            <encoding attr='color' field='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:Calculation_0678801713422336:qk]' palette='green_gold_10_0' type='interpolated' />
+          </style-rule>
+          <style-rule element='map'>
+            <format attr='washout' value='0.0' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Multipolygon' />
+            <encodings>
+              <color column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:Calculation_0678801713422336:qk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:iso3:nk]' />
+              <lod column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713831942:nk]' />
+              <geometry column='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Geometry (generated)]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-transparency' value='165' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Latitude (generated)]</rows>
+        <cols>[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Longitude (generated)]</cols>
+      </table>
+      <simple-id uuid='{D22BEA67-F1FE-4718-B11B-CC604FF902CB}' />
+    </worksheet>
+    <worksheet name='Sheet 6'>
+      <table>
+        <view>
+          <datasources />
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+          </pane>
+        </panes>
+        <rows />
+        <cols />
+      </table>
+      <simple-id uuid='{446080B5-535D-4233-AE9B-333F14BC1D27}' />
+    </worksheet>
+  </worksheets>
+  <dashboards>
+    <dashboard enable-sort-zone-taborder='true' name='Learn'>
+      <style />
+      <size maxheight='768' maxwidth='1366' minheight='768' minwidth='1366' preset-index='0' sizing-mode='fixed' />
+      <datasources>
+        <datasource name='Parameters' />
+      </datasources>
+      <datasource-dependencies datasource='Parameters'>
+        <column caption='p_Module' datatype='integer' name='[Parameter 1]' param-domain-type='list' role='measure' type='quantitative' value='2'>
+          <calculation class='tableau' formula='2' />
+          <members>
+            <member value='0' />
+            <member value='1' />
+            <member value='2' />
+            <member value='3' />
+            <member value='4' />
+            <member value='5' />
+          </members>
+        </column>
+        <column caption='p_Measure' datatype='string' name='[Parameter 2]' param-domain-type='list' role='measure' type='nominal' value='&quot;TOTAL_GHG&quot;'>
+          <calculation class='tableau' formula='&quot;TOTAL_GHG&quot;' />
+          <members>
+            <member value='&quot;GHG_PER_CAPITA&quot;' />
+            <member value='&quot;TOTAL_GHG&quot;' />
+            <member value='&quot;CO2&quot;' />
+            <member value='&quot;COAL_CO2&quot;' />
+            <member value='&quot;RENEWABLE_PCT&quot;' />
+            <member value='&quot;CARBON_INTENSITY&quot;' />
+            <member value='&quot;VULNERABILITY&quot;' />
+          </members>
+        </column>
+        <column caption='p_Phase' datatype='string' name='[Parameter 3]' param-domain-type='list' role='measure' type='nominal' value='&quot;question&quot;'>
+          <calculation class='tableau' formula='&quot;question&quot;' />
+          <members>
+            <member value='&quot;question&quot;' />
+            <member value='&quot;reveal&quot;' />
+            <member value='&quot;explore&quot;' />
+            <member value='&quot;nameit&quot;' />
+          </members>
+        </column>
+        <column alias='Total GHG' caption='p_TimeMeasure' datatype='string' name='[Parameter 4]' param-domain-type='list' role='measure' type='nominal' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;'>
+          <calculation class='tableau' formula='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+          <aliases>
+            <alias key='&quot;EMBER.CARBON.INTENSITY&quot;' value='Carbon Intensity' />
+            <alias key='&quot;EMBER.RENEWABLE.PCT&quot;' value='Renewable Pct' />
+            <alias key='&quot;OWID.CO2&quot;' value='CO2 Emissions' />
+            <alias key='&quot;OWID.COAL_CO2&quot;' value='Coal CO2' />
+            <alias key='&quot;OWID.GHG_PER_CAPITA&quot;' value='GHG per Capita' />
+            <alias key='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' value='Total GHG' />
+          </aliases>
+          <members>
+            <member alias='Carbon Intensity' value='&quot;EMBER.CARBON.INTENSITY&quot;' />
+            <member alias='Renewable Pct' value='&quot;EMBER.RENEWABLE.PCT&quot;' />
+            <member alias='CO2 Emissions' value='&quot;OWID.CO2&quot;' />
+            <member alias='Coal CO2' value='&quot;OWID.COAL_CO2&quot;' />
+            <member alias='GHG per Capita' value='&quot;OWID.GHG_PER_CAPITA&quot;' />
+            <member alias='Total GHG' value='&quot;OWID.TOTAL_GHG_EXCLUDING_LUCF&quot;' />
+          </members>
+        </column>
+      </datasource-dependencies>
+      <zones>
+        <zone h='100000' id='4' type-v2='layout-basic' w='100000' x='0' y='0'>
+          <zone h='97916' id='11' param='horz' type-v2='layout-flow' w='98828' x='586' y='1042'>
+            <zone h='97916' id='3' param='horz' type-v2='layout-flow' w='87115' x='586' y='1042'>
+              <zone h='97916' id='5' param='horz' type-v2='layout-flow' w='87115' x='586' y='1042'>
+                <zone h='97916' id='8' param='vert' type-v2='layout-flow' w='31112' x='586' y='1042'>
+                  <zone h='97916' hidden-by-user='true' id='9' name='Intro Map' w='37335' x='25476' y='1042'>
+                    <layout-cache minheight='244' minwidth='202' type-h='scalable' type-w='scalable' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='97916' hidden-by-user='true' id='13' name='M1 Scatter' w='31112' x='586' y='1042'>
+                    <layout-cache minheight='198' minwidth='159' type-h='scalable' type-w='scalable' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='97916' hidden-by-user='true' id='18' name='M3 Map' w='37335' x='25476' y='1042'>
+                    <layout-cache minheight='244' minwidth='202' type-h='scalable' type-w='scalable' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                  <zone h='97916' id='20' name='M2 Line' w='31112' x='586' y='1042'>
+                    <layout-cache minheight='198' minwidth='159' type-h='scalable' type-w='scalable' />
+                    <zone-style>
+                      <format attr='border-color' value='#000000' />
+                      <format attr='border-style' value='none' />
+                      <format attr='border-width' value='0' />
+                      <format attr='margin' value='4' />
+                    </zone-style>
+                  </zone>
+                </zone>
+                <zone forceUpdate='true' h='97916' id='23' param='[com.visualclimate.climate-narrator].[1.0.0].[https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/narrator.html?v=5]' type-v2='dashboard-object' w='18667' x='31698' y='1042'>
+                  <add-in add-in-id='com.visualclimate.climate-narrator' extension-url='https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/narrator.html?v=5' extension-version='1.0.0' instance-id='083394D6EDB14F9F92ED573FDBB539A6'>
+                    <instance-settings />
+                    <type-settings>
+                      <dashboard />
+                    </type-settings>
+                  </add-in>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='97916' id='28' param='[com.visualclimate.literacy].[1.0.0].[https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/literacy.html]' type-v2='dashboard-object' w='18667' x='50365' y='1042'>
+                  <add-in add-in-id='com.visualclimate.literacy' extension-url='https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/literacy.html' extension-version='1.0.0' instance-id='71721769D640427CBDF83DB7837A5238'>
+                    <instance-settings />
+                    <type-settings>
+                      <dashboard />
+                    </type-settings>
+                  </add-in>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='97916' id='24' param='[com.visualclimate.climate-card].[1.0.0].[https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/index.html?v=3]' type-v2='dashboard-object' w='18667' x='69032' y='1042'>
+                  <add-in add-in-id='com.visualclimate.climate-card' extension-url='https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/index.html?v=3' extension-version='1.0.0' instance-id='7DBF89F0967647C29BEFD3CFC09AB894'>
+                    <instance-settings />
+                    <type-settings>
+                      <dashboard />
+                    </type-settings>
+                  </add-in>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                  </zone-style>
+                </zone>
+              </zone>
+            </zone>
+            <zone fixed-size='160' h='97916' id='10' is-fixed='true' param='vert' type-v2='layout-flow' w='11713' x='87701' y='1042'>
+              <zone h='6771' id='12' mode='compact' param='[Parameters].[Parameter 1]' type-v2='paramctrl' w='11713' x='87701' y='1042'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='5990' id='14' name='M1 Scatter' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713577986:nk]' type-v2='color' w='11713' x='87701' y='7813'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='13802' id='15' name='M1 Scatter' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:population:qk]' type-v2='size' w='11713' x='87701' y='13803'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='6771' id='16' mode='compact' param='[Parameters].[Parameter 2]' type-v2='paramctrl' w='11713' x='87701' y='27605'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='6771' id='17' mode='compact' param='[Parameters].[Parameter 3]' type-v2='paramctrl' w='11713' x='87701' y='34376'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='8464' id='19' name='M3 Map' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:Calculation_0678801713422336:qk]' type-v2='color' w='11713' x='87701' y='41147'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='42576' id='21' name='M2 Line' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name (timeseries_all.csv):nk]' type-v2='color' w='11713' x='87701' y='49611'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+              <zone h='6771' id='22' mode='compact' param='[Parameters].[Parameter 4]' type-v2='paramctrl' w='11713' x='87701' y='92187'>
+                <zone-style>
+                  <format attr='border-color' value='#000000' />
+                  <format attr='border-style' value='none' />
+                  <format attr='border-width' value='0' />
+                  <format attr='margin' value='4' />
+                </zone-style>
+              </zone>
+            </zone>
+          </zone>
+          <zone-style>
+            <format attr='border-color' value='#000000' />
+            <format attr='border-style' value='none' />
+            <format attr='border-width' value='0' />
+            <format attr='margin' value='8' />
+          </zone-style>
+        </zone>
+      </zones>
+      <devicelayouts>
+        <devicelayout auto-generated='true' name='Phone'>
+          <size maxheight='1900' minheight='1900' sizing-mode='vscroll' />
+          <zones>
+            <zone h='100000' id='27' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='97916' id='26' param='vert' type-v2='layout-flow' w='98828' x='586' y='1042'>
+                <zone fixed-size='280' h='97916' id='13' is-fixed='true' name='M1 Scatter' w='31112' x='586' y='1042'>
+                  <layout-cache minheight='198' minwidth='159' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='5990' id='14' name='M1 Scatter' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713577986:nk]' type-v2='color' w='11713' x='87701' y='7813'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='13802' id='15' name='M1 Scatter' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:population:qk]' type-v2='size' w='11713' x='87701' y='13803'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='97916' id='20' is-fixed='true' name='M2 Line' w='31112' x='586' y='1042'>
+                  <layout-cache minheight='198' minwidth='166' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='42576' id='21' name='M2 Line' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name (timeseries_all.csv):nk]' type-v2='color' w='11713' x='87701' y='49611'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='97916' id='9' is-fixed='true' name='Intro Map' w='37335' x='25476' y='1042'>
+                  <layout-cache minheight='244' minwidth='202' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone fixed-size='280' h='97916' id='18' is-fixed='true' name='M3 Map' w='37335' x='25476' y='1042'>
+                  <layout-cache minheight='244' minwidth='202' type-h='scalable' type-w='scalable' />
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='8464' id='19' name='M3 Map' pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:Calculation_0678801713422336:qk]' type-v2='color' w='11713' x='87701' y='41147'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='97916' id='23' param='[com.visualclimate.climate-narrator].[1.0.0].[https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/narrator.html?v=5]' type-v2='dashboard-object' w='18667' x='31698' y='1042'>
+                  <add-in add-in-id='com.visualclimate.climate-narrator' extension-url='https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/narrator.html?v=5' extension-version='1.0.0' instance-id='083394D6EDB14F9F92ED573FDBB539A6'>
+                    <instance-settings />
+                    <type-settings>
+                      <dashboard />
+                    </type-settings>
+                  </add-in>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone forceUpdate='true' h='97916' id='24' param='[com.visualclimate.climate-card].[1.0.0].[https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/index.html?v=3]' type-v2='dashboard-object' w='18667' x='69032' y='1042'>
+                  <add-in add-in-id='com.visualclimate.climate-card' extension-url='https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/index.html?v=3' extension-version='1.0.0' instance-id='7DBF89F0967647C29BEFD3CFC09AB894'>
+                    <instance-settings />
+                    <type-settings>
+                      <dashboard />
+                    </type-settings>
+                  </add-in>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='6771' id='12' mode='compact' param='[Parameters].[Parameter 1]' type-v2='paramctrl' w='11713' x='87701' y='1042'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='6771' id='16' mode='compact' param='[Parameters].[Parameter 2]' type-v2='paramctrl' w='11713' x='87701' y='27605'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='6771' id='17' mode='compact' param='[Parameters].[Parameter 3]' type-v2='paramctrl' w='11713' x='87701' y='34376'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+                <zone h='6771' id='22' mode='compact' param='[Parameters].[Parameter 4]' type-v2='paramctrl' w='11713' x='87701' y='92187'>
+                  <zone-style>
+                    <format attr='border-color' value='#000000' />
+                    <format attr='border-style' value='none' />
+                    <format attr='border-width' value='0' />
+                    <format attr='margin' value='4' />
+                    <format attr='padding' value='0' />
+                  </zone-style>
+                </zone>
+              </zone>
+              <zone-style>
+                <format attr='border-color' value='#000000' />
+                <format attr='border-style' value='none' />
+                <format attr='border-width' value='0' />
+                <format attr='margin' value='8' />
+              </zone-style>
+            </zone>
+          </zones>
+        </devicelayout>
+      </devicelayouts>
+      <simple-id uuid='{480D32BD-1C73-444B-9B27-73BF26863147}' />
+    </dashboard>
+  </dashboards>
+  <windows source-height='30'>
+    <window class='worksheet' name='M1 Scatter'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:Calculation_0678801713577986:nk]' type='color' />
+            <card pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:population:qk]' type='size' />
+            <card mode='compact' param='[Parameters].[Parameter 2]' type='parameter' />
+            <card mode='compact' param='[Parameters].[Parameter 3]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{2822198B-1961-4EB1-8297-563EA42E5E59}' />
+    </window>
+    <window class='worksheet' name='Intro Map'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card mode='compact' param='[Parameters].[Parameter 1]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{D765F9E9-A8C7-46ED-A8E0-58C78A1DD217}' />
+    </window>
+    <window class='worksheet' name='M3 Map'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[avg:Calculation_0678801713422336:qk]' type='color' />
+            <card mode='compact' param='[Parameters].[Parameter 2]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{D447ACAC-9AB8-4C49-934A-AA620803E000}' />
+    </window>
+    <window class='worksheet' maximized='true' name='M2 Line'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='0' param='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[none:name (timeseries_all.csv):nk]' type='color' />
+            <card mode='compact' param='[Parameters].[Parameter 4]' type='parameter' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{71B96650-3518-412F-BAD4-139AE3A24F8C}' />
+    </window>
+    <window class='worksheet' name='Sheet 6'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='31'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{4A6F93A7-0C58-4463-AADD-F60D7B45E76B}' />
+    </window>
+    <window class='dashboard' name='Learn'>
+      <viewpoints>
+        <viewpoint name='Intro Map'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='M1 Scatter'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='M2 Line'>
+          <zoom type='entire-view' />
+        </viewpoint>
+        <viewpoint name='M3 Map'>
+          <zoom type='entire-view' />
+        </viewpoint>
+      </viewpoints>
+      <active id='20' />
+      <simple-id uuid='{351EDB80-4BB1-4D82-84C4-F4842B2E7024}' />
+    </window>
+  </windows>
+  <datagraph>
+    <graph>
+      <properties>
+        <default-execution-subgraph-guid value='1385de34-61ff-4d51-b67c-2570a8edf617' />
+      </properties>
+      <node-execution-subgraphs>
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='f2776902-d1a7-4db8-9acb-295b8626400f' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='6c9b17be-cb73-45dd-aad8-740894b68ddc' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='058c5630-dafe-45ac-a6d0-78cf5785f3e4' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='4db980b0-8849-4fa5-a351-ae1eb48ae1b6' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='9b2cba30-76ed-4dcb-8afe-faa1cbc81753' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='67a2275f-ccc6-4154-8ad8-127880a29652' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='87a5c635-f32a-41ae-8ba7-d97d6069bca9' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='ea59335f-3528-4e16-b9bf-ea808d8e8ecd' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='e574c18b-2ef7-4bba-a51b-30e52734db64' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='371fbb38-7434-45e7-8eb0-c06d6cb7b28b' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='56dbda98-82c9-44db-b3bf-726d7ca50156' />
+        <pair execution-subgraph-guid='1385de34-61ff-4d51-b67c-2570a8edf617' node-guid='b9161de1-8954-4336-bb2a-bcb6213e479c' />
+      </node-execution-subgraphs>
+      <nodes>
+        <dashboard-zone-visibility-node dashboard-identifier='{480D32BD-1C73-444B-9B27-73BF26863147}' node-guid='371fbb38-7434-45e7-8eb0-c06d6cb7b28b' visibility-input-guid='28351fe2-373e-4b63-8499-698f842b0c20' zone-id='9' />
+        <dashboard-zone-visibility-node dashboard-identifier='{480D32BD-1C73-444B-9B27-73BF26863147}' node-guid='ea59335f-3528-4e16-b9bf-ea808d8e8ecd' visibility-input-guid='ff0fedfc-0495-412d-9db3-ac6993b703f4' zone-id='20' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0678801713831942]' fieldname-input-guid='0b336b00-dbd9-41b6-992c-06757abeb355' node-guid='e574c18b-2ef7-4bba-a51b-30e52734db64' value-output-guid='e79fb9aa-2379-4d16-b626-ede2da8530b5' />
+        <dashboard-zone-visibility-node dashboard-identifier='{480D32BD-1C73-444B-9B27-73BF26863147}' node-guid='b9161de1-8954-4336-bb2a-bcb6213e479c' visibility-input-guid='364f847a-258e-405d-8c7b-d047515efaa9' zone-id='18' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0678801713528833]' fieldname-input-guid='37724f48-74d7-46f7-a06c-45730c6896cb' node-guid='56dbda98-82c9-44db-b3bf-726d7ca50156' value-output-guid='703cea3e-ed96-47d4-988d-e4e2e7ec4334' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0678801713664003]' fieldname-input-guid='3e7306f2-5379-4723-8867-13d99bbc775b' node-guid='87a5c635-f32a-41ae-8ba7-d97d6069bca9' value-output-guid='ea0c9405-54d7-4afe-963e-a3cdf42c1aba' />
+        <axis-title-node duplicate-index='0' fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Indicator TF (copy)_2405584987869184:qk]' node-guid='4db980b0-8849-4fa5-a351-ae1eb48ae1b6' orientation='vertical' sheet-identifier='{6E9C7108-5149-46B8-961B-0664751681A4}' title-input-guid='2771cef6-30f5-43e4-b748-5c901386a21d' />
+        <dashboard-zone-visibility-node dashboard-identifier='{480D32BD-1C73-444B-9B27-73BF26863147}' node-guid='9b2cba30-76ed-4dcb-8afe-faa1cbc81753' visibility-input-guid='edc36332-6460-4a4d-8cb3-4554ee393699' zone-id='13' />
+        <axis-title-node duplicate-index='0' fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[sum:Calculation_0678801713422336:qk]' node-guid='67a2275f-ccc6-4154-8ad8-127880a29652' orientation='vertical' sheet-identifier='{689873EC-9C98-4AB3-A266-E45D054F493B}' title-input-guid='8ceaf951-b699-4589-9026-d12f8b88b277' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0678801713750020]' fieldname-input-guid='d237f24a-f539-4e7d-af76-3269e165a2b7' node-guid='058c5630-dafe-45ac-a6d0-78cf5785f3e4' value-output-guid='3995ae0a-8478-4cc4-b52d-3c580743b3fc' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0724775056207874]' fieldname-input-guid='eb88b6ba-99f6-4824-b9fb-1ea03c7bf253' node-guid='f2776902-d1a7-4db8-9acb-295b8626400f' value-output-guid='5fd0263f-e174-4883-9a10-6f02190fa75d' />
+        <single-value-field-node fieldname='[federated.1bhwxmf1rwdsec16o9eq503mekyk].[Calculation_0678801713803269]' fieldname-input-guid='9513f5ea-63e5-4aaf-8c00-5f93f740f626' node-guid='6c9b17be-cb73-45dd-aad8-740894b68ddc' value-output-guid='560a919b-12e6-4e2f-90ca-2c509e39c132' />
+      </nodes>
+      <edges>
+        <edge from='3995ae0a-8478-4cc4-b52d-3c580743b3fc' to='edc36332-6460-4a4d-8cb3-4554ee393699' />
+        <edge from='560a919b-12e6-4e2f-90ca-2c509e39c132' to='ff0fedfc-0495-412d-9db3-ac6993b703f4' />
+        <edge from='5fd0263f-e174-4883-9a10-6f02190fa75d' to='2771cef6-30f5-43e4-b748-5c901386a21d' />
+        <edge from='703cea3e-ed96-47d4-988d-e4e2e7ec4334' to='8ceaf951-b699-4589-9026-d12f8b88b277' />
+        <edge from='e79fb9aa-2379-4d16-b626-ede2da8530b5' to='364f847a-258e-405d-8c7b-d047515efaa9' />
+        <edge from='ea0c9405-54d7-4afe-963e-a3cdf42c1aba' to='28351fe2-373e-4b63-8499-698f842b0c20' />
+      </edges>
+      <pin-values />
+    </graph>
+  </datagraph>
+  <referenced-extensions>
+    <referenced-extension>
+      <manifest manifest-version='0.1'>
+        <dashboard-extension extension-version='1.0.0' id='com.visualclimate.climate-card'>
+          <default-locale>en_US</default-locale>
+          <name>Visual Climate — Climate Card</name>
+          <description>
+      AI-powered Country Climate Report Card showing grade, score,
+      5-domain breakdown, and classification for 250 countries.
+      Data source: visualclimate.org Supabase (172,121 rows, 250 countries, 61 indicators).
+    </description>
+          <author email='harim@visualclimate.org' name='Harim Jung' organization='Visual Climate' website='https://visualclimate.org' />
+          <min-api-version>1.4</min-api-version>
+          <source-location>
+            <url>https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/index.html?v=3</url>
+          </source-location>
+          <icon>iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAASklEQVRIie2UMQ4AIAgE+f+nsdBYYIOxcRqchhMQJEnS30TETkPkMbABJhYi4hm9BpjktcQWN7JDJDlHkq0LFiR+I0mSvuMCyJYZOXCe/VQAAAAASUVORK5CYII=</icon>
+          <permissions>
+            <permission>full data</permission>
+          </permissions>
+        </dashboard-extension>
+      </manifest>
+      <referenced-views>
+        <referenced-view instances='1' viewId='Learn' />
+      </referenced-views>
+    </referenced-extension>
+    <referenced-extension>
+      <manifest manifest-version='0.1'>
+        <dashboard-extension extension-version='1.0.0' id='com.visualclimate.climate-narrator'>
+          <default-locale>en_US</default-locale>
+          <name>Visual Climate — Climate Narrator</name>
+          <description>
+      Real-time contextual climate insights and guided discovery.
+      Reads dashboard state (selected country, filters) and provides
+      interpretive narratives with next-exploration prompts.
+    </description>
+          <author email='harim@visualclimate.org' name='Harim Jung' organization='Visual Climate' website='https://visualclimate.org' />
+          <min-api-version>1.4</min-api-version>
+          <source-location>
+            <url>https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/narrator.html?v=5</url>
+          </source-location>
+          <icon>iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAASklEQVRIie2UMQ4AIAgE+f+nsdBYYIOxcRqchhMQJEnS30TETkPkMbABJhYi4hm9BpjktcQWN7JDJDlHkq0LFiR+I0mSvuMCyJYZOXCe/VQAAAAASUVORK5CYII=</icon>
+          <permissions>
+            <permission>full data</permission>
+          </permissions>
+        </dashboard-extension>
+      </manifest>
+      <referenced-views>
+        <referenced-view instances='1' viewId='Learn' />
+      </referenced-views>
+    </referenced-extension>
+    <referenced-extension>
+      <manifest manifest-version='0.1'>
+        <dashboard-extension extension-version='1.0.0' id='com.visualclimate.literacy'>
+          <default-locale>en_US</default-locale>
+          <name>Climate Literacy</name>
+          <description>
+      Interactive climate literacy modules with guided questions,
+      data reveals, and concept naming. 5 modules covering emissions,
+      energy, vulnerability, policy, and justice.
+    </description>
+          <author email='harim@visualclimate.org' name='Harim Jung' organization='Visual Climate' website='https://visualclimate.org' />
+          <min-api-version>1.4</min-api-version>
+          <source-location>
+            <url>https://harimjung.github.io/Tableau-Extension-for-Climate-Action/extension/literacy.html</url>
+          </source-location>
+          <icon>iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAABmJLR0QA/wD/AP+gvaeTAAAASklEQVRIie2UMQ4AIAgE+f+nsdBYYIOxcRqchhMQJEnS30TETkPkMbABJhYi4hm9BpjktcQWN7JDJDlHkq0LFiR+I0mSvuMCyJYZOXCe/VQAAAAASUVORK5CYII=</icon>
+          <permissions>
+            <permission>full data</permission>
+          </permissions>
+        </dashboard-extension>
+      </manifest>
+      <referenced-views>
+        <referenced-view instances='1' viewId='Learn' />
+      </referenced-views>
+    </referenced-extension>
+  </referenced-extensions>
+</workbook>
