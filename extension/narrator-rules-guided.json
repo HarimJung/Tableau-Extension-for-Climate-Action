@@ -18,6 +18,7 @@
       "step": 1,
       "state": "ANCHOR",
       "rosling_instinct": "Gap Instinct",
+      "metric_explainer_ko": "지금 보고 있는 건 1인당 CO₂ 배출입니다. 이건 나라의 크기가 아니라 사람 한 명의 발자국에 가까운 숫자입니다.",
       "narrator_text_ko": "한국과 중국, 1인당 CO₂ 배출이 더 많은 나라는?",
       "narrator_subtext_ko": "82%의 사람이 이 질문에 틀립니다.",
       "quiz_options": ["한국", "중국", "비슷하다"],
@@ -34,7 +35,7 @@
       "step": 2,
       "state": "DISRUPT",
       "narrator_text_ko": "한국 12.2t vs 중국 8.0t. 한국이 53% 더 많이 배출합니다.",
-      "narrator_subtext_ko": "'최대 배출국'과 '1인당 최대 배출국'은 다릅니다. 중국은 총량이 크지만, 14억 인구로 나누면 한국보다 낮습니다.",
+      "narrator_subtext_ko": "'최대 배출국'과 '1인당 최대 배출국'은 다릅니다. 중국은 총량이 크지만, 14억 인구로 나누면 한국보다 낮습니다. 같은 현실도 어떤 프레임으로 보느냐에 따라 전혀 다른 이야기가 됩니다.",
       "metric": { "value": "53%", "label": "한국이 중국보다 높음" },
       "tableau_actions": [
         { "type": "selectMarks", "worksheet": "CO2 Per Capita", "field": "ISO3", "values": ["KOR", "CHN"] }
@@ -47,7 +48,7 @@
       "step": 3,
       "state": "EXPLORE",
       "narrator_text_ko": "다른 나라는 어떨까요? 지도에서 국가를 클릭해보세요.",
-      "narrator_subtext_ko": "미국 17.7t, 독일 8.1t, 나이지리아 1.7t, 방글라데시 1.4t. 소득 수준에 따라 배출량이 극적으로 달라집니다.",
+      "narrator_subtext_ko": "미국 17.7t, 독일 8.1t, 나이지리아 1.7t, 방글라데시 1.4t. 소득 수준에 따라 배출량이 극적으로 달라집니다. '누가 배출하는가'는 곧 '누가 부유한가'와 같은 질문입니다.",
       "metric": null,
       "tableau_actions": [
         { "type": "clearFilter", "worksheet": "CO2 Per Capita", "field": "ISO3" }
@@ -86,7 +87,7 @@
       "step": 6,
       "state": "REFLECT",
       "narrator_text_ko": "\"세계를 이해하려면 숫자를 봐야 합니다. 하지만 숫자만으로는 세계를 이해할 수 없습니다.\"",
-      "narrator_subtext_ko": "— Hans Rosling, Factfulness. 1인당 배출은 '책임의 크기'를 보여줍니다. 다음 대시보드에서는 '변화의 방향'을 봅니다.",
+      "narrator_subtext_ko": "— Hans Rosling, Factfulness. 1인당 배출은 '책임의 크기'를 보여줍니다. 하지만 숫자 뒤의 사람과 구조를 보지 않으면, 그 숫자는 아무 의미가 없습니다. 다음 대시보드에서는 '변화의 방향'을 봅니다.",
       "metric": null,
       "tableau_actions": [],
       "data_source": "Hans Rosling, Factfulness (2018)"
@@ -98,6 +99,7 @@
       "step": 1,
       "state": "ANCHOR",
       "rosling_instinct": "Negativity Instinct + Straight Line Instinct",
+      "metric_explainer_ko": "지금 보고 있는 건 재생에너지 비율입니다. 전체 전기 중 태양광, 풍력, 수력 등이 차지하는 비중입니다.",
       "narrator_text_ko": "기후 위기에서 '아무것도 변하지 않는다'는 사실일까요?",
       "narrator_subtext_ko": "뉴스는 나쁜 소식만 전합니다. 실제 데이터는 다른 이야기를 합니다.",
       "quiz_options": ["맞다, 거의 안 변했다", "조금 변했다", "많이 변했다"],
@@ -114,7 +116,7 @@
       "step": 2,
       "state": "DISRUPT",
       "narrator_text_ko": "독일: 재생에너지 17% → 53%. 브라질은 이미 89%입니다.",
-      "narrator_subtext_ko": "변화는 일어나고 있습니다. 문제는 '충분히 빠른가'입니다. 파리협정 목표 달성에는 연 4%p 이상의 증가가 필요합니다.",
+      "narrator_subtext_ko": "변화는 일어나고 있습니다. 문제는 '충분히 빠른가'입니다. 파리협정 목표 달성에는 연 4%p 이상의 증가가 필요합니다. 나쁜 뉴스만 보면 이미 일어난 진전을 놓칩니다.",
       "metric": { "value": "+36%p", "label": "독일 RE 증가 (2010→2023)" },
       "tableau_actions": [
         { "type": "selectMarks", "worksheet": "Renewable Trend", "field": "ISO3", "values": ["DEU"] }
@@ -162,7 +164,7 @@
       "step": 6,
       "state": "REFLECT",
       "narrator_text_ko": "\"나쁜 뉴스와 좋은 뉴스는 동시에 존재할 수 있습니다.\"",
-      "narrator_subtext_ko": "— Hans Rosling. 기후 위기는 심각합니다. 동시에 변화도 일어나고 있습니다. 부정 본능에 빠지면 이미 일어난 진전을 놓칩니다.",
+      "narrator_subtext_ko": "— Hans Rosling. 기후 위기는 심각합니다. 동시에 변화도 일어나고 있습니다. 부정 본능에 빠지면 이미 일어난 진전을 놓치고, 가능성을 보지 못합니다. 데이터는 위기와 가능성을 동시에 보여줍니다.",
       "metric": null,
       "tableau_actions": [],
       "data_source": "Hans Rosling, Factfulness (2018)"
@@ -174,6 +176,7 @@
       "step": 1,
       "state": "ANCHOR",
       "rosling_instinct": "Size Instinct",
+      "metric_explainer_ko": "지금 보는 건 에너지 절대량입니다. 비율이 아니라 실제로 사용한 양(TWh)입니다. 비율과 절대량은 전혀 다른 이야기를 합니다.",
       "narrator_text_ko": "재생에너지가 늘었으니 화석연료는 줄었을까요?",
       "narrator_subtext_ko": "80%의 사람이 '줄었다' 또는 '비슷하다'고 답합니다.",
       "quiz_options": ["줄었다 (-5%)", "비슷하다", "늘었다 (+20%)"],
@@ -190,7 +193,7 @@
       "step": 2,
       "state": "DISRUPT",
       "narrator_text_ko": "비율이 줄어도 절대량은 늘 수 있습니다.",
-      "narrator_subtext_ko": "전 세계 에너지 수요 자체가 크게 증가했기 때문입니다. 재생에너지가 파이를 키운 게 아니라, 커지는 파이에 추가된 것입니다.",
+      "narrator_subtext_ko": "전 세계 에너지 수요 자체가 크게 증가했기 때문입니다. 재생에너지가 파이를 키운 게 아니라, 커지는 파이에 추가된 것입니다. 헤드라인의 '성장률'에 속지 마세요. 절대량을 보세요.",
       "metric": { "value": "90%", "label": "2024 신규 발전소 중 RE" },
       "tableau_actions": [
         { "type": "setParameter", "param": "EnergyView", "value": "Absolute" }
@@ -238,7 +241,7 @@
       "step": 6,
       "state": "REFLECT",
       "narrator_text_ko": "\"하나의 숫자만으로는 의미가 없습니다. 항상 비교하세요.\"",
-      "narrator_subtext_ko": "— Hans Rosling. 비율과 절대량, 과거와 현재, 나라와 나라. 비교 없는 숫자는 오해를 낳습니다.",
+      "narrator_subtext_ko": "— Hans Rosling. 비율과 절대량, 과거와 현재, 나라와 나라. 비교 없는 숫자는 오해를 낳습니다. 같은 숫자도 어떤 기준과 비교하느냐에 따라 전혀 다른 의미가 됩니다.",
       "metric": null,
       "tableau_actions": [],
       "data_source": "Hans Rosling, Factfulness (2018)"
@@ -250,6 +253,7 @@
       "step": 1,
       "state": "ANCHOR",
       "rosling_instinct": "Urgency Instinct + Destiny Instinct",
+      "metric_explainer_ko": "지금 보는 건 NDC(국가 온실가스 감축 목표)입니다. 각 나라가 2030년까지 얼마나 줄이겠다고 약속했는지 보여줍니다.",
       "narrator_text_ko": "파리협정에 서명한 나라가 몇 개국인지 아시나요?",
       "narrator_subtext_ko": "85%의 사람이 이 질문에 틀립니다.",
       "quiz_options": ["약 50개국", "약 100개국", "194개국"],
@@ -266,7 +270,7 @@
       "step": 2,
       "state": "DISRUPT",
       "narrator_text_ko": "194개국이 약속했지만, 이행은 다른 문제입니다.",
-      "narrator_subtext_ko": "한국: NDC 목표 2030년까지 -40% (2018년 대비). 현재 실제 감축은 약 -8%. 목표와 현실의 격차가 큽니다.",
+      "narrator_subtext_ko": "한국: NDC 목표 2030년까지 -40% (2018년 대비). 현재 실제 감축은 약 -8%. 목표와 현실의 격차가 큽니다. 약속만으로는 기온이 내려가지 않습니다.",
       "metric": { "value": "-40%", "label": "한국 NDC 2030 목표" },
       "tableau_actions": [
         { "type": "selectMarks", "worksheet": "NDC Gap", "field": "ISO3", "values": ["KOR"] }
@@ -314,7 +318,7 @@
       "step": 6,
       "state": "REFLECT",
       "narrator_text_ko": "\"긴급하다고 느낄 때일수록, 데이터를 먼저 봐야 합니다.\"",
-      "narrator_subtext_ko": "— Hans Rosling. 약속만으로는 기온이 내려가지 않습니다. 목표와 현실의 격차를 직시하는 것이 첫 번째 행동입니다.",
+      "narrator_subtext_ko": "— Hans Rosling. 약속만으로는 기온이 내려가지 않습니다. 목표와 현실의 격차를 직시하는 것이 첫 번째 행동입니다. 긴급함은 맞습니다. 하지만 데이터 없는 긴급함은 공황이 됩니다.",
       "metric": null,
       "tableau_actions": [],
       "data_source": "Hans Rosling, Factfulness (2018)"
@@ -326,6 +330,7 @@
       "step": 1,
       "state": "ANCHOR",
       "rosling_instinct": "Blame Instinct + Generalization Instinct",
+      "metric_explainer_ko": "지금 보는 건 배출량(X축)과 기후 취약도(Y축)입니다. 원인을 만든 곳과 피해를 받는 곳이 같지 않습니다.",
       "narrator_text_ko": "고소득국 상위 10%의 1인당 CO₂ 배출량은 얼마일까요?",
       "narrator_subtext_ko": "기후 위기의 '원인'과 '피해'는 같은 곳에 있지 않습니다.",
       "quiz_options": ["약 10t", "약 15t", "약 25t"],
@@ -342,7 +347,7 @@
       "step": 2,
       "state": "DISRUPT",
       "narrator_text_ko": "나이지리아: 1.7t 배출, 취약도 0.48. 한국: 12.2t 배출, 취약도 0.36.",
-      "narrator_subtext_ko": "적게 배출하는 나라가 더 큰 피해를 받습니다. 방글라데시는 1.4t를 배출하지만, 취약도 0.57로 세계 최고 수준입니다.",
+      "narrator_subtext_ko": "적게 배출하는 나라가 더 큰 피해를 받습니다. 방글라데시는 1.4t를 배출하지만, 취약도 0.57로 세계 최고 수준입니다. 기후 위기는 모두의 문제지만, 모두에게 같은 방식으로 닥치지 않습니다.",
       "metric": { "value": "0.57", "label": "방글라데시 기후 취약도" },
       "tableau_actions": [
         { "type": "selectMarks", "worksheet": "Climate Justice", "field": "ISO3", "values": ["NGA", "KOR", "BGD"] }
@@ -388,7 +393,7 @@
       "step": 6,
       "state": "REFLECT",
       "narrator_text_ko": "\"비난할 대상을 찾는 본능은 문제를 이해하는 것을 방해합니다.\"",
-      "narrator_subtext_ko": "— Hans Rosling. 기후 위기에 '나쁜 나라'와 '착한 나라'는 없습니다. 구조적 불평등을 데이터로 직시하는 것이 시작입니다.",
+      "narrator_subtext_ko": "— Hans Rosling. 기후 위기에 '나쁜 나라'와 '착한 나라'는 없습니다. 구조적 불평등을 데이터로 직시하는 것이 시작입니다. 비난이 아니라 책임, 일반화가 아니라 구조를 봐야 합니다.",
       "metric": null,
       "tableau_actions": [],
       "data_source": "Hans Rosling, Factfulness (2018)"

@@ -5,80 +5,30 @@
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
 
-  // ———— Debug Panel ————
-  function debugLog(message, data) {
-    console.log('[Literacy]', message, data || '');
-    var panel = document.getElementById('debug-panel');
-    if (panel) {
-      var time = new Date().toLocaleTimeString();
-      var line = time + ' | ' + message;
-      if (data) {
-        line += ' | ' + JSON.stringify(data, null, 2);
-      }
-      panel.innerHTML += line + '\n';
-      panel.scrollTop = panel.scrollHeight;
-    }
-  }
-
-  // Toggle debug panel with Ctrl+D or Cmd+D
-  document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
-      e.preventDefault();
-      var panel = document.getElementById('debug-panel');
-      if (panel) {
-        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-      }
-    }
-  });
-
   // ———— Tableau parameter control ————
   async function findParameter(name) {
     try {
       const params = await tableau.extensions.dashboardContent.dashboard.getParametersAsync();
       return params.find(p => p.name === name) || null;
     } catch (e) {
-      console.warn('[Literacy] findParameter failed:', name, e.message);
       return null;
     }
   }
 
   async function setParameter(name, value) {
-    var param = await findParameter(name);
-    if (!param) {
-      debugLog('⚠️ PARAM NOT FOUND: ' + name);
-      return;
-    }
-    // Convert value based on parameter's dataType, not parameter name
-    var finalValue = value;
-    var debugInfo = {
-      name: name,
-      dataType: param.dataType,
-      currentValue: param.currentValue.value,
-      allowableValues: param.allowableValues,
-      inputValue: value,
-      inputType: typeof value
-    };
-    debugLog('📋 Parameter Info', debugInfo);
-
-    if (param.dataType === 'int' || param.dataType === 'float') {
-      finalValue = Number(value);
-      debugLog('🔢 Converted to Number: ' + finalValue);
-    }
-
-    debugLog('➡️ Setting ' + name + ' = ' + finalValue + ' (type: ' + typeof finalValue + ')');
     try {
-      await param.changeValueAsync(finalValue);
-      debugLog('✅ SET OK: ' + name);
+      var param = await findParameter(name);
+      if (!param) return;
+
+      // Skip if already set to desired value
+      var current = param.currentValue.value;
+      if (String(current) === String(value)) return;
+
+      // Always pass String — Tableau API serializes all types to string anyway
+      await param.changeValueAsync(String(value));
     } catch (e) {
-      debugLog('❌ SET FAILED: ' + name, {
-        value: finalValue,
-        valueType: typeof finalValue,
-        dataType: param.dataType,
-        error: e.message || e.toString(),
-        errorDetails: e
-      });
-      // Show alert for critical errors
-      alert('Parameter Error!\n\nName: ' + name + '\nValue: ' + finalValue + '\nType: ' + typeof finalValue + '\nDataType: ' + param.dataType + '\n\nError: ' + (e.message || e.toString()) + '\n\nPress Ctrl+D to see debug panel');
+      // Silently continue — Tableau may have set the value despite the API error
+      // ("Missing output parameter: parameterControl" is a known Tableau API issue)
     }
   }
 
@@ -125,146 +75,146 @@
   const MODULES = [
     {
       id: 1,
-      title: 'Who Emits?',
+      title: '누가 배출하는가?',
       sheet: 'M1 Scatter',
       question: {
-        text: 'Which country emits the MOST greenhouse gas per person?',
+        text: '1인당 온실가스를 가장 많이 배출하는 나라는?',
         choices: [
-          { label: 'China', iso3: 'CHN' },
-          { label: 'United States', iso3: 'USA' },
-          { label: 'Saudi Arabia', iso3: 'SAU' },
-          { label: 'India', iso3: 'IND' }
+          { label: '중국', iso3: 'CHN' },
+          { label: '미국', iso3: 'USA' },
+          { label: '사우디', iso3: 'SAU' },
+          { label: '인도', iso3: 'IND' }
         ],
         answer: 'SAU'
       },
       reveal: {
         params: { p_Module: 1, p_Measure: 'GHG_PER_CAPITA', p_Phase: 'reveal' },
         highlight: 'SAU',
-        text: 'Saudi Arabia: 24.1 tCO\u2082eq per person. Almost 4\u00d7 the world average.'
+        text: '사우디: 1인당 24.1톤. 세계 평균의 4배입니다. 이 숫자는 한 사람이 1년 동안 남기는 기후 발자국입니다.'
       },
       explore: {
-        prompt: 'Now switch to TOTAL emissions. Which country leads?',
+        prompt: '이번엔 "총배출"로 바꿔보세요. 순위가 어떻게 달라질까요?',
         params: { p_Measure: 'TOTAL_GHG' },
-        text: 'China emits 13,532 Mt total \u2014 but only 9.8t per person. Framing changes everything.'
+        text: '중국: 총 13,532Mt \u2014 하지만 1인당으로는 9.8톤. 프레임이 바뀌면 세계가 달라 보입니다.'
       },
       nameit: {
-        concept: 'Total vs Per Capita',
-        definition: 'The same data tells different stories depending on whether you measure by country or by person.'
+        concept: '총량 vs 1인당',
+        definition: '같은 데이터도 어떻게 나누느냐에 따라 전혀 다른 이야기를 합니다. 총량은 나라의 무게를, 1인당은 사람 한 명의 발자국을 보여줍니다.'
       }
     },
     {
       id: 2,
-      title: "Who's Changing?",
+      title: "누가 변하고 있는가?",
       sheet: 'M2 Line',
       question: {
         text: '2013\u20132023 \uc0ac\uc774 CO\u2082\ub97c \uac00\uc7a5 \ub9ce\uc774 \uc904\uc778 G7 \uad6d\uac00\ub294?',
         choices: [
-          { label: 'Germany', iso3: 'DEU' },
-          { label: 'United Kingdom', iso3: 'GBR' },
-          { label: 'Japan', iso3: 'JPN' },
-          { label: 'France', iso3: 'FRA' }
+          { label: '독일', iso3: 'DEU' },
+          { label: '영국', iso3: 'GBR' },
+          { label: '일본', iso3: 'JPN' },
+          { label: '프랑스', iso3: 'FRA' }
         ],
         answer: 'GBR'
       },
       reveal: {
         params: { p_Module: 2, p_TimeMeasure: 'OWID.CO2', p_Phase: 'reveal' },
         highlight: 'GBR',
-        text: 'UK cut CO\u2082 by 35% in 10 years \u2014 the fastest reduction among G7 nations.'
+        text: '영국: 10년 만에 CO\u2082 35% 감축 \u2014 G7 국가 중 가장 빠른 감소입니다. 석탄 발전을 거의 중단했기 때문입니다.'
       },
       explore: {
-        prompt: "Switch to Coal CO\u2082. What drove the UK\u2019s reduction?",
+        prompt: "이번엔 '석탄 CO\u2082'로 바꿔보세요. 영국의 감축을 이끈 진짜 원인은?",
         params: { p_TimeMeasure: 'OWID.COAL_CO2' },
-        text: 'UK coal CO\u2082 dropped from 148 Mt to 18 Mt. Coal phase-out was the single biggest driver.'
+        text: '영국 석탄 CO\u2082: 148Mt → 18Mt로 급감. 석탄 단계적 폐지가 단일 최대 동력이었습니다. 기후 행동은 특정 선택에서 시작됩니다.'
       },
       nameit: {
-        concept: 'Coal Phase-out Effect',
-        definition: 'Replacing coal with gas and renewables delivers the fastest emissions reduction. The UK proved it in under a decade.'
+        concept: '석탄 퇴출 효과',
+        definition: '석탄을 가스와 재생에너지로 교체하면 가장 빠른 배출 감축이 일어납니다. 영국은 10년도 안 돼서 이를 증명했습니다.'
       }
     },
     {
       id: 3,
-      title: 'Energy Reality',
+      title: '에너지의 현실',
       sheet: 'M3 Map',
       question: {
-        text: 'How many countries generate more than 50% of electricity from renewables?',
+        text: '전기의 50% 이상을 재생에너지로 만드는 나라는 몇 개국일까요?',
         choices: [
-          { label: 'Less than 10', value: 'lt10' },
-          { label: 'About 25', value: 'about25' },
-          { label: 'More than 50', value: 'mt50' },
-          { label: 'Over 100', value: 'over100' }
+          { label: '10개 미만', value: 'lt10' },
+          { label: '약 25개국', value: 'about25' },
+          { label: '50개 이상', value: 'mt50' },
+          { label: '100개 이상', value: 'over100' }
         ],
         answer: 'mt50'
       },
       reveal: {
         params: { p_Module: 3, p_Measure: 'RENEWABLE_PCT', p_Phase: 'reveal' },
-        text: 'Over 50 countries exceed 50% renewable electricity \u2014 mostly thanks to hydropower.'
+        text: '50개국 이상이 재생에너지 50%를 넘습니다 \u2014 대부분은 수력 덕분입니다. 하지만 재생에너지 비율이 높다고 경제 전체가 깨끗한 건 아닙니다.'
       },
       explore: {
-        prompt: 'Now switch to Carbon Intensity. Does renewable = clean?',
+        prompt: '이번엔 "탄소 집약도"로 바꿔보세요. 재생에너지 = 깨끗한 경제일까요?',
         params: { p_Measure: 'CARBON_INTENSITY' },
-        text: 'Some high-renewable countries still have high carbon intensity in industry and transport. Renewable electricity \u2260 clean economy.'
+        text: '재생에너지 비율이 높아도 산업과 수송 부문의 탄소 집약도가 높은 나라가 많습니다. 전기가 깨끗해도 경제 전체가 저절로 깨끗해지진 않습니다.'
       },
       nameit: {
-        concept: 'Renewable \u2260 Clean',
-        definition: "High renewable electricity share doesn\u2019t guarantee low overall emissions. The full energy mix matters."
+        concept: '재생에너지 \u2260 깨끗한 경제',
+        definition: "전기 부문의 높은 재생에너지 비율이 전체 배출량이 낮다는 보장은 아닙니다. 전체 에너지 믹스를 봐야 합니다."
       }
     },
     {
       id: 4,
-      title: 'Promises vs Reality',
+      title: '약속 vs 현실',
       sheet: 'M2 Line',
       question: {
-        text: 'How many G20 countries are on track to meet their 2030 NDC targets?',
+        text: 'G20 국가 중 2030 NDC 목표를 달성할 궤도에 있는 나라는 몇 개국일까요?',
         choices: [
-          { label: 'Most of them (15+)', value: 'most' },
-          { label: 'About half (8\u201310)', value: 'half' },
-          { label: 'A few (2\u20134)', value: 'few' },
-          { label: 'None (0)', value: 'none' }
+          { label: '대부분 (15개 이상)', value: 'most' },
+          { label: '약 절반 (8\u201310개)', value: 'half' },
+          { label: '소수 (2\u20134개)', value: 'few' },
+          { label: '없음 (0개)', value: 'none' }
         ],
         answer: 'few'
       },
       reveal: {
         params: { p_Module: 4, p_TimeMeasure: 'OWID.TOTAL_GHG_EXCLUDING_LUCF', p_Phase: 'reveal' },
-        text: 'Only 2\u20134 G20 nations are on track. Most are far behind their own promises.'
+        text: 'G20 중 단 2\u20134개국만 궤도에 있습니다. 대부분은 자신의 약속보다 훨씬 뒤처져 있습니다. 목표와 현실 사이의 간극이 기후 위기의 핵심입니다.'
       },
       explore: {
-        prompt: "Look at South Korea: NDC target is \u221240% by 2030. Where is the trend heading?",
+        prompt: "한국을 클릭해보세요. NDC 목표는 2030년까지 \u221240%입니다. 실제 추세는 어디로 가고 있을까요?",
         params: {},
         filters: [{ sheet: 'M2 Line', field: 'Name', values: ['South Korea'] }],
-        text: "Korea\u2019s target: 436 Mt by 2030. Current trend: 624 Mt. That\u2019s a 188 Mt gap \u2014 nearly 43% overshoot."
+        text: "한국 목표: 2030년 436Mt. 현재 추세: 624Mt. 188Mt 격차 \u2014 약 43% 초과입니다. 약속만으로는 기온이 내려가지 않습니다."
       },
       nameit: {
-        concept: 'NDC Implementation Gap',
-        definition: "The gap between what countries promise (NDC) and what they\u2019re actually doing. This is the core crisis of climate policy."
+        concept: 'NDC 이행 격차',
+        definition: "국가가 약속한 것(NDC)과 실제로 하고 있는 것 사이의 간극입니다. 이것이 기후 정책의 핵심 위기입니다."
       }
     },
     {
       id: 5,
-      title: 'Climate Justice',
+      title: '기후 정의',
       sheet: 'M1 Scatter',
       question: {
-        text: "Africa\u2019s share of global cumulative CO\u2082 emissions is approximately:",
+        text: "아프리카의 누적 CO\u2082 배출 비중은 전 세계의 약 몇 %일까요?",
         choices: [
-          { label: 'About 20%', value: '20pct' },
-          { label: 'About 10%', value: '10pct' },
-          { label: 'About 3%', value: '3pct' },
-          { label: 'Less than 1%', value: 'lt1pct' }
+          { label: '약 20%', value: '20pct' },
+          { label: '약 10%', value: '10pct' },
+          { label: '약 3%', value: '3pct' },
+          { label: '1% 미만', value: 'lt1pct' }
         ],
         answer: '3pct'
       },
       reveal: {
         params: { p_Module: 5, p_Measure: 'VULNERABILITY', p_Phase: 'reveal' },
-        text: 'Africa contributed ~3% of cumulative CO\u2082 but faces the highest climate vulnerability scores.'
+        text: '아프리카: 누적 CO\u2082의 ~3%를 배출했지만, 기후 취약도는 가장 높습니다. 원인을 만든 곳과 피해를 받는 곳이 다릅니다.'
       },
       explore: {
-        prompt: 'Filter to Low Income countries only. Where do they sit on the chart?',
+        prompt: '"저소득국" 필터를 적용해보세요. 차트에서 어디에 위치할까요?',
         params: {},
         filters: [{ sheet: 'M1 Scatter', field: 'Income Group', values: ['Low income'] }],
-        text: "Low-income countries cluster at bottom-left: lowest emissions, lowest GDP, highest vulnerability. They didn\u2019t cause the crisis but bear the worst consequences."
+        text: "저소득국은 왼쪽 아래에 몰려 있습니다: 가장 낮은 배출, 가장 낮은 GDP, 가장 높은 취약도. 위기를 만들지 않았지만 가장 큰 피해를 받습니다."
       },
       nameit: {
-        concept: 'Climate Justice Gap',
-        definition: 'Those who contributed least to climate change suffer its worst impacts. This inequity is the central moral challenge of the climate crisis.'
+        concept: '기후 정의 격차',
+        definition: '기후변화에 가장 적게 기여한 사람들이 가장 큰 피해를 받습니다. 이 불평등이 기후 위기의 핵심 도덕적 과제입니다.'
       }
     }
   ];
@@ -313,7 +263,6 @@
   }
 
   async function renderReveal(mod) {
-    console.log('[Literacy] renderReveal module:', mod.id, 'params:', mod.reveal.params);
     for (var key in mod.reveal.params) {
       await setParameter(key, mod.reveal.params[key]);
     }
@@ -330,7 +279,7 @@
     html += '<div class="lit-reveal-icon">&#128161;</div>';
     html += '<div class="lit-reveal-text">' + mod.reveal.text + '</div>';
     html += '</div>';
-    html += '<button class="lit-next-btn" id="btn-explore">Explore further <span class="lit-arrow">&rarr;</span></button>';
+    html += '<button class="lit-next-btn" id="btn-explore">더 탐색하기 <span class="lit-arrow">&rarr;</span></button>';
     panel.innerHTML = html;
 
     document.getElementById('btn-explore').addEventListener('click', function () {
@@ -339,7 +288,6 @@
   }
 
   async function renderExplore(mod) {
-    console.log('[Literacy] renderExplore module:', mod.id, 'params:', mod.explore.params);
     for (var key in mod.explore.params) {
       await setParameter(key, mod.explore.params[key]);
     }
@@ -360,7 +308,7 @@
     html += '<div class="lit-explore-card">';
     html += '<div class="lit-explore-text">' + mod.explore.text + '</div>';
     html += '</div>';
-    html += '<button class="lit-next-btn" id="btn-nameit">Name this concept <span class="lit-arrow">&rarr;</span></button>';
+    html += '<button class="lit-next-btn" id="btn-nameit">개념 이름 붙이기 <span class="lit-arrow">&rarr;</span></button>';
     panel.innerHTML = html;
 
     document.getElementById('btn-nameit').addEventListener('click', function () {
@@ -376,12 +324,12 @@
     html += '<span class="lit-module-title">' + mod.title + '</span>';
     html += '</div>';
     html += '<div class="lit-concept-card">';
-    html += '<div class="lit-concept-label">Key Concept</div>';
+    html += '<div class="lit-concept-label">핵심 개념</div>';
     html += '<div class="lit-concept-name">' + mod.nameit.concept + '</div>';
     html += '<div class="lit-concept-def">' + mod.nameit.definition + '</div>';
     html += '</div>';
     html += '<button class="lit-next-btn" id="btn-next">';
-    html += isLast ? 'Start Exploring <span class="lit-arrow">&rarr;</span>' : 'Next Module <span class="lit-arrow">&rarr;</span>';
+    html += isLast ? '탐색 시작하기 <span class="lit-arrow">&rarr;</span>' : '다음 모듈 <span class="lit-arrow">&rarr;</span>';
     html += '</button>';
     panel.innerHTML = html;
 
@@ -400,9 +348,9 @@
     panel.innerHTML =
       '<div class="lit-complete">' +
       '<div class="lit-complete-icon">&#127891;</div>' +
-      '<div class="lit-complete-title">Module Complete!</div>' +
-      '<p class="lit-complete-text">You\'ve completed all available modules. More coming soon.</p>' +
-      '<button class="lit-next-btn" id="btn-restart">Restart <span class="lit-arrow">&rarr;</span></button>' +
+      '<div class="lit-complete-title">모듈 완료!</div>' +
+      '<p class="lit-complete-text">기후 데이터를 읽는 5가지 프레임을 학습했습니다. 이제 대시보드를 자유롭게 탐색해보세요.</p>' +
+      '<button class="lit-next-btn" id="btn-restart">다시 시작 <span class="lit-arrow">&rarr;</span></button>' +
       '</div>';
     document.getElementById('btn-restart').addEventListener('click', function () {
       currentModule = 0;
@@ -453,73 +401,8 @@
       startLiteracy();
       return;
     }
-    tableau.extensions.initializeAsync().then(function () {
-      runParameterDiagnostic().then(function () {
-        startLiteracy();
-      });
-    });
+    tableau.extensions.initializeAsync().then(startLiteracy);
   });
-
-  // ———— Diagnostic: test each parameter individually ————
-  async function runParameterDiagnostic() {
-    var panel = document.getElementById('literacy-panel');
-    panel.innerHTML = '<div style="padding:16px; font-family:monospace; font-size:11px; line-height:1.6;">' +
-      '<b>Parameter Diagnostic</b><br>Testing each parameter...<br><br>' +
-      '<div id="diag-log"></div></div>';
-    var log = document.getElementById('diag-log');
-
-    function addLog(msg) {
-      log.innerHTML += msg + '<br>';
-    }
-
-    // List all parameters first
-    try {
-      var params = await tableau.extensions.dashboardContent.dashboard.getParametersAsync();
-      addLog('Found ' + params.length + ' parameters:');
-      for (var i = 0; i < params.length; i++) {
-        var p = params[i];
-        var av = p.allowableValues;
-        var avStr = av.type;
-        if (av.type === 'list' && av.allowableValues) {
-          avStr += ': [' + av.allowableValues.map(function(v) { return v.value; }).join(', ') + ']';
-        }
-        addLog('  &bull; <b>' + p.name + '</b> dataType=' + p.dataType +
-          ' current=' + p.currentValue.value + ' allowable=' + avStr);
-      }
-      addLog('');
-    } catch (e) {
-      addLog('❌ Failed to list parameters: ' + e.message);
-    }
-
-    // Test each parameter one by one
-    var tests = [
-      { name: 'p_Module', value: 1, note: 'integer param, number value' },
-      { name: 'p_Module', value: '1', note: 'integer param, STRING value' },
-      { name: 'p_Phase', value: 'question', note: 'string param' },
-      { name: 'p_Measure', value: 'GHG_PER_CAPITA', note: 'string param' },
-    ];
-
-    for (var t = 0; t < tests.length; t++) {
-      var test = tests[t];
-      addLog('Test ' + (t+1) + ': ' + test.name + ' = ' + test.value + ' (' + test.note + ')');
-      try {
-        var param = await findParameter(test.name);
-        if (!param) {
-          addLog('  ⚠️ Parameter not found!');
-          continue;
-        }
-        await param.changeValueAsync(test.value);
-        addLog('  ✅ OK');
-      } catch (e) {
-        addLog('  ❌ FAILED: ' + (e.message || e.toString()));
-      }
-      // Small delay between tests
-      await new Promise(function(r) { setTimeout(r, 300); });
-    }
-
-    addLog('<br><b>Diagnostic complete.</b> Waiting 5 seconds then starting...');
-    await new Promise(function(r) { setTimeout(r, 5000); });
-  }
 
   async function startLiteracy() {
     currentModule = 0;

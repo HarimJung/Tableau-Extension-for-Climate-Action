@@ -125,20 +125,20 @@
       insight: function (p, peer, ex, ctx) {
         var prev = ctx.prevProfile;
         var diff = (p.total_score || 0) - (prev.total_score || 0);
-        return p.name + ' dramatically outperforms ' + prev.name + ' by +' +
-          VC.fmt(diff) + ' points (' + VC.fmt(p.total_score) + ' vs ' + VC.fmt(prev.total_score) + ').';
+        return p.name + '이(가) ' + prev.name + '보다 압도적으로 높습니다: +' +
+          VC.fmt(diff) + '점 (' + VC.fmt(p.total_score) + '점 vs ' + VC.fmt(prev.total_score) + '점).';
       },
       so_what: function (p, peer, ex, ctx) {
         var big = findBiggestDomainDiff(p, ctx.prevProfile);
         return big
-          ? 'The biggest gap is ' + big.label + ': leads by ' + VC.fmt(Math.abs(big.diff)) + ' pts.'
-          : 'A commanding lead across most domains.';
+          ? '가장 큰 격차는 ' + big.label + '입니다: ' + VC.fmt(Math.abs(big.diff)) + '점 차이.'
+          : '대부분의 영역에서 압도적으로 앞섭니다.';
       },
       metric: function (p, peer, ex, ctx) {
         var diff = (p.total_score || 0) - (ctx.prevProfile.total_score || 0);
         return { value: '+' + VC.fmt(diff), label: 'vs ' + ctx.prevProfile.name };
       },
-      action: 'What drives this gap? Compare income groups for context.',
+      action: '이 격차는 어디서 왔을까요? 소득 그룹별로 비교해보세요.',
       module: 4,
     },
 
@@ -150,19 +150,19 @@
       insight: function (p, peer, ex, ctx) {
         var prev = ctx.prevProfile;
         var diff = (p.total_score || 0) - (prev.total_score || 0);
-        return p.name + ' significantly trails ' + prev.name + ' by ' + VC.fmt(diff) + ' points.';
+        return p.name + '이(가) ' + prev.name + '보다 크게 뒤처집니다: ' + VC.fmt(diff) + '점 차이.';
       },
       so_what: function (p, peer, ex, ctx) {
         var big = findBiggestDomainDiff(p, ctx.prevProfile);
         return big
-          ? 'Widest gap in ' + big.label + ': ' + VC.fmt(Math.abs(big.diff)) + ' pts behind.'
-          : 'Lagging across multiple domains.';
+          ? '가장 큰 격차는 ' + big.label + '입니다: ' + VC.fmt(Math.abs(big.diff)) + '점 뒤처짐.'
+          : '여러 영역에서 뒤처져 있습니다.';
       },
       metric: function (p, peer, ex, ctx) {
         var diff = (p.total_score || 0) - (ctx.prevProfile.total_score || 0);
         return { value: VC.fmt(diff), label: 'vs ' + ctx.prevProfile.name };
       },
-      action: 'Check if income level or geography explains part of this gap.',
+      action: '소득 수준이나 지리적 위치가 이 격차를 설명할 수 있는지 확인해보세요.',
       module: 4,
     },
 
@@ -173,21 +173,21 @@
       },
       insight: function (p, peer, ex, ctx) {
         var prev = ctx.prevProfile;
-        return p.name + ' and ' + prev.name + ' are nearly identical (' +
-          VC.fmt(p.total_score) + ' vs ' + VC.fmt(prev.total_score) + ').';
+        return p.name + '과(와) ' + prev.name + '은(는) 거의 같습니다 (' +
+          VC.fmt(p.total_score) + '점 vs ' + VC.fmt(prev.total_score) + '점).';
       },
       so_what: function (p, peer, ex, ctx) {
         var big = findBiggestDomainDiff(p, ctx.prevProfile);
         return big
-          ? 'Despite similar totals, they differ most in ' + big.label + ' (' + VC.fmt(Math.abs(big.diff)) + ' pts).'
-          : 'Remarkably similar profiles across all domains.';
+          ? '총점은 비슷하지만, ' + big.label + '에서 가장 큰 차이를 보입니다 (' + VC.fmt(Math.abs(big.diff)) + '점).'
+          : '모든 영역에서 놀랍도록 비슷한 프로필입니다.';
       },
       metric: function (p, peer, ex, ctx) {
         var diff = (p.total_score || 0) - (ctx.prevProfile.total_score || 0);
         var sign = diff >= 0 ? '+' : '';
         return { value: sign + VC.fmt(diff), label: 'vs ' + ctx.prevProfile.name };
       },
-      action: 'Look at the domain breakdown \u2014 the devil is in the details.',
+      action: '도메인 세부 내역을 보세요 \u2014 디테일에 진실이 있습니다.',
       module: 4,
     },
 
@@ -285,16 +285,16 @@
       condition: function (st, p) { return st === 'WELCOME' && (p.total_score || 0) >= 80; },
       insight: function (p) {
         var cls = VC.CLASS_LABEL[p.climate_class];
-        return p.name + ' scores an outstanding ' + VC.fmt(p.total_score) + '/100 \u2014 grade ' +
-          (p.grade || '\u2014') + '. A global climate leader.' +
-          (cls ? ' Classified as a ' + cls + '.' : '');
+        return p.name + '의 기후 성적: ' + VC.fmt(p.total_score) + '점 (100점 만점) \u2014 등급 ' +
+          (p.grade || '\u2014') + '. 세계 기후 리더입니다.' +
+          (cls ? ' 분류: ' + cls + '.' : '');
       },
-      so_what: 'Among the very top tier of all 250 countries assessed.',
+      so_what: '평가받은 250개국 중 최상위권입니다.',
       metric: function (p) { return { value: VC.fmt(p.total_score), label: 'Climate Score' }; },
       action: function (p, peer) {
         return peer.globalRank
-          ? 'Ranked #' + peer.globalRank + ' of ' + peer.totalCountries + ' globally.'
-          : 'Exploring profile\u2026';
+          ? '전 세계 ' + peer.totalCountries + '개국 중 ' + peer.globalRank + '위입니다.'
+          : '프로필 탐색 중\u2026';
       },
       module: 1,
     },
@@ -303,10 +303,10 @@
       condition: function (st, p) { return st === 'WELCOME' && (p.total_score || 0) >= 60; },
       insight: function (p) {
         var cls = VC.CLASS_LABEL[p.climate_class];
-        return p.name + ' scores ' + VC.fmt(p.total_score) + '/100 \u2014 grade ' +
-          (p.grade || '\u2014') + (cls ? ', classified as a ' + cls : '') + '.';
+        return p.name + '의 성적: ' + VC.fmt(p.total_score) + '점 (100점 만점) \u2014 등급 ' +
+          (p.grade || '\u2014') + (cls ? ', 분류: ' + cls : '') + '.';
       },
-      so_what: 'A solid performance, though still room to reach the top tier.',
+      so_what: '견고한 성과입니다. 하지만 최상위권에 도달하려면 더 나아가야 합니다.',
       metric: function (p) { return { value: VC.fmt(p.total_score), label: 'Climate Score' }; },
       action: function (p, peer) {
         return peer.globalRank
@@ -323,7 +323,7 @@
         return p.name + ' scores ' + VC.fmt(p.total_score) + '/100 \u2014 grade ' +
           (p.grade || '\u2014') + (cls ? ', classified as a ' + cls : '') + '.';
       },
-      so_what: 'Middling \u2014 some progress, but significant gaps remain across domains.',
+      so_what: '중간 수준입니다 \u2014 일부 진전이 있지만, 여러 영역에서 여전히 큰 격차가 남아 있습니다.',
       metric: function (p) { return { value: VC.fmt(p.total_score), label: 'Climate Score' }; },
       action: function (p, peer) {
         return peer.globalRank
@@ -336,14 +336,14 @@
     { id: 'WELCOME_POOR',
       condition: function (st, p) { return st === 'WELCOME' && (p.total_score || 0) >= 20; },
       insight: function (p) {
-        return p.name + ' scores ' + VC.fmt(p.total_score) + '/100 \u2014 grade ' + (p.grade || '\u2014') + '.';
+        return p.name + '의 성적: ' + VC.fmt(p.total_score) + '점 (100점 만점) \u2014 등급 ' + (p.grade || '\u2014') + '.';
       },
-      so_what: 'Below average. Major acceleration is needed across most domains.',
+      so_what: '평균 이하입니다. 대부분의 영역에서 대대적인 가속화가 필요합니다.',
       metric: function (p) { return { value: VC.fmt(p.total_score), label: 'Climate Score' }; },
       action: function (p, peer) {
         return peer.globalRank
-          ? 'Ranked #' + peer.globalRank + ' of ' + peer.totalCountries + '. Click another country to compare.'
-          : 'Exploring profile\u2026';
+          ? '전 세계 ' + peer.totalCountries + '개국 중 ' + peer.globalRank + '위. 다른 나라를 클릭해서 비교해보세요.'
+          : '프로필 탐색 중\u2026';
       },
       module: 1,
     },
@@ -354,7 +354,7 @@
         return p.name + ' scores ' + VC.fmt(p.total_score) + '/100 \u2014 grade ' + (p.grade || '\u2014') + '.';
       },
       so_what: function (p) {
-        return 'Critical. ' + p.name + ' ranks among the lowest performers globally.';
+        return '위기 상황입니다. ' + p.name + '은(는) 전 세계적으로 최하위권 성과를 보이고 있습니다.';
       },
       metric: function (p) { return { value: VC.fmt(p.total_score), label: 'Climate Score' }; },
       action: function (p, peer) {
@@ -374,20 +374,20 @@
       insight: function (p) {
         var best = getStrongestDomain(p);
         var worst = getWeakestDomain(p);
-        return 'Changer: CO\u2082 declining AND renewables rising. Strongest: ' +
-          (best ? best.label + ' (' + VC.fmt(best.score) + ')' : '\u2014') + '. Weakest: ' +
-          (worst ? worst.label + ' (' + VC.fmt(worst.score) + ')' : '\u2014') + '.';
+        return 'Changer: CO\u2082 감소 중 + 재생에너지 증가 중. 강점: ' +
+          (best ? best.label + ' (' + VC.fmt(best.score) + '점)' : '\u2014') + '. 약점: ' +
+          (worst ? worst.label + ' (' + VC.fmt(worst.score) + '점)' : '\u2014') + '.';
       },
-      so_what: 'The trajectory is positive. Sustaining momentum in the weaker domains will be key.',
+      so_what: '궤적은 긍정적입니다. 약한 영역에서 모멘텀을 유지하는 것이 핵심입니다.',
       metric: function (p) {
         var best = getStrongestDomain(p);
         return best ? { value: VC.fmt(best.score), label: best.label + ' (best)' } : null;
       },
       action: function (p, peer) {
         if (peer.incomeRank && peer.incomeTotal)
-          return '#' + peer.incomeRank + ' of ' + peer.incomeTotal + ' in ' + (p.income_group || 'income group') + '.';
+          return (p.income_group || '소득 그룹') + ' 중 ' + peer.incomeTotal + '개국 중 ' + peer.incomeRank + '위.';
         if (peer.globalRank)
-          return 'Global rank: #' + peer.globalRank + ' of ' + peer.totalCountries + '.';
+          return '전 세계 순위: ' + peer.totalCountries + '개국 중 ' + peer.globalRank + '위.';
         return '';
       },
       module: 2,
@@ -417,9 +417,9 @@
       },
       action: function (p, peer) {
         if (peer.incomeRank && peer.incomeTotal)
-          return '#' + peer.incomeRank + ' of ' + peer.incomeTotal + ' in ' + (p.income_group || 'income group') + '.';
+          return (p.income_group || '소득 그룹') + ' 중 ' + peer.incomeTotal + '개국 중 ' + peer.incomeRank + '위.';
         if (peer.globalRank)
-          return 'Global rank: #' + peer.globalRank + ' of ' + peer.totalCountries + '.';
+          return '전 세계 순위: ' + peer.totalCountries + '개국 중 ' + peer.globalRank + '위.';
         return '';
       },
       module: 2,
@@ -443,9 +443,9 @@
       },
       action: function (p, peer) {
         if (peer.incomeRank && peer.incomeTotal)
-          return '#' + peer.incomeRank + ' of ' + peer.incomeTotal + ' in ' + (p.income_group || 'income group') + '.';
+          return (p.income_group || '소득 그룹') + ' 중 ' + peer.incomeTotal + '개국 중 ' + peer.incomeRank + '위.';
         if (peer.globalRank)
-          return 'Global rank: #' + peer.globalRank + ' of ' + peer.totalCountries + '.';
+          return '전 세계 순위: ' + peer.totalCountries + '개국 중 ' + peer.globalRank + '위.';
         return '';
       },
       module: 2,
@@ -565,17 +565,17 @@
       insight: function (p, peer, ex) {
         var re = ex['EMBER.RENEWABLE.PCT'];
         var ghg = ex['OWID.GHG_PER_CAPITA'];
-        var txt = 'Renewable electricity at ' + VC.fmt(re.value) + '% (' +
-          VC.reShareCategory(re.value) + ', ' + re.year + ') \u2014 a clean grid.';
-        if (ghg) txt += ' GHG per capita: ' + VC.fmt(ghg.value) + ' tCO\u2082eq.';
+        var txt = '재생에너지 전력 ' + VC.fmt(re.value) + '% (' +
+          VC.reShareCategory(re.value) + ', ' + re.year + ') \u2014 깨끗한 그리드입니다.';
+        if (ghg) txt += ' 1인당 GHG: ' + VC.fmt(ghg.value) + ' tCO\u2082eq.';
         return txt;
       },
-      so_what: 'A majority-renewable grid is a strong foundation. The remaining challenge is decarbonizing transport, industry, and heating.',
+      so_what: '과반 이상의 재생에너지 그리드는 강력한 기반입니다. 남은 과제는 수송, 산업, 난방의 탈탄소화입니다.',
       metric: function (p, peer, ex) {
         var re = ex['EMBER.RENEWABLE.PCT'];
         return { value: VC.fmt(re.value) + '%', label: 'Renewable Electricity' };
       },
-      action: 'Try the NDC Tracker or Timeseries Explorer for deeper analysis \u2192',
+      action: '더 깊은 분석을 위해 NDC Tracker 또는 Timeseries Explorer를 사용해보세요 \u2192',
       module: 3,
     },
 
@@ -586,17 +586,17 @@
       insight: function (p, peer, ex) {
         var re = ex['EMBER.RENEWABLE.PCT'];
         var ghg = ex['OWID.GHG_PER_CAPITA'];
-        var txt = 'Renewable electricity at just ' + VC.fmt(re.value) + '% (' +
-          re.year + ') \u2014 almost entirely fossil-powered.';
-        if (ghg) txt += ' GHG per capita: ' + VC.fmt(ghg.value) + ' tCO\u2082eq.';
+        var txt = '재생에너지 전력이 겨우 ' + VC.fmt(re.value) + '%에 불과합니다 (' +
+          re.year + ') \u2014 거의 전적으로 화석연료에 의존하고 있습니다.';
+        if (ghg) txt += ' 1인당 GHG: ' + VC.fmt(ghg.value) + ' tCO\u2082eq.';
         return txt;
       },
-      so_what: 'Energy transition has barely started. This is the single biggest lever for emissions reduction.',
+      so_what: '에너지 전환은 거의 시작되지 않았습니다. 이것이 배출 감축의 가장 큰 레버입니다.',
       metric: function (p, peer, ex) {
         var re = ex['EMBER.RENEWABLE.PCT'];
         return { value: VC.fmt(re.value) + '%', label: 'Renewable Electricity' };
       },
-      action: 'Open the Timeseries Explorer to see the energy trend over time \u2192',
+      action: 'Timeseries Explorer를 열어 시간 경과에 따른 에너지 추세를 확인하세요 \u2192',
       module: 3,
     },
 
@@ -611,12 +611,12 @@
         if (re) txt += ' Renewables: ' + VC.fmt(re.value) + '%.';
         return txt;
       },
-      so_what: 'High per-capita emissions signal carbon-intensive lifestyles or industry. Both demand-side and supply-side action is critical.',
+      so_what: '높은 1인당 배출은 탄소 집약적 생활 방식이나 산업을 나타냅니다. 수요 측과 공급 측 모두에서 행동이 중요합니다.',
       metric: function (p, peer, ex) {
         var ghg = ex['OWID.GHG_PER_CAPITA'];
         return { value: VC.fmt(ghg.value), label: 'tCO\u2082eq per capita' };
       },
-      action: 'Check the NDC Tracker to see if targets match this reality \u2192',
+      action: 'NDC Tracker를 확인해서 목표가 이 현실과 일치하는지 보세요 \u2192',
       module: 3,
     },
 
@@ -631,12 +631,12 @@
         if (re) txt += ' Renewables: ' + VC.fmt(re.value) + '%.';
         return txt;
       },
-      so_what: 'High climate vulnerability coupled with limited adaptive capacity. Resilience investment is as urgent as mitigation.',
+      so_what: '높은 기후 취약성과 제한된 적응 능력이 결합되어 있습니다. 회복력 투자는 완화만큼 긴급합니다.',
       metric: function (p, peer, ex) {
         var vuln = ex['NDGAIN.VULNERABILITY'];
         return { value: VC.fmt(vuln.value, 2), label: 'Vulnerability Index' };
       },
-      action: 'Explore the Resilience domain in the Climate Card \u2192',
+      action: 'Climate Card에서 Resilience 영역을 탐색하세요 \u2192',
       module: 3,
     },
 
@@ -665,7 +665,7 @@
         var ndc = VC.NDC_TARGETS[p.iso3];
         return { value: '\u2212' + ndc.ndc2030_pct + '%', label: 'NDC 2030 Target' };
       },
-      action: 'Open the NDC Gap Tracker for detailed trajectory analysis \u2192',
+      action: '상세한 궤적 분석을 위해 NDC Gap Tracker를 여세요 \u2192',
       module: 3,
     },
 
@@ -691,7 +691,7 @@
       metric: function (p) {
         return { value: VC.fmt(p.total_score), label: 'Climate Score' };
       },
-      action: 'Try the Climate Card or Timeseries Explorer for more detail \u2192',
+      action: '더 자세한 정보는 Climate Card 또는 Timeseries Explorer를 사용해보세요 \u2192',
       module: 1,
     },
   ];
