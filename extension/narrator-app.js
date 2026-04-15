@@ -772,8 +772,8 @@
 
     var gradeBadge = document.getElementById('narrator-grade-badge');
     gradeBadge.textContent = (currentGuidedStep + 1) + '/6';
-    gradeBadge.style.background = 'var(--vc-primary-subtle, #E8F0FF)';
-    gradeBadge.style.color = 'var(--vc-primary, #0066FF)';
+    gradeBadge.style.background = 'var(--vc-primary-subtle, rgba(194,65,12,0.08))';
+    gradeBadge.style.color = 'var(--vc-primary, #C2410C)';
     gradeBadge.style.display = '';
 
     // Insight text

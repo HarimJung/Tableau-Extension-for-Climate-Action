@@ -294,7 +294,7 @@
       areaPath += ' L ' + xScale(recent[j].year) + ' ' + yScale(recent[j].value);
     }
     areaPath += ' L ' + xScale(recent[recent.length - 1].year) + ' ' + (PAD.top + plotH) + ' Z';
-    svg += '<path d="' + areaPath + '" fill="rgba(0,102,255,0.06)"/>';
+    svg += '<path d="' + areaPath + '" fill="rgba(194,65,12,0.05)"/>';
 
     // Line
     var pathParts = recent.map(function (r, idx) {
@@ -322,8 +322,8 @@
     }
 
     // 크로스헤어 라인 (initially hidden, controlled by JS)
-    svg += '<line class="crosshair-x" x1="0" y1="' + PAD.top + '" x2="0" y2="' + (PAD.top + plotH) + '" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
-    svg += '<line class="crosshair-y" x1="' + PAD.left + '" y1="0" x2="' + (W - PAD.right) + '" y2="0" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<line class="crosshair-x" x1="0" y1="' + PAD.top + '" x2="0" y2="' + (PAD.top + plotH) + '" stroke="rgba(42,36,30,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<line class="crosshair-y" x1="' + PAD.left + '" y1="0" x2="' + (W - PAD.right) + '" y2="0" stroke="rgba(42,36,30,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
     svg += '<circle class="crosshair-dot" cx="0" cy="0" r="5" fill="none" stroke="var(--vc-primary)" stroke-width="2" style="display:none"/>';
 
     // 인비저블 오버레이 for mouse tracking

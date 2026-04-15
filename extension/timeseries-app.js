@@ -243,7 +243,7 @@
     }
 
     // 각 지표의 라인
-    var COLORS = ['#0066FF', '#E5484D', '#00A67E', '#F59E0B', '#8B5CF6', '#FF6B6B', '#4ECDC4', '#45B7D1'];
+    var COLORS = ['#C2410C', '#0B6B3A', '#B45309', '#6D28D9', '#8B1C1C', '#2563EB', '#0F766E', '#92400E'];
     var colorIdx = 0;
 
     // Store all data points for tooltip tracking (flattened, with color)
@@ -300,8 +300,8 @@
     }
 
     // 크로스헤어 라인 (initially hidden)
-    svg += '<line class="crosshair-x" x1="0" y1="' + PAD.top + '" x2="0" y2="' + (PAD.top + plotH) + '" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
-    svg += '<line class="crosshair-y" x1="' + PAD.left + '" y1="0" x2="' + (W - PAD.right) + '" y2="0" stroke="rgba(15,23,42,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<line class="crosshair-x" x1="0" y1="' + PAD.top + '" x2="0" y2="' + (PAD.top + plotH) + '" stroke="rgba(42,36,30,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
+    svg += '<line class="crosshair-y" x1="' + PAD.left + '" y1="0" x2="' + (W - PAD.right) + '" y2="0" stroke="rgba(42,36,30,0.15)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>';
     svg += '<circle class="crosshair-dot" cx="0" cy="0" r="5" fill="none" stroke="var(--vc-primary)" stroke-width="2" style="display:none"/>';
 
     // 인비저블 오버레이 for mouse tracking

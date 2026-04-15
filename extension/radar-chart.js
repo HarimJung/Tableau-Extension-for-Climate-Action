@@ -80,7 +80,7 @@ var RadarChart = (function () {
     });
 
     var polyStr = scorePoints.map(function (p) { return p.x + ',' + p.y; }).join(' ');
-    svg += '<polygon points="' + polyStr + '" fill="rgba(0,102,255,0.12)" stroke="var(--vc-primary, #0066FF)" stroke-width="2" opacity="0">';
+    svg += '<polygon points="' + polyStr + '" fill="rgba(194,65,12,0.10)" stroke="var(--vc-primary, #C2410C)" stroke-width="2" opacity="0">';
     svg += '<animate attributeName="opacity" from="0" to="1" dur="0.6s" fill="freeze"/>';
     svg += '</polygon>';
 
