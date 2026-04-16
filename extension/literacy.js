@@ -194,16 +194,9 @@
     }
   }
 
-  // ———— 화면 디버그 메시지 ————
+  // ———— 디버그 (콘솔만) ————
   function debugMsg(msg) {
     console.log('[LITERACY] ' + msg);
-    document.title = msg;
-    var dp = document.getElementById('debug-panel');
-    if (dp) {
-      dp.style.display = 'block';
-      dp.innerHTML = '<div style="background:#111;color:#0f0;padding:8px;font-size:11px;font-family:monospace;max-height:120px;overflow:auto;position:fixed;bottom:0;left:0;right:0;z-index:9999">'
-        + new Date().toLocaleTimeString() + ' — ' + msg + '<br>' + dp.innerHTML.replace(/<div[^>]*>|<\/div>/g, '') + '</div>';
-    }
   }
 
   // ———— Module data (English) ————
@@ -456,11 +449,9 @@
 
       if (isIso3) {
         opt.addEventListener('mouseenter', function () {
-          document.title = 'HOVER: ' + this.dataset.answer;
           selectCountry(mod.sheet, this.dataset.answer);
         });
         opt.addEventListener('mouseleave', function () {
-          document.title = 'LEAVE';
           var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
           highlightCountries(mod.sheet, iso3List);
         });
