@@ -4,6 +4,7 @@
   let currentModule = 0;
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
+  var exploreMode = false;
 
   // ———— Utility functions ————
   function delay(ms) {
@@ -112,6 +113,23 @@
           tableau.SelectionUpdateType.REPLACE
         );
       }
+    } catch (e) {
+      // standalone mode
+    }
+  }
+
+  async function highlightCountries(worksheetName, iso3Array) {
+    try {
+      var dashboard = tableau.extensions.dashboardContent.dashboard;
+      var ws = dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
+      if (!ws) return;
+      await ws.selectMarksByValueAsync(
+        [{
+          fieldName: 'Iso3',
+          value: iso3Array.map(function (code) { return { value: code }; })
+        }],
+        tableau.SelectionUpdateType.REPLACE
+      );
     } catch (e) {
       // standalone mode
     }
@@ -364,7 +382,22 @@
         }
         setTimeout(function () { goToPhase('reveal'); }, 1800);
       });
+
+      if (isIso3) {
+        opt.addEventListener('mouseenter', function () {
+          selectCountry(mod.sheet, this.dataset.answer);
+        });
+        opt.addEventListener('mouseleave', function () {
+          var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
+          highlightCountries(mod.sheet, iso3List);
+        });
+      }
     });
+
+    if (isIso3) {
+      var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
+      highlightCountries(mod.sheet, iso3List);
+    }
   }
 
   async function renderReveal(mod) {
@@ -532,7 +565,8 @@
     });
     html += '</div>';
 
-    html += '<button class="iq-cta" id="btn-restart">Start over \u2192</button>';
+    html += '<button class="iq-cta" id="btn-explore-mode">Start exploring \u2192</button>';
+    html += '<button class="iq-cta iq-cta-secondary" id="btn-restart">Start over \u2192</button>';
     html += '</div>';
     panel.innerHTML = html;
 
@@ -550,9 +584,48 @@
       }
     })();
 
+    document.getElementById('btn-explore-mode').addEventListener('click', function () {
+      enterExploreMode();
+    });
+
     document.getElementById('btn-restart').addEventListener('click', function () {
       currentModule = 0;
       goToPhase('question');
+    });
+  }
+
+  var peekTimeout = null;
+
+  async function showPeekCard(iso3) {
+    var existing = document.getElementById('literacy-peek-card');
+    if (existing) existing.remove();
+    if (peekTimeout) clearTimeout(peekTimeout);
+    try {
+      var card = await VC.getReportCard(iso3);
+      if (!card) return;
+      var flag = VC.iso3ToFlag(iso3);
+      var score = card.total_score != null ? VC.fmt(card.total_score, 1) : '—';
+      var grade = card.grade || '—';
+      var div = document.createElement('div');
+      div.id = 'literacy-peek-card';
+      div.className = 'iq-peek-card';
+      div.innerHTML =
+        '<span class="iq-peek-flag">' + flag + '</span>' +
+        '<span class="iq-peek-name">' + card.name + '</span>' +
+        '<span class="iq-peek-score">' + score + '/100</span>' +
+        '<span class="iq-peek-grade">' + grade + '</span>';
+      document.body.appendChild(div);
+      peekTimeout = setTimeout(function () {
+        div.classList.add('iq-peek-exit');
+        setTimeout(function () { div.remove(); }, 300);
+      }, 3000);
+    } catch (e) {}
+  }
+
+  function onLearnMarkChange() {
+    if (typeof exploreMode !== 'undefined' && exploreMode) return;
+    VC.detectISO3FromDashboard().then(function (iso3) {
+      if (iso3) showPeekCard(iso3);
     });
   }
 
@@ -591,6 +664,133 @@
     updateProgress();
   }
 
+  // ———— Explore Mode (Free Mode) ————
+  function enterExploreMode() {
+    exploreMode = true;
+    renderExploreWaiting();
+    VC.onMarkSelection(onExploreMarkChange);
+    VC.onFilterChange(onExploreMarkChange);
+  }
+
+  async function onExploreMarkChange() {
+    if (!exploreMode) return;
+    var iso3 = await VC.detectISO3FromDashboard();
+    if (iso3) await renderExploreProfile(iso3);
+  }
+
+  function renderExploreWaiting() {
+    transitionTo(function () {
+      var panel = document.getElementById('literacy-panel');
+      var html = '<div class="iq-frame">';
+      html += '<div class="iq-eyebrow">';
+      html += '<span class="iq-eyebrow-title">Explore</span>';
+      html += '<span class="iq-eyebrow-rule"></span>';
+      html += '<span class="iq-eyebrow-count">Free Mode</span>';
+      html += '</div>';
+      html += '<h2 class="iq-question">Click any country on the chart.</h2>';
+      html += '<p class="iq-hook">You\u2019ve learned 5 frames. Now apply them to any of 250 countries.</p>';
+      html += '<div class="iq-continue revealed" id="btn-back-learn">\u2190 Back to Learn</div>';
+      html += '</div>';
+      panel.innerHTML = html;
+
+      document.getElementById('btn-back-learn').addEventListener('click', function () {
+        exitExploreMode();
+      });
+    });
+  }
+
+  async function renderExploreProfile(iso3) {
+    var results = await Promise.all([VC.getReportCard(iso3), VC.getPeerContext(iso3)]);
+    var card = results[0];
+    var peer = results[1];
+    if (!card) return;
+
+    transitionTo(function () {
+      var panel = document.getElementById('literacy-panel');
+      var html = '<div class="iq-frame">';
+
+      // Eyebrow
+      html += '<div class="iq-eyebrow">';
+      html += '<span class="iq-eyebrow-title">Explore</span>';
+      html += '<span class="iq-eyebrow-rule"></span>';
+      html += '<span class="iq-eyebrow-count">' + card.name + '</span>';
+      html += '</div>';
+
+      // Country header
+      html += '<div class="iq-country-header">';
+      html += '<span class="iq-country-flag">' + VC.iso3ToFlag(iso3) + '</span>';
+      html += '<span class="iq-country-name">' + card.name + '</span>';
+      html += '</div>';
+
+      // Meta
+      html += '<div class="iq-meta">' + iso3 + ' \u00B7 ' + (card.region || '') + ' \u00B7 ' + (card.income_group || '') + '</div>';
+
+      // Big number
+      html += '<div class="iq-big-number-card">';
+      html += '<span id="explore-score">0</span>';
+      html += '<span class="iq-big-unit">/ 100 \u2014 Grade ' + card.grade + '</span>';
+      html += '</div>';
+
+      // Climate class pill
+      var classLabel = VC.CLASS_LABEL[card.climate_class] || card.climate_class;
+      var classColor = VC.CLASS_COLOR[card.climate_class] || '#9A9A9A';
+      html += '<span class="iq-class-pill" style="background:' + classColor + ';color:#fff">' + classLabel + '</span>';
+
+      // Rank
+      if (peer && peer.globalRank) {
+        html += '<div class="iq-rank">#' + peer.globalRank + ' of ' + peer.totalCountries + '</div>';
+      }
+
+      // Domain mini bars
+      html += '<div class="iq-domain-bars">';
+      VC.DOMAINS.forEach(function (d) {
+        var score = card[d.field] != null ? card[d.field] : 0;
+        html += '<div class="iq-domain-row">';
+        html += '<span class="iq-domain-label">' + d.label + '</span>';
+        html += '<div class="iq-domain-track">';
+        html += '<div class="iq-domain-fill" style="width:' + score + '%;background:' + d.color + '"></div>';
+        html += '</div>';
+        html += '<span class="iq-domain-score">' + VC.fmt(score, 0) + '</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+
+      // Insight
+      html += '<p class="iq-hook">' + getInsight(card) + '</p>';
+
+      // Back button
+      html += '<div class="iq-continue revealed" id="btn-back-learn">\u2190 Back to Learn</div>';
+      html += '</div>';
+      panel.innerHTML = html;
+
+      // Post-render: count-up score
+      (async function () {
+        await delay(200);
+        var scoreEl = document.getElementById('explore-score');
+        if (scoreEl) await animateNumber(scoreEl, card.total_score, 800);
+      })();
+
+      document.getElementById('btn-back-learn').addEventListener('click', function () {
+        exitExploreMode();
+      });
+    });
+  }
+
+  function getInsight(card) {
+    var score = card.total_score;
+    if (score >= 80) return 'Climate leader \u2014 top global performance across most domains.';
+    if (score >= 60) return 'Solid performer \u2014 above average, room to improve.';
+    if (score >= 40) return 'Moderate action \u2014 meaningful gaps in several domains.';
+    if (score >= 20) return 'Below average \u2014 urgent improvement needed across most areas.';
+    return 'Critical \u2014 among the lowest performers globally.';
+  }
+
+  function exitExploreMode() {
+    exploreMode = false;
+    currentModule = 0;
+    goToPhase('question');
+  }
+
   // ———— Init ————
   document.addEventListener('DOMContentLoaded', function () {
     if (typeof tableau === 'undefined' || !tableau.extensions) {
@@ -603,9 +803,11 @@
   async function startLiteracy() {
     currentModule = 0;
     currentPhase = 'question';
+    exploreMode = false;
     await setParameter('p_Module', 1);
     await setParameter('p_Phase', 'question');
     await setParameter('p_Measure', 'GHG_PER_CAPITA');
     renderQuestion(MODULES[0]);
+    VC.onMarkSelection(onLearnMarkChange);
   }
 })();

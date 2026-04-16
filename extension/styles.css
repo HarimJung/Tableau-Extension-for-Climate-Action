@@ -2091,3 +2091,42 @@ body::before {
   transition: width 0.5s var(--ease-out-expo);
   border-radius: 0 2px 2px 0;
 }
+
+/* ── Peek Card ── */
+.iq-peek-card {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  z-index: 1000;
+  animation: peekSlideIn 0.3s ease-out;
+}
+.iq-peek-card.iq-peek-exit {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.3s ease-in;
+}
+.iq-peek-flag { font-size: 20px; }
+.iq-peek-name { font-weight: 600; color: #1A1A2E; }
+.iq-peek-score { color: #4A4A6A; }
+.iq-peek-grade {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #EFF6FF;
+  color: #0066FF;
+  font-weight: 700;
+  font-size: 12px;
+}
+@keyframes peekSlideIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
