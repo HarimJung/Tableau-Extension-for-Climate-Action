@@ -5,6 +5,52 @@
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
 
+  // ———— Utility functions ————
+  function delay(ms) {
+    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+  }
+
+  function animateNumber(el, target, duration, suffix) {
+    suffix = suffix || '';
+    return new Promise(function (resolve) {
+      var start = performance.now();
+      function tick(now) {
+        var t = Math.min((now - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - t, 4); // ease-out-quart
+        var current = eased * target;
+        if (target % 1 !== 0) {
+          el.textContent = current.toFixed(1) + suffix;
+        } else {
+          el.textContent = Math.round(current) + suffix;
+        }
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          resolve();
+        }
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  function typeText(elementId, text, speed) {
+    return new Promise(function (resolve) {
+      var el = document.getElementById(elementId);
+      if (!el) { resolve(); return; }
+      var i = 0;
+      function type() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        } else {
+          resolve();
+        }
+      }
+      type();
+    });
+  }
+
   // ———— Tableau parameter control ————
   async function findParameter(name) {
     try {
@@ -90,12 +136,15 @@
       reveal: {
         params: { p_Module: 1, p_Measure: 'GHG_PER_CAPITA', p_Phase: 'reveal' },
         highlight: 'SAU',
-        text: 'Saudi Arabia: 24.1 tonnes per person — four times the global average. This number is the climate footprint one person leaves in a single year.'
+        text: 'Saudi Arabia: 24.1 tonnes per person \u2014 four times the global average. This number is the climate footprint one person leaves in a single year.',
+        bigNumber: 22.1,
+        bigUnit: 't CO\u2082eq per person',
+        statNumber: '22.1 t/person'
       },
       explore: {
-        prompt: 'Now switch to "Total emissions." How does the ranking change?',
+        prompt: 'Now switch to \u201CTotal emissions.\u201D How does the ranking change?',
         params: { p_Measure: 'TOTAL_GHG' },
-        text: 'China: 13,532 Mt total — but only 9.8 tonnes per person. Change the frame and the world looks completely different.'
+        text: 'China: 13,532 Mt total \u2014 but only 9.8 tonnes per person. Change the frame and the world looks completely different.'
       },
       nameit: {
         concept: 'Total vs Per Capita',
@@ -119,10 +168,13 @@
       reveal: {
         params: { p_Module: 2, p_TimeMeasure: 'OWID.CO2', p_Phase: 'reveal' },
         highlight: 'GBR',
-        text: 'The UK: a 35% CO\u2082 reduction in ten years — the fastest decline among G7 nations. The reason? It nearly eliminated coal power.'
+        text: 'The UK: a 35% CO\u2082 reduction in ten years \u2014 the fastest decline among G7 nations. The reason? It nearly eliminated coal power.',
+        bigNumber: 50,
+        bigUnit: '% CO\u2082 reduction since 1990',
+        statNumber: '\u221250% CO\u2082'
       },
       explore: {
-        prompt: 'Now switch to "Coal CO\u2082." What really drove the UK\'s decline?',
+        prompt: 'Now switch to \u201CCoal CO\u2082.\u201D What really drove the UK\'s decline?',
         params: { p_TimeMeasure: 'OWID.COAL_CO2' },
         text: 'UK coal CO\u2082: 148 Mt \u2192 18 Mt. The coal phase-out was the single largest driver. Climate action starts with specific choices.'
       },
@@ -147,10 +199,13 @@
       },
       reveal: {
         params: { p_Module: 3, p_Measure: 'RENEWABLE_PCT', p_Phase: 'reveal' },
-        text: 'More than 50 countries exceed 50% renewable electricity — mostly thanks to hydropower. But a high renewable share doesn\'t mean a clean economy.'
+        text: 'More than 50 countries exceed 50% renewable electricity \u2014 mostly thanks to hydropower. But a high renewable share doesn\'t mean a clean economy.',
+        bigNumber: 50,
+        bigUnit: '+ countries exceed 50% renewables',
+        statNumber: '50+ countries'
       },
       explore: {
-        prompt: 'Now switch to "Carbon intensity." Does renewable electricity = a clean economy?',
+        prompt: 'Now switch to \u201CCarbon intensity.\u201D Does renewable electricity = a clean economy?',
         params: { p_Measure: 'CARBON_INTENSITY' },
         text: 'Many countries with high renewable shares still have carbon-intensive industry and transport. Clean electricity doesn\'t automatically mean a clean economy.'
       },
@@ -175,13 +230,16 @@
       },
       reveal: {
         params: { p_Module: 4, p_TimeMeasure: 'OWID.TOTAL_GHG_EXCLUDING_LUCF', p_Phase: 'reveal' },
-        text: 'Only 2\u20134 G20 members are on track. Most are falling far short of their own pledges. The gap between targets and reality is the heart of the climate crisis.'
+        text: 'Only 2\u20134 G20 members are on track. Most are falling far short of their own pledges. The gap between targets and reality is the heart of the climate crisis.',
+        bigNumber: 2,
+        bigUnit: '\u20134 G20 members on track',
+        statNumber: '2\u20134 of 20'
       },
       explore: {
         prompt: 'Click South Korea. Its NDC target is \u221240% by 2030. Where is the actual trend heading?',
         params: {},
         filters: [{ sheet: 'M2 Line', field: 'Name', values: ['South Korea'] }],
-        text: 'South Korea\'s target: 436 Mt by 2030. Current trend: 624 Mt. A gap of 188 Mt — roughly 43% over. Promises alone don\'t lower temperatures.'
+        text: 'South Korea\'s target: 436 Mt by 2030. Current trend: 624 Mt. A gap of 188 Mt \u2014 roughly 43% over. Promises alone don\'t lower temperatures.'
       },
       nameit: {
         concept: 'The NDC Implementation Gap',
@@ -204,10 +262,13 @@
       },
       reveal: {
         params: { p_Module: 5, p_Measure: 'VULNERABILITY', p_Phase: 'reveal' },
-        text: 'Africa: ~3% of cumulative CO\u2082, yet the highest climate vulnerability. Those who caused the crisis and those who suffer from it are not the same.'
+        text: 'Africa: ~3% of cumulative CO\u2082, yet the highest climate vulnerability. Those who caused the crisis and those who suffer from it are not the same.',
+        bigNumber: 3,
+        bigUnit: '% of cumulative global CO\u2082',
+        statNumber: '~3% cumulative'
       },
       explore: {
-        prompt: 'Apply the "Low income" filter. Where do these countries sit on the chart?',
+        prompt: 'Apply the \u201CLow income\u201D filter. Where do these countries sit on the chart?',
         params: {},
         filters: [{ sheet: 'M1 Scatter', field: 'Income Group', values: ['Low income'] }],
         text: 'Low-income countries cluster in the bottom left: lowest emissions, lowest GDP, highest vulnerability. They didn\'t create this crisis, yet they bear the greatest cost.'
@@ -221,6 +282,22 @@
 
   // ———— Helpers ————
   function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+
+  // ———— Transition wrapper ————
+  async function transitionTo(renderFn) {
+    var frame = document.querySelector('.iq-frame');
+    if (frame) {
+      frame.classList.add('iq-exit');
+      await delay(280);
+    }
+    await renderFn();
+    var newFrame = document.querySelector('.iq-frame');
+    if (newFrame) {
+      newFrame.classList.add('iq-enter');
+      newFrame.offsetHeight; // force reflow
+      newFrame.classList.add('iq-enter-active');
+    }
+  }
 
   // ———— Phase rendering ————
   function renderQuestion(mod) {
@@ -237,7 +314,7 @@
     html += '<ol class="iq-options">';
     mod.question.choices.forEach(function (c, i) {
       var val = isIso3 ? c.iso3 : c.value;
-      html += '<li class="iq-option" data-answer="' + val + '">';
+      html += '<li class="iq-option" data-answer="' + val + '" style="animation-delay:' + (280 + i * 80) + 'ms">';
       html += '<span class="iq-option-num">' + pad2(i + 1) + '</span>';
       html += '<span class="iq-option-text">' + c.label + '</span>';
       html += '</li>';
@@ -258,18 +335,25 @@
 
         if (correct) {
           opt.classList.add('correct');
+          opt.insertAdjacentHTML('beforeend', '<span class="iq-feedback-icon">\u2713</span>');
         } else {
           opt.classList.add('wrong');
+          opt.classList.add('iq-shake');
+          opt.insertAdjacentHTML('beforeend', '<span class="iq-feedback-icon">\u2717</span>');
           // Show the correct answer
           panel.querySelectorAll('.iq-option').forEach(function (o) {
             if (o.dataset.answer === mod.question.answer) {
               o.classList.add('correct');
+              o.insertAdjacentHTML('beforeend', '<span class="iq-feedback-icon">\u2713</span>');
             }
           });
         }
 
-        // Dim non-relevant options
+        // Insert stat reveal on correct option + dim others
         panel.querySelectorAll('.iq-option').forEach(function (o) {
+          if (o.dataset.answer === mod.question.answer && mod.reveal.statNumber) {
+            o.insertAdjacentHTML('beforeend', '<span class="iq-stat-reveal">' + mod.reveal.statNumber + '</span>');
+          }
           if (!o.classList.contains('correct') && !o.classList.contains('wrong')) {
             o.classList.add('dim');
           }
@@ -278,7 +362,7 @@
         if (isIso3) {
           await selectCountry(mod.sheet, answer);
         }
-        setTimeout(function () { goToPhase('reveal'); }, 1200);
+        setTimeout(function () { goToPhase('reveal'); }, 1800);
       });
     });
   }
@@ -298,20 +382,39 @@
     html += '<span class="iq-eyebrow-rule"></span>';
     html += '<span class="iq-eyebrow-count">Reveal</span>';
     html += '</div>';
+
+    if (mod.reveal.bigNumber != null) {
+      html += '<div class="iq-big-number-card">';
+      html += '<span id="reveal-number">0</span>';
+      html += '<span class="iq-big-unit">' + mod.reveal.bigUnit + '</span>';
+      html += '</div>';
+    }
+
     html += '<h2 class="iq-question" style="font-size:clamp(16px,4.8vw,19px)">' + mod.reveal.text + '</h2>';
-    html += '<div class="iq-continue" style="opacity:0.85" id="btn-explore">Explore further \u2192</div>';
+    html += '<div class="iq-continue" id="btn-explore">Explore further \u2192</div>';
     html += '</div>';
     panel.innerHTML = html;
 
     document.getElementById('btn-explore').addEventListener('click', function () {
       goToPhase('explore');
     });
+
+    // Post-render: count-up then reveal continue button
+    (async function () {
+      if (mod.reveal.bigNumber != null) {
+        await delay(350);
+        var numEl = document.getElementById('reveal-number');
+        if (numEl) await animateNumber(numEl, mod.reveal.bigNumber, 1000);
+      }
+      var btn = document.getElementById('btn-explore');
+      if (btn) btn.classList.add('revealed');
+    })();
   }
 
   async function renderExplore(mod) {
-    for (var key in mod.explore.params) {
-      await setParameter(key, mod.explore.params[key]);
-    }
+    var hasParams = Object.keys(mod.explore.params).length > 0;
+
+    // Apply filters immediately (for M4, M5)
     if (mod.explore.filters) {
       for (var i = 0; i < mod.explore.filters.length; i++) {
         var f = mod.explore.filters[i];
@@ -328,10 +431,37 @@
     html += '<span class="iq-eyebrow-count">Explore</span>';
     html += '</div>';
     html += '<p class="iq-hook">' + mod.explore.prompt + '</p>';
-    html += '<div class="iq-fact-slot revealed"><p>' + mod.explore.text + '</p></div>';
-    html += '<div class="iq-continue revealed" id="btn-nameit">Name this concept \u2192</div>';
+
+    if (hasParams) {
+      html += '<button class="iq-switch-btn" id="btn-switch">Switch the frame \u2192</button>';
+      html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p></div>';
+      html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
+    } else {
+      html += '<div class="iq-fact-slot revealed"><p>' + mod.explore.text + '</p></div>';
+      html += '<div class="iq-continue revealed" id="btn-nameit">Name this concept \u2192</div>';
+    }
+
     html += '</div>';
     panel.innerHTML = html;
+
+    if (hasParams) {
+      document.getElementById('btn-switch').addEventListener('click', async function () {
+        var switchBtn = this;
+        switchBtn.disabled = true;
+        switchBtn.style.opacity = '0.4';
+
+        for (var key in mod.explore.params) {
+          await setParameter(key, mod.explore.params[key]);
+        }
+
+        await delay(600);
+        var factSlot = panel.querySelector('.iq-fact-slot');
+        var continueBtn = document.getElementById('btn-nameit');
+        if (factSlot) factSlot.classList.add('revealed');
+        if (continueBtn) continueBtn.classList.add('revealed');
+        switchBtn.style.display = 'none';
+      });
+    }
 
     document.getElementById('btn-nameit').addEventListener('click', function () {
       goToPhase('nameit');
@@ -347,19 +477,32 @@
     html += '<span class="iq-eyebrow-title">Key Concept</span>';
     html += '<span class="iq-eyebrow-rule"></span>';
     html += '</div>';
-    html += '<div class="iq-score">';
-    html += '<span class="iq-score-num" style="font-size:clamp(28px,9vw,36px)">' + mod.nameit.concept + '</span>';
+    html += '<div class="iq-concept-card">';
+    html += '<span class="iq-concept-label">Remember this:</span>';
+    html += '<span id="concept-type"></span>';
+    html += '<span class="iq-concept-line"></span>';
+    html += '<span class="iq-concept-def" id="concept-def">' + mod.nameit.definition + '</span>';
     html += '</div>';
-    html += '<p class="iq-verdict">' + mod.nameit.definition + '</p>';
     html += '<button class="iq-cta" id="btn-next">';
-    html += isLast ? 'Start exploring \u2192' : 'Next module \u2192';
+    html += isLast ? 'See your journey \u2192' : 'Next module \u2192';
     html += '</button>';
     html += '</div>';
     panel.innerHTML = html;
 
+    // Post-render: typewriter effect then fade-in definition
+    (async function () {
+      await delay(400);
+      await typeText('concept-type', mod.nameit.concept, 50);
+      var defEl = document.getElementById('concept-def');
+      if (defEl) defEl.classList.add('visible');
+    })();
+
     document.getElementById('btn-next').addEventListener('click', function () {
       if (isLast) {
-        renderComplete();
+        transitionTo(function () { renderComplete(); });
+        // Progress to 100%
+        var fill = document.getElementById('literacy-progress-fill');
+        if (fill) fill.style.width = '100%';
       } else {
         currentModule++;
         goToPhase('question');
@@ -375,18 +518,51 @@
     html += '<span class="iq-eyebrow-rule"></span>';
     html += '</div>';
     html += '<div class="iq-score">';
-    html += '<span class="iq-score-num">05</span>';
+    html += '<span class="iq-score-num" id="complete-count">0</span>';
     html += '<span class="iq-score-denom">/ 05</span>';
     html += '</div>';
     html += '<p class="iq-verdict">You\'ve learned <em>5 frames</em> for reading climate data.</p>';
+
+    html += '<div class="iq-concepts-summary">';
+    MODULES.forEach(function (m, i) {
+      html += '<div class="iq-concept-mini" data-idx="' + i + '">';
+      html += '<span class="iq-concept-mini-num">' + pad2(i + 1) + '</span>';
+      html += '<span class="iq-concept-mini-name">' + m.nameit.concept + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+
     html += '<button class="iq-cta" id="btn-restart">Start over \u2192</button>';
     html += '</div>';
     panel.innerHTML = html;
+
+    // Post-render: count-up then stagger concept cards
+    (async function () {
+      var countEl = document.getElementById('complete-count');
+      if (countEl) {
+        await animateNumber(countEl, 5, 800);
+        countEl.textContent = '05';
+      }
+      var cards = panel.querySelectorAll('.iq-concept-mini');
+      for (var i = 0; i < cards.length; i++) {
+        await delay(100);
+        cards[i].classList.add('visible');
+      }
+    })();
 
     document.getElementById('btn-restart').addEventListener('click', function () {
       currentModule = 0;
       goToPhase('question');
     });
+  }
+
+  // ———— Progress ————
+  function updateProgress() {
+    var phases = { question: 1, reveal: 2, explore: 3, nameit: 4 };
+    var step = currentModule * 4 + (phases[currentPhase] || 0);
+    var pct = (step / 20) * 100;
+    var fill = document.getElementById('literacy-progress-fill');
+    if (fill) fill.style.width = pct + '%';
   }
 
   // ———— Phase navigation ————
@@ -407,11 +583,12 @@
     await setParameter('p_Phase', phase);
     var mod = MODULES[currentModule];
     switch (phase) {
-      case 'question': renderQuestion(mod); break;
-      case 'reveal': await renderReveal(mod); break;
-      case 'explore': await renderExplore(mod); break;
-      case 'nameit': renderNameIt(mod); break;
+      case 'question': await transitionTo(function () { renderQuestion(mod); }); break;
+      case 'reveal': await transitionTo(function () { return renderReveal(mod); }); break;
+      case 'explore': await transitionTo(function () { return renderExplore(mod); }); break;
+      case 'nameit': await transitionTo(function () { return renderNameIt(mod); }); break;
     }
+    updateProgress();
   }
 
   // ———— Init ————
