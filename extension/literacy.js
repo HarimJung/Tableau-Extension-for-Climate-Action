@@ -105,16 +105,20 @@
 
   async function selectCountry(worksheetName, iso3) {
     try {
-      const dashboard = tableau.extensions.dashboardContent.dashboard;
-      const ws = dashboard.worksheets.find(w => w.name === worksheetName);
-      if (ws) {
-        await ws.selectMarksByValueAsync(
-          [{ fieldName: 'Iso3', value: [{ value: iso3 }] }],
-          tableau.SelectionUpdateType.REPLACE
-        );
+      var dashboard = tableau.extensions.dashboardContent.dashboard;
+      var ws = dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
+      if (!ws) {
+        document.title = 'ERR: no sheet ' + worksheetName;
+        return;
       }
+      document.title = 'Selecting: ' + iso3 + ' on ' + worksheetName;
+      await ws.selectMarksByValueAsync(
+        [{ fieldName: 'Iso3', value: [{ value: iso3 }] }],
+        tableau.SelectionUpdateType.REPLACE
+      );
+      document.title = 'OK: selected ' + iso3;
     } catch (e) {
-      // standalone mode
+      document.title = 'SEL ERR: ' + e.message;
     }
   }
 
@@ -122,7 +126,11 @@
     try {
       var dashboard = tableau.extensions.dashboardContent.dashboard;
       var ws = dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
-      if (!ws) return;
+      if (!ws) {
+        document.title = 'ERR: sheet not found: ' + worksheetName;
+        return;
+      }
+      document.title = 'Highlighting: ' + iso3Array.join(',') + ' on ' + worksheetName;
       await ws.selectMarksByValueAsync(
         [{
           fieldName: 'Iso3',
@@ -130,8 +138,9 @@
         }],
         tableau.SelectionUpdateType.REPLACE
       );
+      document.title = 'OK: highlighted ' + iso3Array.join(',');
     } catch (e) {
-      // standalone mode
+      document.title = 'ERR: ' + e.message;
     }
   }
 
