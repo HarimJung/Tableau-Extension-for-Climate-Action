@@ -103,22 +103,61 @@
     activeFilters = [];
   }
 
+  // ———— 워크시트에서 ISO3 필드명 자동 탐지 ————
+  async function findIso3FieldName(ws) {
+    try {
+      var dt = await ws.getSummaryDataAsync();
+      var columns = dt.columns;
+      for (var i = 0; i < columns.length; i++) {
+        var fn = (columns[i].fieldName || '').toLowerCase().replace(/[\s_\-]/g, '');
+        if (fn === 'iso3' || fn === 'countryiso3' || fn === 'countrycode') {
+          return columns[i].fieldName; // 실제 Tableau 필드명 반환
+        }
+      }
+      // 못 찾으면 caption도 확인
+      for (var j = 0; j < columns.length; j++) {
+        var cap = (columns[j].caption || '').toLowerCase().replace(/[\s_\-]/g, '');
+        if (cap === 'iso3' || cap === 'countryiso3' || cap === 'countrycode') {
+          return columns[j].fieldName;
+        }
+      }
+    } catch (e) {
+      // 에러 시 기본값
+    }
+    return 'Iso3'; // fallback
+  }
+
   async function selectCountry(worksheetName, iso3) {
     try {
       var dashboard = tableau.extensions.dashboardContent.dashboard;
       var ws = dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
       if (!ws) {
-        document.title = 'ERR: no sheet ' + worksheetName;
+        debugMsg('ERR: no sheet "' + worksheetName + '"');
         return;
       }
-      document.title = 'Selecting: ' + iso3 + ' on ' + worksheetName;
+      var fieldName = await findIso3FieldName(ws);
+      debugMsg('selectCountry: ' + iso3 + ' on ' + worksheetName + ' field=' + fieldName);
+
+      // 방법 1: 단순 문자열 배열
       await ws.selectMarksByValueAsync(
-        [{ fieldName: 'Iso3', value: [{ value: iso3 }] }],
-        tableau.SelectionUpdateType.REPLACE
+        [{ fieldName: fieldName, value: [iso3] }],
+        tableau.SelectionUpdateType.Replace
       );
-      document.title = 'OK: selected ' + iso3;
-    } catch (e) {
-      document.title = 'SEL ERR: ' + e.message;
+      debugMsg('OK: selected ' + iso3);
+    } catch (e1) {
+      debugMsg('Method1 failed: ' + e1.message + ' — trying method2');
+      try {
+        // 방법 2: DataValue 객체 (formattedValue 포함)
+        var ws2 = tableau.extensions.dashboardContent.dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
+        var fieldName2 = await findIso3FieldName(ws2);
+        await ws2.selectMarksByValueAsync(
+          [{ fieldName: fieldName2, value: [{ value: String(iso3), formattedValue: String(iso3) }] }],
+          tableau.SelectionUpdateType.Replace
+        );
+        debugMsg('OK method2: selected ' + iso3);
+      } catch (e2) {
+        debugMsg('Both methods failed: ' + e2.message);
+      }
     }
   }
 
@@ -127,20 +166,43 @@
       var dashboard = tableau.extensions.dashboardContent.dashboard;
       var ws = dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
       if (!ws) {
-        document.title = 'ERR: sheet not found: ' + worksheetName;
+        debugMsg('ERR: sheet not found: "' + worksheetName + '"');
         return;
       }
-      document.title = 'Highlighting: ' + iso3Array.join(',') + ' on ' + worksheetName;
+      var fieldName = await findIso3FieldName(ws);
+      debugMsg('highlight: ' + iso3Array.join(',') + ' on ' + worksheetName + ' field=' + fieldName);
+
+      // 방법 1: 단순 문자열 배열
       await ws.selectMarksByValueAsync(
-        [{
-          fieldName: 'Iso3',
-          value: iso3Array.map(function (code) { return { value: code }; })
-        }],
-        tableau.SelectionUpdateType.REPLACE
+        [{ fieldName: fieldName, value: iso3Array.map(String) }],
+        tableau.SelectionUpdateType.Replace
       );
-      document.title = 'OK: highlighted ' + iso3Array.join(',');
-    } catch (e) {
-      document.title = 'ERR: ' + e.message;
+      debugMsg('OK: highlighted ' + iso3Array.join(','));
+    } catch (e1) {
+      debugMsg('HL Method1 failed: ' + e1.message + ' — trying method2');
+      try {
+        var ws2 = tableau.extensions.dashboardContent.dashboard.worksheets.find(function (w) { return w.name === worksheetName; });
+        var fieldName2 = await findIso3FieldName(ws2);
+        await ws2.selectMarksByValueAsync(
+          [{ fieldName: fieldName2, value: iso3Array.map(function(code) { return { value: String(code), formattedValue: String(code) }; }) }],
+          tableau.SelectionUpdateType.Replace
+        );
+        debugMsg('OK HL method2: highlighted ' + iso3Array.join(','));
+      } catch (e2) {
+        debugMsg('HL both failed: ' + e2.message);
+      }
+    }
+  }
+
+  // ———— 화면 디버그 메시지 ————
+  function debugMsg(msg) {
+    console.log('[LITERACY] ' + msg);
+    document.title = msg;
+    var dp = document.getElementById('debug-panel');
+    if (dp) {
+      dp.style.display = 'block';
+      dp.innerHTML = '<div style="background:#111;color:#0f0;padding:8px;font-size:11px;font-family:monospace;max-height:120px;overflow:auto;position:fixed;bottom:0;left:0;right:0;z-index:9999">'
+        + new Date().toLocaleTimeString() + ' — ' + msg + '<br>' + dp.innerHTML.replace(/<div[^>]*>|<\/div>/g, '') + '</div>';
     }
   }
 
@@ -394,9 +456,11 @@
 
       if (isIso3) {
         opt.addEventListener('mouseenter', function () {
+          document.title = 'HOVER: ' + this.dataset.answer;
           selectCountry(mod.sheet, this.dataset.answer);
         });
         opt.addEventListener('mouseleave', function () {
+          document.title = 'LEAVE';
           var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
           highlightCountries(mod.sheet, iso3List);
         });
@@ -408,7 +472,7 @@
       setTimeout(function () {
         var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
         highlightCountries(mod.sheet, iso3List);
-      }, 800);
+      }, 1500);  // 800 → 1500ms로 증가
     }
   }
 
@@ -664,8 +728,16 @@
       } else if (mod.sheet === 'M3 Map') {
         await setParameter('p_Measure', 'RENEWABLE_PCT');
       }
+      // DZV 시트 전환 대기 — Tableau가 실제로 시트를 교체할 시간
+      await delay(600);
     }
     await setParameter('p_Phase', phase);
+
+    // reveal 시에도 시트가 보일 시간 확보
+    if (phase === 'reveal') {
+      await delay(300);
+    }
+
     var mod = MODULES[currentModule];
     switch (phase) {
       case 'question': await transitionTo(function () { renderQuestion(mod); }); break;
