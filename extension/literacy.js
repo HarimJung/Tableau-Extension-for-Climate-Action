@@ -395,8 +395,11 @@
     });
 
     if (isIso3) {
-      var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
-      highlightCountries(mod.sheet, iso3List);
+      // DZV 시트 전환 후 Tableau가 새 시트를 렌더링할 시간을 줌
+      setTimeout(function () {
+        var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
+        highlightCountries(mod.sheet, iso3List);
+      }, 800);
     }
   }
 
