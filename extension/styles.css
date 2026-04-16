@@ -1980,6 +1980,22 @@ body::before {
 }
 .iq-continue:hover { color: var(--vc-primary-hover); }
 
+/* Back button */
+.iq-back {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vc-text-muted);
+  cursor: pointer;
+  padding: 8px 0;
+  margin-top: 12px;
+  letter-spacing: 0.04em;
+  transition: color 0.15s ease;
+}
+.iq-back:hover {
+  color: var(--vc-text);
+}
+
 /* Concept card in Name It */
 .iq-concept-card {
   background: var(--vc-surface);

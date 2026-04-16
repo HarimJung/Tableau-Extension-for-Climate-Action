@@ -491,10 +491,14 @@
     }
 
     html += '<h2 class="iq-question" style="font-size:clamp(16px,4.8vw,19px)">' + mod.reveal.text + '</h2>';
+    html += '<div class="iq-back" id="btn-back-question">\u2190 Back to question</div>';
     html += '<div class="iq-continue" id="btn-explore">Explore further \u2192</div>';
     html += '</div>';
     panel.innerHTML = html;
 
+    document.getElementById('btn-back-question').addEventListener('click', function () {
+      goToPhase('question');
+    });
     document.getElementById('btn-explore').addEventListener('click', function () {
       goToPhase('explore');
     });
@@ -535,9 +539,11 @@
     if (hasParams) {
       html += '<button class="iq-switch-btn" id="btn-switch">Switch the frame \u2192</button>';
       html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p></div>';
+      html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
     } else {
       html += '<div class="iq-fact-slot revealed"><p>' + mod.explore.text + '</p></div>';
+      html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue revealed" id="btn-nameit">Name this concept \u2192</div>';
     }
 
@@ -563,6 +569,9 @@
       });
     }
 
+    document.getElementById('btn-back-reveal').addEventListener('click', function () {
+      goToPhase('reveal');
+    });
     document.getElementById('btn-nameit').addEventListener('click', function () {
       goToPhase('nameit');
     });
@@ -583,6 +592,7 @@
     html += '<span class="iq-concept-line"></span>';
     html += '<span class="iq-concept-def" id="concept-def">' + mod.nameit.definition + '</span>';
     html += '</div>';
+    html += '<div class="iq-back" id="btn-back-explore">\u2190 Back to explore</div>';
     html += '<button class="iq-cta" id="btn-next">';
     html += isLast ? 'See your journey \u2192' : 'Next module \u2192';
     html += '</button>';
@@ -597,6 +607,9 @@
       if (defEl) defEl.classList.add('visible');
     })();
 
+    document.getElementById('btn-back-explore').addEventListener('click', function () {
+      goToPhase('explore');
+    });
     document.getElementById('btn-next').addEventListener('click', function () {
       if (isLast) {
         transitionTo(function () { renderComplete(); });
