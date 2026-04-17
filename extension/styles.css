@@ -1817,6 +1817,25 @@ body::before {
   letter-spacing: -0.005em;
 }
 
+/* ── Nudge callout ── */
+.iq-nudge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--vc-primary);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  padding: 10px 12px;
+  margin: 0 0 16px 0;
+  background: var(--vc-primary-subtle);
+  border-left: 2px solid var(--vc-primary);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.iq-nudge-post {
+  margin-top: 12px;
+  margin-bottom: 0;
+}
+
 /* === END LITERACY === */
 
 /* ================================================================

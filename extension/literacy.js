@@ -219,14 +219,21 @@
         params: { p_Module: 1, p_Measure: 'GHG_PER_CAPITA', p_Phase: 'reveal' },
         highlight: 'SAU',
         text: 'Saudi Arabia: 24.1 tonnes per person \u2014 four times the global average. This number is the climate footprint one person leaves in a single year.',
-        bigNumber: 22.1,
+        bigNumber: 24.1,
         bigUnit: 't CO\u2082eq per person',
-        statNumber: '22.1 t/person'
+        statNumber: '24.1 t/person'
       },
       explore: {
         prompt: 'Now switch to \u201CTotal emissions.\u201D How does the ranking change?',
         params: { p_Measure: 'TOTAL_GHG' },
         text: 'China: 13,532 Mt total \u2014 but only 9.8 tonnes per person. Change the frame and the world looks completely different.'
+      },
+      nudge: {
+        question: 'Look at the chart first \u2014 find the four highlighted dots and compare their heights.',
+        reveal: 'Click other countries on the chart to compare their values.',
+        preSwitch: 'Before switching, read the Y-axis title. You\'re looking at "per person" right now.',
+        postSwitch: 'The Y-axis changed. Find who\'s on top now.',
+        nameit: 'Click Saudi Arabia, then China. Same data, different story.'
       },
       nameit: {
         concept: 'Total vs Per Capita',
@@ -260,6 +267,13 @@
         params: { p_TimeMeasure: 'OWID.COAL_CO2' },
         text: 'UK coal CO\u2082: 148 Mt \u2192 18 Mt. The coal phase-out was the single largest driver. Climate action starts with specific choices.'
       },
+      nudge: {
+        question: 'Look at the chart \u2014 which line drops the most after 2013?',
+        reveal: 'Click other country lines to compare how much they cut.',
+        preSwitch: 'You\'re seeing total CO\u2082. Next: what fuel drove the biggest drop?',
+        postSwitch: 'The Y-axis now shows Coal CO\u2082. Which line changed the most?',
+        nameit: 'Click the UK line, then China. One dropped, one surged.'
+      },
       nameit: {
         concept: 'The Coal Phase-Out Effect',
         definition: 'Replacing coal with gas and renewables delivers the fastest emission cuts. The UK proved this in under a decade.'
@@ -290,6 +304,13 @@
         prompt: 'Now switch to \u201CCarbon intensity.\u201D Does renewable electricity = a clean economy?',
         params: { p_Measure: 'CARBON_INTENSITY' },
         text: 'Many countries with high renewable shares still have carbon-intensive industry and transport. Clean electricity doesn\'t automatically mean a clean economy.'
+      },
+      nudge: {
+        question: 'Look at the bar chart \u2014 how many bars cross the 50% line?',
+        reveal: 'Click a green country on the map. Check its exact renewable share.',
+        preSwitch: 'These countries have high renewables. But are they truly "clean"?',
+        postSwitch: 'Now you see Carbon Intensity. Do high-renewable countries stay green?',
+        nameit: 'Find a country that\'s green on renewables but red on intensity.'
       },
       nameit: {
         concept: 'Renewables \u2260 Clean Economy',
@@ -323,6 +344,13 @@
         filters: [{ sheet: 'M2 Line', field: 'Name', values: ['South Korea'] }],
         text: 'South Korea\'s target: 436 Mt by 2030. Current trend: 624 Mt. A gap of 188 Mt \u2014 roughly 43% over. Promises alone don\'t lower temperatures.'
       },
+      nudge: {
+        question: 'These are G20 emission trends. How many lines are going down?',
+        reveal: 'Click any country line to see if it\'s trending toward its target.',
+        preSwitch: '',
+        postSwitch: '',
+        nameit: 'Click South Korea. Compare its pledge line to its actual trend.'
+      },
       nameit: {
         concept: 'The NDC Implementation Gap',
         definition: 'The distance between what a country has pledged (its NDC) and what it is actually doing. This is the central crisis of climate policy.'
@@ -354,6 +382,13 @@
         params: {},
         filters: [{ sheet: 'M1 Scatter', field: 'Income Group', values: ['Low income'] }],
         text: 'Low-income countries cluster in the bottom left: lowest emissions, lowest GDP, highest vulnerability. They didn\'t create this crisis, yet they bear the greatest cost.'
+      },
+      nudge: {
+        question: 'This chart shows vulnerability vs GDP. Where do African countries cluster?',
+        reveal: 'Click an African country. Check its emissions vs vulnerability score.',
+        preSwitch: '',
+        postSwitch: '',
+        nameit: 'Apply the "Low income" filter. Notice where the dots land.'
       },
       nameit: {
         concept: 'The Climate Justice Gap',
@@ -393,6 +428,9 @@
     html += '<span class="iq-eyebrow-count">' + pad2(mod.id) + ' / 05</span>';
     html += '</div>';
     html += '<h2 class="iq-question">' + mod.question.text + '</h2>';
+    if (mod.nudge && mod.nudge.question) {
+      html += '<p class="iq-nudge">' + mod.nudge.question + '</p>';
+    }
     html += '<ol class="iq-options">';
     mod.question.choices.forEach(function (c, i) {
       var val = isIso3 ? c.iso3 : c.value;
@@ -491,6 +529,9 @@
     }
 
     html += '<h2 class="iq-question" style="font-size:clamp(16px,4.8vw,19px)">' + mod.reveal.text + '</h2>';
+    if (mod.nudge && mod.nudge.reveal) {
+      html += '<p class="iq-nudge">' + mod.nudge.reveal + '</p>';
+    }
     html += '<div class="iq-back" id="btn-back-question">\u2190 Back to question</div>';
     html += '<div class="iq-continue" id="btn-explore">Explore further \u2192</div>';
     html += '</div>';
@@ -537,8 +578,15 @@
     html += '<p class="iq-hook">' + mod.explore.prompt + '</p>';
 
     if (hasParams) {
+      if (mod.nudge && mod.nudge.preSwitch) {
+        html += '<p class="iq-nudge">' + mod.nudge.preSwitch + '</p>';
+      }
       html += '<button class="iq-switch-btn" id="btn-switch">Switch the frame \u2192</button>';
-      html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p></div>';
+      html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p>';
+      if (mod.nudge && mod.nudge.postSwitch) {
+        html += '<p class="iq-nudge iq-nudge-post">' + mod.nudge.postSwitch + '</p>';
+      }
+      html += '</div>';
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
     } else {
@@ -566,6 +614,15 @@
         if (factSlot) factSlot.classList.add('revealed');
         if (continueBtn) continueBtn.classList.add('revealed');
         switchBtn.style.display = 'none';
+
+        // Auto-highlight relevant country after switch
+        if (mod.id === 1) {
+          await delay(800);
+          await selectCountry(mod.sheet, 'CHN');
+        } else if (mod.id === 2) {
+          await delay(800);
+          await selectCountry(mod.sheet, 'GBR');
+        }
       });
     }
 
@@ -592,6 +649,9 @@
     html += '<span class="iq-concept-line"></span>';
     html += '<span class="iq-concept-def" id="concept-def">' + mod.nameit.definition + '</span>';
     html += '</div>';
+    if (mod.nudge && mod.nudge.nameit) {
+      html += '<p class="iq-nudge">' + mod.nudge.nameit + '</p>';
+    }
     html += '<div class="iq-back" id="btn-back-explore">\u2190 Back to explore</div>';
     html += '<button class="iq-cta" id="btn-next">';
     html += isLast ? 'See your journey \u2192' : 'Next module \u2192';
