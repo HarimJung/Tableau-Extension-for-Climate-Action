@@ -258,9 +258,9 @@
         params: { p_Module: 2, p_TimeMeasure: 'OWID.CO2', p_Phase: 'reveal' },
         highlight: 'GBR',
         text: 'The UK: a 35% CO\u2082 reduction in ten years \u2014 the fastest decline among G7 nations. The reason? It nearly eliminated coal power.',
-        bigNumber: 50,
-        bigUnit: '% CO\u2082 reduction since 1990',
-        statNumber: '\u221250% CO\u2082'
+        bigNumber: 35,
+        bigUnit: '% CO\u2082 reduction in ten years',
+        statNumber: '\u221235% CO\u2082'
       },
       explore: {
         prompt: 'Now switch to \u201CCoal CO\u2082.\u201D What really drove the UK\'s decline?',
@@ -579,14 +579,13 @@
 
     if (hasParams) {
       if (mod.nudge && mod.nudge.preSwitch) {
-        html += '<p class="iq-nudge">' + mod.nudge.preSwitch + '</p>';
+        html += '<p class="iq-nudge" id="nudge-pre">' + mod.nudge.preSwitch + '</p>';
       }
       html += '<button class="iq-switch-btn" id="btn-switch">Switch the frame \u2192</button>';
-      html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p>';
+      html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p></div>';
       if (mod.nudge && mod.nudge.postSwitch) {
-        html += '<p class="iq-nudge iq-nudge-post">' + mod.nudge.postSwitch + '</p>';
+        html += '<p class="iq-nudge iq-nudge-post iq-nudge-hidden" id="nudge-post">' + mod.nudge.postSwitch + '</p>';
       }
-      html += '</div>';
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
     } else {
@@ -608,10 +607,16 @@
           await setParameter(key, mod.explore.params[key]);
         }
 
+        // Hide preSwitch nudge
+        var preNudge = document.getElementById('nudge-pre');
+        if (preNudge) preNudge.classList.add('iq-nudge-hidden');
+
         await delay(600);
         var factSlot = panel.querySelector('.iq-fact-slot');
         var continueBtn = document.getElementById('btn-nameit');
+        var postNudge = document.getElementById('nudge-post');
         if (factSlot) factSlot.classList.add('revealed');
+        if (postNudge) postNudge.classList.remove('iq-nudge-hidden');
         if (continueBtn) continueBtn.classList.add('revealed');
         switchBtn.style.display = 'none';
 
