@@ -282,7 +282,7 @@
         preSwitch1: 'You see total CO\u2082 dropping. But which fuel caused it?',
         postSwitch1: 'Coal nearly hit zero. So what replaced it?',
         preSwitch2: 'Coal vanished. What filled the gap?',
-        postSwitch2: 'CO\u2082 down \u2192 Coal gone \u2192 Renewables up. Three charts, one cause-and-effect chain.',
+        postSwitch2: 'CO\u2082 down \u2192 Coal gone \u2192 Renewables up. One cause-and-effect chain.',
         nameit: 'Click UK, then China. One quit coal. One doubled down.'
       },
       nameit: {
@@ -306,7 +306,7 @@
       },
       reveal: {
         params: { p_Module: 3, p_Measure: 'RENEWABLE_PCT', p_Phase: 'reveal' },
-        text: '64 countries exceed 50% \u2014 each green square is one country. Most rely on hydropower. But does high renewable share mean low emissions?',
+        text: '64 countries exceed 50% \u2014 each green square is one country. Most rely on hydropower. But does "renewable" mean "clean"?',
         bigNumber: 64,
         bigUnit: 'countries above 50% renewable electricity',
         statNumber: '64 countries'
@@ -317,7 +317,7 @@
         text: 'Some green squares turned red. High renewables \u2260 low carbon intensity. Biomass burns, hydro fluctuates, and industry still runs on fossil fuels.'
       },
       nudge: {
-        question: 'Each square = one country. Green = above 50%. How many greens do you see?',
+        question: 'Each square = one country. Green = above 50%. Count the greens.',
         reveal: 'Click a green square to see which country it is.',
         preSwitch: 'These 64 countries look "green." But are they truly clean?',
         postSwitch: 'Same countries, new colors. Which green squares turned red?',
@@ -344,7 +344,7 @@
       },
       reveal: {
         params: { p_Module: 4, p_TimeMeasure: 'OWID.TOTAL_GHG_EXCLUDING_LUCF', p_Phase: 'reveal' },
-        text: 'Only a handful actually cut total emissions. Grey dot = 2013, blue dot = 2023. Lines going up = emissions grew.',
+        text: 'Only a handful actually cut emissions. Grey dot = 2013, blue dot = 2023. Lines going up = emissions grew.',
         bigNumber: 5,
         bigUnit: 'of G20 nations actually reduced emissions',
         statNumber: '5 of 20'
@@ -382,27 +382,27 @@
       },
       reveal: {
         params: { p_Module: 5, p_Measure: 'VULNERABILITY', p_Phase: 'reveal' },
-        text: 'Sub-Saharan Africa: the lowest per-capita emissions on Earth, yet the highest vulnerability to climate impacts. The upper-left corner of this chart is the map of climate injustice.',
+        text: 'Sub-Saharan Africa: the lowest per-capita emissions on Earth, yet the highest vulnerability. The upper-left corner is the map of injustice.',
         bigNumber: 3,
         bigUnit: '% of global CO\u2082 \u2014 yet most vulnerable',
-        statNumber: '~3% of global CO\u2082'
+        statNumber: '~3%'
       },
       explore: {
-        prompt: 'Now let\'s filter to see only low-income countries.',
+        prompt: 'Now filter to low-income countries only.',
         params: {},
         filters: [{ sheet: 'M5 Justice', field: 'Income Group', values: ['Low income'] }],
-        text: 'Every single low-income country sits in the upper-left: minimal emissions, maximum vulnerability. They didn\'t cause this crisis. They can\'t afford to adapt to it.'
+        text: 'Every low-income country sits in the upper-left: minimal emissions, maximum vulnerability. They didn\'t cause this crisis.'
       },
       nudge: {
-        question: 'Look at the upper-left corner. What color are those dots?',
+        question: 'Look at the upper-left corner. What color clusters there?',
         reveal: 'Click any dot in the upper-left. Check its emissions vs vulnerability.',
         preSwitch: '',
         postSwitch: '',
-        nameit: 'Apply the "Low income" filter. Notice where the dots land.'
+        nameit: 'Apply the low-income filter. Watch where the remaining dots land.'
       },
       nameit: {
         concept: 'The Climate Justice Gap',
-        definition: 'Those who have contributed least to climate change suffer the most from its consequences and have the fewest resources to adapt. This is the central moral challenge of the climate crisis.'
+        definition: 'Those who contributed least to climate change suffer most and have the fewest resources to adapt. This is the central moral challenge of the climate crisis.'
       }
     }
   ];
@@ -589,45 +589,38 @@
     html += '<p class="iq-hook">' + mod.explore.prompt + '</p>';
 
     if (hasSwitch1) {
-      // ——— 2단 Switch 모드 (Module 2) ———
       if (mod.nudge && mod.nudge.preSwitch1) {
         html += '<p class="iq-nudge" id="nudge-pre1">' + mod.nudge.preSwitch1 + '</p>';
       }
-      html += '<button class="iq-switch-btn" id="btn-switch1">' + mod.explore.switch1.label + ' \u2192</button>';
+      html += '<button class="iq-switch-btn" id="btn-switch1"><span class="iq-switch-icon">\u25C9</span> ' + mod.explore.switch1.label + '</button>';
       html += '<div class="iq-fact-slot" id="fact1"><p>' + mod.explore.switch1.text + '</p></div>';
       if (mod.nudge && mod.nudge.postSwitch1) {
         html += '<p class="iq-nudge iq-nudge-hidden" id="nudge-post1">' + mod.nudge.postSwitch1 + '</p>';
       }
-
       if (hasSwitch2) {
         if (mod.nudge && mod.nudge.preSwitch2) {
           html += '<p class="iq-nudge iq-nudge-hidden" id="nudge-pre2">' + mod.nudge.preSwitch2 + '</p>';
         }
-        html += '<button class="iq-switch-btn iq-switch-hidden" id="btn-switch2">' + mod.explore.switch2.label + ' \u2192</button>';
+        html += '<button class="iq-switch-btn iq-switch-hidden" id="btn-switch2"><span class="iq-switch-icon">\u25C9</span> ' + mod.explore.switch2.label + '</button>';
         html += '<div class="iq-fact-slot" id="fact2"><p>' + mod.explore.switch2.text + '</p></div>';
         if (mod.nudge && mod.nudge.postSwitch2) {
           html += '<p class="iq-nudge iq-nudge-hidden" id="nudge-post2">' + mod.nudge.postSwitch2 + '</p>';
         }
       }
-
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
-
     } else if (hasParams) {
-      // ——— 1단 Switch 모드 (Module 1, 3, 4) ———
       if (mod.nudge && mod.nudge.preSwitch) {
         html += '<p class="iq-nudge" id="nudge-pre">' + mod.nudge.preSwitch + '</p>';
       }
-      html += '<button class="iq-switch-btn" id="btn-switch">Switch the frame \u2192</button>';
+      html += '<button class="iq-switch-btn" id="btn-switch"><span class="iq-switch-icon">\u25C9</span> Switch the frame</button>';
       html += '<div class="iq-fact-slot"><p>' + mod.explore.text + '</p></div>';
       if (mod.nudge && mod.nudge.postSwitch) {
         html += '<p class="iq-nudge iq-nudge-hidden iq-nudge-post" id="nudge-post">' + mod.nudge.postSwitch + '</p>';
       }
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
-
     } else {
-      // ——— Switch 없는 모드 (Module 5) ———
       html += '<div class="iq-fact-slot revealed"><p>' + mod.explore.text + '</p></div>';
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue revealed" id="btn-nameit">Name this concept \u2192</div>';
@@ -636,28 +629,20 @@
     html += '</div>';
     panel.innerHTML = html;
 
-    // ——— Event Listeners ———
-
     if (hasSwitch1) {
       document.getElementById('btn-switch1').addEventListener('click', async function () {
         this.disabled = true;
-        this.style.opacity = '0.4';
-
+        this.classList.add('iq-switch-active');
         for (var key in mod.explore.switch1.params) {
           await setParameter(key, mod.explore.switch1.params[key]);
         }
-
         var pre1 = document.getElementById('nudge-pre1');
         if (pre1) pre1.classList.add('iq-nudge-hidden');
-
         await delay(600);
-
         var fact1 = document.getElementById('fact1');
         if (fact1) fact1.classList.add('revealed');
-
         var post1 = document.getElementById('nudge-post1');
         if (post1) post1.classList.remove('iq-nudge-hidden');
-
         if (hasSwitch2) {
           await delay(400);
           var pre2 = document.getElementById('nudge-pre2');
@@ -668,61 +653,45 @@
           var nameBtn = document.getElementById('btn-nameit');
           if (nameBtn) nameBtn.classList.add('revealed');
         }
-
         this.style.display = 'none';
-
         if (mod.id === 2) {
           await delay(800);
           await selectCountry(mod.sheet, 'GBR');
         }
       });
-
       if (hasSwitch2) {
         document.getElementById('btn-switch2').addEventListener('click', async function () {
           this.disabled = true;
-          this.style.opacity = '0.4';
-
+          this.classList.add('iq-switch-active');
           for (var key in mod.explore.switch2.params) {
             await setParameter(key, mod.explore.switch2.params[key]);
           }
-
           var pre2 = document.getElementById('nudge-pre2');
           if (pre2) pre2.classList.add('iq-nudge-hidden');
-
           await delay(600);
-
           var fact2 = document.getElementById('fact2');
           if (fact2) fact2.classList.add('revealed');
-
           var post2 = document.getElementById('nudge-post2');
           if (post2) post2.classList.remove('iq-nudge-hidden');
-
           var nameBtn = document.getElementById('btn-nameit');
           if (nameBtn) nameBtn.classList.add('revealed');
-
           this.style.display = 'none';
-
           if (mod.id === 2) {
             await delay(800);
             await selectCountry(mod.sheet, 'GBR');
           }
         });
       }
-
     } else if (hasParams) {
       document.getElementById('btn-switch').addEventListener('click', async function () {
         this.disabled = true;
-        this.style.opacity = '0.4';
-
+        this.classList.add('iq-switch-active');
         for (var key in mod.explore.params) {
           await setParameter(key, mod.explore.params[key]);
         }
-
         var preNudge = document.getElementById('nudge-pre');
         if (preNudge) preNudge.classList.add('iq-nudge-hidden');
-
         await delay(600);
-
         var factSlot = panel.querySelector('.iq-fact-slot');
         var continueBtn = document.getElementById('btn-nameit');
         var postNudge = document.getElementById('nudge-post');
@@ -730,7 +699,6 @@
         if (postNudge) postNudge.classList.remove('iq-nudge-hidden');
         if (continueBtn) continueBtn.classList.add('revealed');
         this.style.display = 'none';
-
         if (mod.id === 1) {
           await delay(800);
           await selectCountry(mod.sheet, 'CHN');
@@ -911,11 +879,9 @@
       await delay(600);
     }
     await setParameter('p_Phase', phase);
-
     if (phase === 'reveal') {
       await delay(300);
     }
-
     var mod = MODULES[currentModule];
     switch (phase) {
       case 'question': await transitionTo(function () { renderQuestion(mod); }); break;
