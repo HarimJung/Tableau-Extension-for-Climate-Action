@@ -843,10 +843,7 @@
   }
 
   function onLearnMarkChange() {
-    if (typeof exploreMode !== 'undefined' && exploreMode) return;
-    VC.detectISO3FromDashboard().then(function (iso3) {
-      if (iso3) showPeekCard(iso3);
-    });
+    // peek card disabled
   }
 
   // ———— Progress ————
