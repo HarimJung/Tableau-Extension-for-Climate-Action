@@ -91,8 +91,7 @@
   // Fast path for p_HighlightISO3 — skips getParametersAsync() lookup
   function setHighlight(iso3) {
     if (!_highlightParam) return;
-    try { _highlightParam.changeValueAsync(String(iso3)); }
-    catch (e) { /* silent */ }
+    _highlightParam.changeValueAsync(String(iso3)).catch(function () { /* silent */ });
   }
 
   async function applyFilter(worksheetName, fieldName, values) {
