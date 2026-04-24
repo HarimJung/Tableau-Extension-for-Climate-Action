@@ -5,6 +5,7 @@
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
   var exploreMode = false;
+  var _highlightParam = null; // cached p_HighlightISO3 reference
 
   // ———— Utility functions ————
   function delay(ms) {
@@ -65,18 +66,33 @@
   async function setParameter(name, value) {
     try {
       var param = await findParameter(name);
-      if (!param) return;
+      if (!param) {
+        debugMsg('setParameter FAIL: "' + name + '" not found among dashboard parameters');
+        return;
+      }
 
       // Skip if already set to desired value
       var current = param.currentValue.value;
-      if (String(current) === String(value)) return;
+      if (String(current) === String(value)) {
+        debugMsg('setParameter SKIP: "' + name + '" already = "' + value + '"');
+        return;
+      }
 
       // Always pass String — Tableau API serializes all types to string anyway
       await param.changeValueAsync(String(value));
+      debugMsg('setParameter OK: "' + name + '" → "' + value + '"');
     } catch (e) {
+      debugMsg('setParameter ERR: "' + name + '" → "' + value + '" — ' + e.message);
       // Silently continue — Tableau may have set the value despite the API error
       // ("Missing output parameter: parameterControl" is a known Tableau API issue)
     }
+  }
+
+  // Fast path for p_HighlightISO3 — skips getParametersAsync() lookup
+  function setHighlight(iso3) {
+    if (!_highlightParam) return;
+    try { _highlightParam.changeValueAsync(String(iso3)); }
+    catch (e) { /* silent */ }
   }
 
   async function applyFilter(worksheetName, fieldName, values) {
@@ -491,7 +507,7 @@
 
         if (isIso3) {
           await selectCountry(mod.sheet, answer);
-          await setParameter('p_HighlightISO3', answer);
+          setHighlight(answer);
         }
         setTimeout(function () { goToPhase('reveal'); }, 1800);
       });
@@ -500,10 +516,10 @@
         opt.addEventListener('mouseenter', function () {
           var iso3 = this.dataset.answer;
           selectCountry(mod.sheet, iso3);
-          setParameter('p_HighlightISO3', iso3);
+          setHighlight(iso3);
         });
         opt.addEventListener('mouseleave', function () {
-          setParameter('p_HighlightISO3', '');
+          setHighlight('---');
           var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
           highlightCountries(mod.sheet, iso3List);
         });
@@ -525,7 +541,7 @@
     }
     if (mod.reveal.highlight) {
       await selectCountry(mod.sheet, mod.reveal.highlight);
-      await setParameter('p_HighlightISO3', mod.reveal.highlight);
+      setHighlight(mod.reveal.highlight);
     }
 
     var panel = document.getElementById('literacy-panel');
@@ -662,7 +678,7 @@
         if (mod.id === 2) {
           await delay(800);
           await selectCountry(mod.sheet, 'GBR');
-          await setParameter('p_HighlightISO3', 'GBR');
+          setHighlight('GBR');
         }
       });
       if (hasSwitch2) {
@@ -685,7 +701,7 @@
           if (mod.id === 2) {
             await delay(800);
             await selectCountry(mod.sheet, 'GBR');
-            await setParameter('p_HighlightISO3', 'GBR');
+            setHighlight('GBR');
           }
         });
       }
@@ -709,7 +725,7 @@
         if (mod.id === 1) {
           await delay(800);
           await selectCountry(mod.sheet, 'CHN');
-          await setParameter('p_HighlightISO3', 'CHN');
+          setHighlight('CHN');
         }
       });
     }
@@ -868,7 +884,7 @@
     currentPhase = phase;
     if (phase === 'question') {
       await clearActiveFilters();
-      await setParameter('p_HighlightISO3', '');
+      setHighlight('---');
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
       if (mod.sheet === 'M1 Scatter') {
@@ -1038,10 +1054,15 @@
     currentModule = 0;
     currentPhase = 'question';
     exploreMode = false;
+
+    // Cache p_HighlightISO3 parameter reference for fast hover updates
+    _highlightParam = await findParameter('p_HighlightISO3');
+    debugMsg('p_HighlightISO3 cached: ' + (_highlightParam ? 'YES' : 'NOT FOUND'));
+
     await setParameter('p_Module', 1);
     await setParameter('p_Phase', 'question');
     await setParameter('p_Measure', 'GHG_PER_CAPITA');
-    await setParameter('p_HighlightISO3', '');
+    setHighlight('---');
     renderQuestion(MODULES[0]);
     VC.onMarkSelection(onLearnMarkChange);
   }
