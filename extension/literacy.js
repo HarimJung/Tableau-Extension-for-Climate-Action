@@ -6,7 +6,6 @@
   let activeFilters = []; // [{sheet, field}]
   var exploreMode = false;
   var _highlightParam = null; // cached p_HighlightISO3 reference
-  var _highlightAllowedSet = null; // Set of allowed ISO3 values (null = accepts all)
 
   // ———— Utility functions ————
   function delay(ms) {
@@ -90,13 +89,8 @@
   }
 
   // Fast path for p_HighlightISO3 — skips getParametersAsync() lookup
-  // Pre-validates against allowable list to prevent native Tableau error dialog
   function setHighlight(iso3) {
     if (!_highlightParam) return;
-    if (_highlightAllowedSet && !_highlightAllowedSet.has(String(iso3))) {
-      debugMsg('setHighlight SKIP: "' + iso3 + '" not in allowed list');
-      return;
-    }
     _highlightParam.changeValueAsync(String(iso3)).catch(function () { /* silent */ });
   }
 
@@ -1059,20 +1053,9 @@
     currentPhase = 'question';
     exploreMode = false;
 
-    // Cache p_HighlightISO3 parameter reference + allowed values
+    // Cache p_HighlightISO3 parameter reference for fast hover
     _highlightParam = await findParameter('p_HighlightISO3');
-    if (_highlightParam) {
-      var av = _highlightParam.allowableValues;
-      if (av && av.type === 'list' && av.allowableValues) {
-        _highlightAllowedSet = new Set(av.allowableValues.map(function (dv) { return dv.value; }));
-        debugMsg('p_HighlightISO3 cached: YES (list, ' + _highlightAllowedSet.size + ' values)');
-      } else {
-        _highlightAllowedSet = null; // "All" type — accept anything
-        debugMsg('p_HighlightISO3 cached: YES (all values)');
-      }
-    } else {
-      debugMsg('p_HighlightISO3: NOT FOUND');
-    }
+    debugMsg('p_HighlightISO3: ' + (_highlightParam ? 'FOUND' : 'NOT FOUND'));
 
     await setParameter('p_Module', 1);
     await setParameter('p_Phase', 'question');
