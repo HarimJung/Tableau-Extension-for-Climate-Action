@@ -6,6 +6,7 @@
   let activeFilters = []; // [{sheet, field}]
   var exploreMode = false;
   var _highlightParam = null; // cached p_HighlightISO3 reference
+  var _highlightAllowedSet = null; // Set of allowed ISO3 values (null = accepts all)
 
   // ———— Utility functions ————
   function delay(ms) {
@@ -89,8 +90,13 @@
   }
 
   // Fast path for p_HighlightISO3 — skips getParametersAsync() lookup
+  // Pre-validates against allowable list to prevent native Tableau error dialog
   function setHighlight(iso3) {
     if (!_highlightParam) return;
+    if (_highlightAllowedSet && !_highlightAllowedSet.has(String(iso3))) {
+      debugMsg('setHighlight SKIP: "' + iso3 + '" not in allowed list');
+      return;
+    }
     _highlightParam.changeValueAsync(String(iso3)).catch(function () { /* silent */ });
   }
 
@@ -518,8 +524,8 @@
           setHighlight(iso3);
         });
         opt.addEventListener('mouseleave', function () {
-          setHighlight('---');
           var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
+          setHighlight(iso3List[0]); // reset to a valid ISO3
           highlightCountries(mod.sheet, iso3List);
         });
       }
@@ -883,7 +889,6 @@
     currentPhase = phase;
     if (phase === 'question') {
       await clearActiveFilters();
-      setHighlight('---');
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
       if (mod.sheet === 'M1 Scatter') {
@@ -1054,14 +1059,24 @@
     currentPhase = 'question';
     exploreMode = false;
 
-    // Cache p_HighlightISO3 parameter reference for fast hover updates
+    // Cache p_HighlightISO3 parameter reference + allowed values
     _highlightParam = await findParameter('p_HighlightISO3');
-    debugMsg('p_HighlightISO3 cached: ' + (_highlightParam ? 'YES' : 'NOT FOUND'));
+    if (_highlightParam) {
+      var av = _highlightParam.allowableValues;
+      if (av && av.type === 'list' && av.allowableValues) {
+        _highlightAllowedSet = new Set(av.allowableValues.map(function (dv) { return dv.value; }));
+        debugMsg('p_HighlightISO3 cached: YES (list, ' + _highlightAllowedSet.size + ' values)');
+      } else {
+        _highlightAllowedSet = null; // "All" type — accept anything
+        debugMsg('p_HighlightISO3 cached: YES (all values)');
+      }
+    } else {
+      debugMsg('p_HighlightISO3: NOT FOUND');
+    }
 
     await setParameter('p_Module', 1);
     await setParameter('p_Phase', 'question');
     await setParameter('p_Measure', 'GHG_PER_CAPITA');
-    setHighlight('---');
     renderQuestion(MODULES[0]);
     VC.onMarkSelection(onLearnMarkChange);
   }
