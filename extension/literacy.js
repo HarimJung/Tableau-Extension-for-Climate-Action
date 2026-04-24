@@ -491,15 +491,19 @@
 
         if (isIso3) {
           await selectCountry(mod.sheet, answer);
+          await setParameter('p_HighlightISO3', answer);
         }
         setTimeout(function () { goToPhase('reveal'); }, 1800);
       });
 
       if (isIso3) {
         opt.addEventListener('mouseenter', function () {
-          selectCountry(mod.sheet, this.dataset.answer);
+          var iso3 = this.dataset.answer;
+          selectCountry(mod.sheet, iso3);
+          setParameter('p_HighlightISO3', iso3);
         });
         opt.addEventListener('mouseleave', function () {
+          setParameter('p_HighlightISO3', '');
           var iso3List = mod.question.choices.map(function(c) { return c.iso3; });
           highlightCountries(mod.sheet, iso3List);
         });
@@ -521,6 +525,7 @@
     }
     if (mod.reveal.highlight) {
       await selectCountry(mod.sheet, mod.reveal.highlight);
+      await setParameter('p_HighlightISO3', mod.reveal.highlight);
     }
 
     var panel = document.getElementById('literacy-panel');
@@ -657,6 +662,7 @@
         if (mod.id === 2) {
           await delay(800);
           await selectCountry(mod.sheet, 'GBR');
+          await setParameter('p_HighlightISO3', 'GBR');
         }
       });
       if (hasSwitch2) {
@@ -679,6 +685,7 @@
           if (mod.id === 2) {
             await delay(800);
             await selectCountry(mod.sheet, 'GBR');
+            await setParameter('p_HighlightISO3', 'GBR');
           }
         });
       }
@@ -702,6 +709,7 @@
         if (mod.id === 1) {
           await delay(800);
           await selectCountry(mod.sheet, 'CHN');
+          await setParameter('p_HighlightISO3', 'CHN');
         }
       });
     }
@@ -860,6 +868,7 @@
     currentPhase = phase;
     if (phase === 'question') {
       await clearActiveFilters();
+      await setParameter('p_HighlightISO3', '');
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
       if (mod.sheet === 'M1 Scatter') {
@@ -1032,6 +1041,7 @@
     await setParameter('p_Module', 1);
     await setParameter('p_Phase', 'question');
     await setParameter('p_Measure', 'GHG_PER_CAPITA');
+    await setParameter('p_HighlightISO3', '');
     renderQuestion(MODULES[0]);
     VC.onMarkSelection(onLearnMarkChange);
   }
