@@ -810,7 +810,7 @@
 
     html += '<div class="iq-domain-bars">';
     VC.DOMAINS.forEach(function (d) {
-      var score = card[d.field] != null ? card[d.field] : 0;
+      var score = card[d.scoreField] != null ? card[d.scoreField] : 0;
       html += '<div class="iq-domain-row">';
       html += '<span class="iq-domain-label">' + d.label + '</span>';
       html += '<div class="iq-domain-track">';
@@ -1097,7 +1097,7 @@
       // Domain mini bars
       html += '<div class="iq-domain-bars">';
       VC.DOMAINS.forEach(function (d) {
-        var score = card[d.field] != null ? card[d.field] : 0;
+        var score = card[d.scoreField] != null ? card[d.scoreField] : 0;
         html += '<div class="iq-domain-row">';
         html += '<span class="iq-domain-label">' + d.label + '</span>';
         html += '<div class="iq-domain-track">';
