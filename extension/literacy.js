@@ -788,45 +788,100 @@
   }
 
   async function renderCountryCard(iso3) {
-    var card = await VC.getReportCard(iso3);
+    var results = await Promise.all([VC.getReportCard(iso3), VC.getPeerContext(iso3)]);
+    var card = results[0];
+    var peer = results[1];
     if (!card) return;
     var slot = document.getElementById('explore-card-slot');
     if (!slot) return;
 
-    var html = '<div class="iq-country-card">';
-    html += '<div class="iq-country-header">';
-    html += '<span class="iq-country-flag">' + VC.iso3ToFlag(iso3) + '</span>';
-    html += '<span class="iq-country-name">' + card.name + '</span>';
+    var grade = card.grade || '\u2014';
+    var gradeBg = VC.GRADE_BG[grade] || '#F8F9FA';
+    var gradeColor = VC.GRADE_COLOR[grade] || '#1A1A2E';
+    var className = VC.CLASS_LABEL[card.climate_class] || null;
+    var classColor = className ? (VC.CLASS_COLOR[className] || '#9A9A9A') : '#9A9A9A';
+    var GLOBAL_AVG = { emissions: 55, energy: 50, economy: 45, responsibility: 60, resilience: 40 };
+
+    var html = '<div class="climate-card" style="display:block;padding:0;">';
+
+    // Header
+    html += '<div class="card-header">';
+    html += '<span class="card-flag">' + VC.iso3ToFlag(iso3) + '</span>';
+    html += '<div>';
+    html += '<div class="card-country-name">' + card.name + '</div>';
+    html += '<div class="card-meta">' + iso3 + ' \u00B7 ' + (card.region || '\u2014') + ' \u00B7 ' + (card.income_group || '\u2014') + '</div>';
     html += '</div>';
-    html += '<div class="iq-meta">' + iso3 + ' \u00B7 ' + (card.region || '') + ' \u00B7 ' + (card.income_group || '') + '</div>';
-    html += '<div class="iq-big-number-card">';
-    html += '<span id="card-score">0</span>';
-    html += '<span class="iq-big-unit">/ 100 \u2014 Grade ' + card.grade + '</span>';
     html += '</div>';
 
-    var classLabel = VC.CLASS_LABEL[card.climate_class] || card.climate_class;
-    var classColor = VC.CLASS_COLOR[card.climate_class] || '#9A9A9A';
-    html += '<span class="iq-class-pill" style="background:' + classColor + ';color:#fff">' + classLabel + '</span>';
+    // Score Hero
+    html += '<div class="score-hero">';
+    html += '<div><span class="score-big" id="card-score-num">0</span><span class="score-unit">/100</span></div>';
+    html += '<span class="grade-badge" style="background:' + gradeBg + ';color:' + gradeColor + '">' + grade + '</span>';
+    html += '<div>';
+    if (className) {
+      html += '<span class="class-pill" style="background:' + classColor + ';display:inline-block">' + className + '</span>';
+    }
+    if (peer && peer.globalRank) {
+      html += '<div class="rank-text" style="margin-top:4px">#' + peer.globalRank + ' / ' + peer.totalCountries + '</div>';
+    }
+    html += '</div>';
+    html += '</div>';
 
-    html += '<div class="iq-domain-bars">';
+    // Domain Bars
+    html += '<div class="domain-section"><h3>Domain Breakdown</h3>';
     VC.DOMAINS.forEach(function (d) {
-      var score = card[d.scoreField] != null ? card[d.scoreField] : 0;
-      html += '<div class="iq-domain-row">';
-      html += '<span class="iq-domain-label">' + d.label + '</span>';
-      html += '<div class="iq-domain-track">';
-      html += '<div class="iq-domain-fill" style="width:' + score + '%;background:' + d.color + '"></div>';
+      var score = card[d.scoreField];
+      var pct = score != null ? Math.min(100, Math.max(0, score)) : 0;
+      var avg = GLOBAL_AVG[d.key] || 50;
+      html += '<div class="domain-bar-row">';
+      html += '<div class="domain-tooltip">' + d.label + ': ' + (score != null ? VC.fmt(score) + '/100' : 'No data') + ' \u00B7 Weight: ' + d.weight + ' \u00B7 Global avg: ' + avg + '</div>';
+      html += '<span class="domain-label">' + d.label + ' <span style="font-size:9px;color:var(--vc-text-muted)">(' + d.weight + ')</span></span>';
+      html += '<div class="domain-bar-track">';
+      html += '<div class="domain-bar-fill" style="width:0%;background:' + d.color + '" data-target-width="' + pct + '%"></div>';
+      html += '<div class="domain-bar-avg" style="left:' + avg + '%" title="Global Avg: ' + avg + '"></div>';
       html += '</div>';
-      html += '<span class="iq-domain-score">' + VC.fmt(score, 0) + '</span>';
+      html += '<span class="domain-bar-value" style="color:' + (score != null ? d.color : 'var(--vc-missing)') + '">' + (score != null ? VC.fmt(score) : '\u2014') + '</span>';
       html += '</div>';
     });
     html += '</div>';
-    html += '</div>';
 
+    // Key Insights
+    var lines = [];
+    var domainScores = VC.DOMAINS
+      .map(function (d) { return { label: d.label, score: card[d.scoreField] }; })
+      .filter(function (d) { return d.score != null; })
+      .sort(function (a, b) { return b.score - a.score; });
+    if (domainScores.length > 0) {
+      var best = domainScores[0];
+      var worst = domainScores[domainScores.length - 1];
+      lines.push('<strong>Strongest:</strong> ' + best.label + ' (' + VC.fmt(best.score) + ', ' + VC.perfLabel(best.score) + ')');
+      if (domainScores.length > 1) {
+        lines.push('<strong>Weakest:</strong> ' + worst.label + ' (' + VC.fmt(worst.score) + ', ' + VC.perfLabel(worst.score) + ')');
+      }
+    }
+    if (className && VC.CLASS_EXPLAIN[className]) {
+      lines.push('<strong>Classification:</strong> ' + className + ' \u2014 ' + VC.CLASS_EXPLAIN[className]);
+    }
+    if (peer && peer.globalRank) {
+      lines.push('<strong>Global Rank:</strong> #' + peer.globalRank + ' of ' + peer.totalCountries + ' countries');
+    }
+    if (peer && peer.incomeRank) {
+      lines.push('<strong>Income Group Rank:</strong> #' + peer.incomeRank + ' of ' + peer.incomeTotal);
+    }
+    if (lines.length > 0) {
+      html += '<div class="insights">' + lines.join('<br>') + '</div>';
+    }
+
+    html += '</div>';
     slot.innerHTML = html;
 
+    // Post-render: animate score count-up + domain bar fills
     await delay(200);
-    var scoreEl = document.getElementById('card-score');
-    if (scoreEl) await animateNumber(scoreEl, card.total_score, 800);
+    var scoreEl = document.getElementById('card-score-num');
+    if (scoreEl) animateNumber(scoreEl, card.total_score, 800);
+    slot.querySelectorAll('.domain-bar-fill').forEach(function (el) {
+      el.style.width = el.getAttribute('data-target-width');
+    });
   }
 
   function renderNameIt(mod) {
@@ -1058,6 +1113,13 @@
     var peer = results[1];
     if (!card) return;
 
+    var grade = card.grade || '\u2014';
+    var gradeBg = VC.GRADE_BG[grade] || '#F8F9FA';
+    var gradeColor = VC.GRADE_COLOR[grade] || '#1A1A2E';
+    var className = VC.CLASS_LABEL[card.climate_class] || null;
+    var classColor = className ? (VC.CLASS_COLOR[className] || '#9A9A9A') : '#9A9A9A';
+    var GLOBAL_AVG = { emissions: 55, energy: 50, economy: 45, responsibility: 60, resilience: 40 };
+
     transitionTo(function () {
       var panel = document.getElementById('literacy-panel');
       var html = '<div class="iq-frame">';
@@ -1069,58 +1131,92 @@
       html += '<span class="iq-eyebrow-count">' + card.name + '</span>';
       html += '</div>';
 
-      // Country header
-      html += '<div class="iq-country-header">';
-      html += '<span class="iq-country-flag">' + VC.iso3ToFlag(iso3) + '</span>';
-      html += '<span class="iq-country-name">' + card.name + '</span>';
+      // Full Climate Card
+      html += '<div class="climate-card" style="display:block;padding:0;">';
+
+      // Header
+      html += '<div class="card-header">';
+      html += '<span class="card-flag">' + VC.iso3ToFlag(iso3) + '</span>';
+      html += '<div>';
+      html += '<div class="card-country-name">' + card.name + '</div>';
+      html += '<div class="card-meta">' + iso3 + ' \u00B7 ' + (card.region || '\u2014') + ' \u00B7 ' + (card.income_group || '\u2014') + '</div>';
+      html += '</div>';
       html += '</div>';
 
-      // Meta
-      html += '<div class="iq-meta">' + iso3 + ' \u00B7 ' + (card.region || '') + ' \u00B7 ' + (card.income_group || '') + '</div>';
-
-      // Big number
-      html += '<div class="iq-big-number-card">';
-      html += '<span id="explore-score">0</span>';
-      html += '<span class="iq-big-unit">/ 100 \u2014 Grade ' + card.grade + '</span>';
-      html += '</div>';
-
-      // Climate class pill
-      var classLabel = VC.CLASS_LABEL[card.climate_class] || card.climate_class;
-      var classColor = VC.CLASS_COLOR[card.climate_class] || '#9A9A9A';
-      html += '<span class="iq-class-pill" style="background:' + classColor + ';color:#fff">' + classLabel + '</span>';
-
-      // Rank
-      if (peer && peer.globalRank) {
-        html += '<div class="iq-rank">#' + peer.globalRank + ' of ' + peer.totalCountries + '</div>';
+      // Score Hero
+      html += '<div class="score-hero">';
+      html += '<div><span class="score-big" id="explore-score-num">0</span><span class="score-unit">/100</span></div>';
+      html += '<span class="grade-badge" style="background:' + gradeBg + ';color:' + gradeColor + '">' + grade + '</span>';
+      html += '<div>';
+      if (className) {
+        html += '<span class="class-pill" style="background:' + classColor + ';display:inline-block">' + className + '</span>';
       }
+      if (peer && peer.globalRank) {
+        html += '<div class="rank-text" style="margin-top:4px">#' + peer.globalRank + ' / ' + peer.totalCountries + '</div>';
+      }
+      html += '</div>';
+      html += '</div>';
 
-      // Domain mini bars
-      html += '<div class="iq-domain-bars">';
+      // Domain Bars
+      html += '<div class="domain-section"><h3>Domain Breakdown</h3>';
       VC.DOMAINS.forEach(function (d) {
-        var score = card[d.scoreField] != null ? card[d.scoreField] : 0;
-        html += '<div class="iq-domain-row">';
-        html += '<span class="iq-domain-label">' + d.label + '</span>';
-        html += '<div class="iq-domain-track">';
-        html += '<div class="iq-domain-fill" style="width:' + score + '%;background:' + d.color + '"></div>';
+        var score = card[d.scoreField];
+        var pct = score != null ? Math.min(100, Math.max(0, score)) : 0;
+        var avg = GLOBAL_AVG[d.key] || 50;
+        html += '<div class="domain-bar-row">';
+        html += '<div class="domain-tooltip">' + d.label + ': ' + (score != null ? VC.fmt(score) + '/100' : 'No data') + ' \u00B7 Weight: ' + d.weight + ' \u00B7 Global avg: ' + avg + '</div>';
+        html += '<span class="domain-label">' + d.label + ' <span style="font-size:9px;color:var(--vc-text-muted)">(' + d.weight + ')</span></span>';
+        html += '<div class="domain-bar-track">';
+        html += '<div class="domain-bar-fill" style="width:0%;background:' + d.color + '" data-target-width="' + pct + '%"></div>';
+        html += '<div class="domain-bar-avg" style="left:' + avg + '%" title="Global Avg: ' + avg + '"></div>';
         html += '</div>';
-        html += '<span class="iq-domain-score">' + VC.fmt(score, 0) + '</span>';
+        html += '<span class="domain-bar-value" style="color:' + (score != null ? d.color : 'var(--vc-missing)') + '">' + (score != null ? VC.fmt(score) : '\u2014') + '</span>';
         html += '</div>';
       });
       html += '</div>';
 
-      // Insight
-      html += '<p class="iq-hook">' + getInsight(card) + '</p>';
+      // Key Insights
+      var lines = [];
+      var domainScores = VC.DOMAINS
+        .map(function (d) { return { label: d.label, score: card[d.scoreField] }; })
+        .filter(function (d) { return d.score != null; })
+        .sort(function (a, b) { return b.score - a.score; });
+      if (domainScores.length > 0) {
+        var best = domainScores[0];
+        var worst = domainScores[domainScores.length - 1];
+        lines.push('<strong>Strongest:</strong> ' + best.label + ' (' + VC.fmt(best.score) + ', ' + VC.perfLabel(best.score) + ')');
+        if (domainScores.length > 1) {
+          lines.push('<strong>Weakest:</strong> ' + worst.label + ' (' + VC.fmt(worst.score) + ', ' + VC.perfLabel(worst.score) + ')');
+        }
+      }
+      if (className && VC.CLASS_EXPLAIN[className]) {
+        lines.push('<strong>Classification:</strong> ' + className + ' \u2014 ' + VC.CLASS_EXPLAIN[className]);
+      }
+      if (peer && peer.globalRank) {
+        lines.push('<strong>Global Rank:</strong> #' + peer.globalRank + ' of ' + peer.totalCountries + ' countries');
+      }
+      if (peer && peer.incomeRank) {
+        lines.push('<strong>Income Group Rank:</strong> #' + peer.incomeRank + ' of ' + peer.incomeTotal);
+      }
+      if (lines.length > 0) {
+        html += '<div class="insights">' + lines.join('<br>') + '</div>';
+      }
+
+      html += '</div>'; // .climate-card
 
       // Back button
       html += '<div class="iq-continue revealed" id="btn-back-learn">\u2190 Back to Learn</div>';
-      html += '</div>';
+      html += '</div>'; // .iq-frame
       panel.innerHTML = html;
 
-      // Post-render: count-up score
+      // Post-render: animate score + domain bars
       (async function () {
         await delay(200);
-        var scoreEl = document.getElementById('explore-score');
-        if (scoreEl) await animateNumber(scoreEl, card.total_score, 800);
+        var scoreEl = document.getElementById('explore-score-num');
+        if (scoreEl) animateNumber(scoreEl, card.total_score, 800);
+        panel.querySelectorAll('.domain-bar-fill').forEach(function (el) {
+          el.style.width = el.getAttribute('data-target-width');
+        });
       })();
 
       document.getElementById('btn-back-learn').addEventListener('click', function () {
