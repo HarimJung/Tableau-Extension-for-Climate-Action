@@ -2183,6 +2183,29 @@ body::before {
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Map nudge — Module 3 question→reveal transition */
+.iq-map-nudge {
+  margin-top: 20px;
+  padding: 16px;
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.iq-map-nudge-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.iq-map-nudge-text {
+  font-size: 14px;
+  color: #4A4A6A;
+  font-style: italic;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.iq-map-switch {
+  width: 100%;
+}
+
 /* Switch 2 — hidden until explore phase unlocks it */
 .iq-switch-hidden {
   display: none;

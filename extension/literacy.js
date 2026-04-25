@@ -508,7 +508,31 @@
           await selectCountry(mod.sheet, answer);
           setHighlight(answer);
         }
-        setTimeout(function () { goToPhase('reveal'); }, 1800);
+        if (mod.id === 3) {
+          // 자동 전환 대신 넛지 버튼 표시
+          setTimeout(function () {
+            var nudgeHtml = '<div class="iq-map-nudge" id="map-nudge">';
+            nudgeHtml += '<p class="iq-map-nudge-text">Maps can be deceiving \u2014 large countries catch your eye, but how many are there exactly?</p>';
+            nudgeHtml += '<button class="iq-switch-btn iq-map-switch" id="btn-map-to-waffle">';
+            nudgeHtml += '<span class="iq-switch-icon">\u25E7</span> Count it differently';
+            nudgeHtml += '</button>';
+            nudgeHtml += '</div>';
+            panel.insertAdjacentHTML('beforeend', nudgeHtml);
+
+            // 애니메이션으로 등장
+            var nudgeEl = document.getElementById('map-nudge');
+            if (nudgeEl) {
+              nudgeEl.offsetHeight;
+              nudgeEl.classList.add('iq-map-nudge-visible');
+            }
+
+            document.getElementById('btn-map-to-waffle').addEventListener('click', function () {
+              goToPhase('reveal');
+            });
+          }, 1200);
+        } else {
+          setTimeout(function () { goToPhase('reveal'); }, 1800);
+        }
       });
 
       if (isIso3) {
