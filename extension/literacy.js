@@ -526,7 +526,8 @@
               nudgeEl.classList.add('iq-map-nudge-visible');
             }
 
-            document.getElementById('btn-map-to-waffle').addEventListener('click', function () {
+            document.getElementById('btn-map-to-waffle').addEventListener('click', async function () {
+              await setParameter('p_M3View', 'waffle');
               goToPhase('reveal');
             });
           }, 1200);
@@ -906,7 +907,6 @@
   async function goToPhase(phase) {
     currentPhase = phase;
     if (phase === 'question') {
-      await setParameter('Show Map', 'false');
       await clearActiveFilters();
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
@@ -916,20 +916,13 @@
         await setParameter('p_TimeMeasure', 'OWID.CO2');
       } else if (mod.sheet === 'M3 Waffle') {
         await setParameter('p_Measure', 'RENEWABLE_PCT');
-        await setParameter('Show Map', 'true');
-        await setParameter('Show Waffle', 'false');
+        await setParameter('p_M3View', 'map');
       } else if (mod.sheet === 'M4 Dumbbell') {
         await setParameter('p_TimeMeasure', 'OWID.TOTAL_GHG_EXCLUDING_LUCF');
       } else if (mod.sheet === 'M5 Justice') {
         await setParameter('p_Measure', 'VULNERABILITY');
       }
       await delay(600);
-    }
-    if (MODULES[currentModule].id === 3) {
-      if (phase === 'reveal' || phase === 'explore' || phase === 'nameit') {
-        await setParameter('Show Map', 'false');
-        await setParameter('Show Waffle', 'true');
-      }
     }
     await setParameter('p_Phase', phase);
     if (phase === 'reveal') {
