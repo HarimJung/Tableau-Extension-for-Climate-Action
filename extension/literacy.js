@@ -919,6 +919,15 @@
       }
     })();
 
+    var conceptCards = panel.querySelectorAll('.iq-concept-mini');
+    conceptCards.forEach(function (card) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', function () {
+        currentModule = parseInt(this.getAttribute('data-idx'), 10);
+        goToPhase('question');
+      });
+    });
+
     document.getElementById('btn-explore-mode').addEventListener('click', function () {
       enterExploreMode();
     });
