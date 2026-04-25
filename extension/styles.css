@@ -2210,3 +2210,122 @@ body::before {
 .iq-switch-hidden {
   display: none;
 }
+
+/* ———— Measure pill toggle ———— */
+.iq-measure-pills {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.iq-pill {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1.5px solid rgba(14,14,14,0.15);
+  border-radius: 6px;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vc-text-secondary, #555555);
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+.iq-pill:hover {
+  border-color: var(--vc-primary, #C2410C);
+  color: var(--vc-primary, #C2410C);
+}
+.iq-pill.iq-pill-active {
+  background: var(--vc-primary, #C2410C);
+  border-color: var(--vc-primary, #C2410C);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ———— Country card (Module 5 explore + Free Mode) ———— */
+.iq-country-card {
+  background: var(--vc-surface, #F5F5F0);
+  border: 1px solid rgba(14,14,14,0.08);
+  border-radius: 8px;
+  padding: 16px;
+  margin: 12px 0;
+}
+.iq-country-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.iq-country-flag {
+  font-size: 22px;
+  line-height: 1;
+}
+.iq-country-name {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--vc-text, #0E0E0E);
+}
+.iq-meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--vc-text-muted, #9A9A9A);
+  margin-bottom: 12px;
+}
+.iq-class-pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 12px;
+}
+.iq-rank {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--vc-text-secondary, #555555);
+  margin-bottom: 12px;
+}
+.iq-domain-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.iq-domain-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.iq-domain-label {
+  flex: 0 0 72px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vc-text-secondary, #555555);
+  text-align: right;
+}
+.iq-domain-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(14,14,14,0.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.iq-domain-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.iq-domain-score {
+  flex: 0 0 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--vc-text, #0E0E0E);
+  text-align: right;
+}

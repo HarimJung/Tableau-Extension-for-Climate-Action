@@ -5,6 +5,8 @@
   let currentPhase = 'question';
   let activeFilters = []; // [{sheet, field}]
   var exploreMode = false;
+  var m5CardActive = false;
+  var m5ListenerRegistered = false;
   var _highlightParam = null; // cached p_HighlightISO3 reference
 
   // ———— Utility functions ————
@@ -348,21 +350,21 @@
       title: 'Promises vs Reality',
       sheet: 'M4 Dumbbell',
       question: {
-        text: 'Of the G20 nations, how many actually reduced total emissions between 2013 and 2023?',
+        text: 'Of the G20 nations, how many increased total greenhouse gas emissions between 2013 and 2023?',
         choices: [
-          { label: 'Most (15+)', value: 'most' },
-          { label: 'About half (8\u201310)', value: 'half' },
+          { label: 'Almost none (1\u20132)', value: 'none' },
           { label: 'A few (4\u20136)', value: 'few' },
-          { label: 'Almost none (1\u20132)', value: 'none' }
+          { label: 'About half (8\u201310)', value: 'half' },
+          { label: 'Most (15+)', value: 'most' }
         ],
         answer: 'few'
       },
       reveal: {
         params: { p_Module: 4, p_TimeMeasure: 'OWID.TOTAL_GHG_EXCLUDING_LUCF', p_Phase: 'reveal' },
-        text: 'Only a handful actually cut emissions. Grey dot = 2013, blue dot = 2023. Lines going up = emissions grew.',
-        bigNumber: 5,
-        bigUnit: 'of G20 nations actually reduced emissions',
-        statNumber: '5 of 20'
+        text: '6 G20 nations actually increased emissions. The lines going up show who\u2019s moving in the wrong direction \u2014 despite their climate pledges.',
+        bigNumber: 6,
+        bigUnit: 'G20 nations increased emissions (2013\u20132023)',
+        statNumber: '6 of 20'
       },
       explore: {
         prompt: 'What if we look at per-capita instead of total?',
@@ -370,7 +372,7 @@
         text: 'Per capita tells a different story. Some countries with rising totals actually decreased per person \u2014 population growth masks the progress.'
       },
       nudge: {
-        question: 'Count the lines pointing downward. That\'s how many actually cut.',
+        question: 'Count the lines pointing upward. That\u2019s how many increased.',
         reveal: 'Find the longest upward line. Who increased the most?',
         preSwitch: 'You see total emissions. But what about per person?',
         postSwitch: 'Same countries, different frame. Did any arrows flip direction?',
@@ -384,40 +386,33 @@
     {
       id: 5,
       title: 'Climate Justice',
-      sheet: 'M5 Justice',
+      sheet: 'M1 Scatter',
       question: {
-        text: 'Which region has the lowest emissions per person but the highest climate vulnerability?',
+        text: 'Do richer countries produce cleaner electricity?',
         choices: [
-          { label: 'Southeast Asia', value: 'sea' },
-          { label: 'Sub-Saharan Africa', value: 'africa' },
-          { label: 'South America', value: 'latam' },
-          { label: 'Central Europe', value: 'europe' }
+          { label: 'Yes \u2014 they can afford clean tech', value: 'yes' },
+          { label: 'No \u2014 many rich countries are still dirty', value: 'no' },
+          { label: 'Only European countries are clean', value: 'europe' },
+          { label: 'There is no pattern', value: 'none' }
         ],
-        answer: 'africa'
+        answer: 'no'
       },
       reveal: {
-        params: { p_Module: 5, p_Measure: 'VULNERABILITY', p_Phase: 'reveal' },
-        text: 'Sub-Saharan Africa: the lowest per-capita emissions on Earth, yet the highest vulnerability. The upper-left corner is the map of injustice.',
-        bigNumber: 3,
-        bigUnit: '% of global CO\u2082 \u2014 yet most vulnerable',
-        statNumber: '~3%'
+        params: { p_Module: 5, p_Measure: 'CARBON_INTENSITY', p_Phase: 'reveal' },
+        text: 'Wealth doesn\u2019t guarantee clean energy. Some of the richest nations still burn dirty \u2014 while poorer countries with hydro power score better.',
+        bigNumber: 6,
+        bigUnit: 'of the 10 richest nations have carbon intensity above 350 gCO\u2082/kWh'
       },
       explore: {
-        prompt: 'Now filter to low-income countries only.',
-        params: {},
-        filters: [{ sheet: 'M5 Justice', field: 'Income Group', values: ['Low income'] }],
-        text: 'Every low-income country sits in the upper-left: minimal emissions, maximum vulnerability. They didn\'t cause this crisis.'
-      },
-      nudge: {
-        question: 'Look at the upper-left corner. What color clusters there?',
-        reveal: 'Click any dot in the upper-left. Check its emissions vs vulnerability.',
-        preSwitch: '',
-        postSwitch: '',
-        nameit: 'Apply the low-income filter. Watch where the remaining dots land.'
+        prompt: 'Click any country to see its climate report card.',
+        switches: [
+          { label: 'Carbon Intensity', measure: 'CARBON_INTENSITY' },
+          { label: 'GHG per Capita', measure: 'GHG_PER_CAPITA' }
+        ]
       },
       nameit: {
-        concept: 'The Climate Justice Gap',
-        definition: 'Those who contributed least to climate change suffer most and have the fewest resources to adapt. This is the central moral challenge of the climate crisis.'
+        concept: 'Wealth \u2260 Clean Energy',
+        definition: 'Money can buy efficiency, but not responsibility. The richest nations often have the dirtiest energy.'
       }
     }
   ];
@@ -665,6 +660,16 @@
       }
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
       html += '<div class="iq-continue" id="btn-nameit">Name this concept \u2192</div>';
+    } else if (mod.explore.switches) {
+      html += '<div class="iq-measure-pills">';
+      mod.explore.switches.forEach(function (s, i) {
+        var cls = i === 0 ? ' iq-pill-active' : '';
+        html += '<button class="iq-pill' + cls + '" data-measure="' + s.measure + '">' + s.label + '</button>';
+      });
+      html += '</div>';
+      html += '<div id="explore-card-slot"></div>';
+      html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
+      html += '<div class="iq-continue revealed" id="btn-nameit">Name this concept \u2192</div>';
     } else {
       html += '<div class="iq-fact-slot revealed"><p>' + mod.explore.text + '</p></div>';
       html += '<div class="iq-back" id="btn-back-reveal">\u2190 Back to reveal</div>';
@@ -754,12 +759,74 @@
       });
     }
 
+    if (mod.explore.switches) {
+      var pills = panel.querySelectorAll('.iq-pill');
+      pills.forEach(function (pill) {
+        pill.addEventListener('click', async function () {
+          pills.forEach(function (p) { p.classList.remove('iq-pill-active'); });
+          this.classList.add('iq-pill-active');
+          await setParameter('p_Measure', this.getAttribute('data-measure'));
+        });
+      });
+      m5CardActive = true;
+      if (!m5ListenerRegistered) {
+        m5ListenerRegistered = true;
+        VC.onMarkSelection(async function () {
+          if (!m5CardActive) return;
+          var iso3 = await VC.detectISO3FromDashboard();
+          if (iso3) renderCountryCard(iso3);
+        });
+      }
+    }
+
     document.getElementById('btn-back-reveal').addEventListener('click', function () {
       goToPhase('reveal');
     });
     document.getElementById('btn-nameit').addEventListener('click', function () {
       goToPhase('nameit');
     });
+  }
+
+  async function renderCountryCard(iso3) {
+    var card = await VC.getReportCard(iso3);
+    if (!card) return;
+    var slot = document.getElementById('explore-card-slot');
+    if (!slot) return;
+
+    var html = '<div class="iq-country-card">';
+    html += '<div class="iq-country-header">';
+    html += '<span class="iq-country-flag">' + VC.iso3ToFlag(iso3) + '</span>';
+    html += '<span class="iq-country-name">' + card.name + '</span>';
+    html += '</div>';
+    html += '<div class="iq-meta">' + iso3 + ' \u00B7 ' + (card.region || '') + ' \u00B7 ' + (card.income_group || '') + '</div>';
+    html += '<div class="iq-big-number-card">';
+    html += '<span id="card-score">0</span>';
+    html += '<span class="iq-big-unit">/ 100 \u2014 Grade ' + card.grade + '</span>';
+    html += '</div>';
+
+    var classLabel = VC.CLASS_LABEL[card.climate_class] || card.climate_class;
+    var classColor = VC.CLASS_COLOR[card.climate_class] || '#9A9A9A';
+    html += '<span class="iq-class-pill" style="background:' + classColor + ';color:#fff">' + classLabel + '</span>';
+
+    html += '<div class="iq-domain-bars">';
+    VC.DOMAINS.forEach(function (d) {
+      var score = card[d.field] != null ? card[d.field] : 0;
+      html += '<div class="iq-domain-row">';
+      html += '<span class="iq-domain-label">' + d.label + '</span>';
+      html += '<div class="iq-domain-track">';
+      html += '<div class="iq-domain-fill" style="width:' + score + '%;background:' + d.color + '"></div>';
+      html += '</div>';
+      html += '<span class="iq-domain-score">' + VC.fmt(score, 0) + '</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '</div>';
+
+    slot.innerHTML = html;
+
+    await delay(200);
+    var scoreEl = document.getElementById('card-score');
+    if (scoreEl) await animateNumber(scoreEl, card.total_score, 800);
   }
 
   function renderNameIt(mod) {
@@ -906,12 +973,17 @@
   // ———— Phase navigation ————
   async function goToPhase(phase) {
     currentPhase = phase;
+    m5CardActive = false;
     if (phase === 'question') {
       await clearActiveFilters();
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
       if (mod.sheet === 'M1 Scatter') {
-        await setParameter('p_Measure', 'GHG_PER_CAPITA');
+        if (mod.id === 5) {
+          await setParameter('p_Measure', 'CARBON_INTENSITY');
+        } else {
+          await setParameter('p_Measure', 'GHG_PER_CAPITA');
+        }
       } else if (mod.sheet === 'M2 Line') {
         await setParameter('p_TimeMeasure', 'OWID.CO2');
       } else if (mod.sheet === 'M3 Waffle') {
@@ -919,8 +991,6 @@
         await setParameter('p_M3View', 'map');
       } else if (mod.sheet === 'M4 Dumbbell') {
         await setParameter('p_TimeMeasure', 'OWID.TOTAL_GHG_EXCLUDING_LUCF');
-      } else if (mod.sheet === 'M5 Justice') {
-        await setParameter('p_Measure', 'VULNERABILITY');
       }
       await delay(600);
     }
