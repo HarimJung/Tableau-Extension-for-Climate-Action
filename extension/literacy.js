@@ -882,6 +882,9 @@
   async function goToPhase(phase) {
     currentPhase = phase;
     if (phase === 'question') {
+      if (MODULES[currentModule].id !== 3) {
+        await setParameter('Show Map', false);
+      }
       await clearActiveFilters();
       var mod = MODULES[currentModule];
       await setParameter('p_Module', mod.id);
@@ -890,6 +893,10 @@
       } else if (mod.sheet === 'M2 Line') {
         await setParameter('p_TimeMeasure', 'OWID.CO2');
       } else if (mod.sheet === 'M3 Waffle') {
+        if (mod.id === 3) {
+          await setParameter('Show Map', true);
+          await setParameter('Show Waffle', false);
+        }
         await setParameter('p_Measure', 'RENEWABLE_PCT');
       } else if (mod.sheet === 'M4 Dumbbell') {
         await setParameter('p_TimeMeasure', 'OWID.TOTAL_GHG_EXCLUDING_LUCF');
@@ -897,6 +904,10 @@
         await setParameter('p_Measure', 'VULNERABILITY');
       }
       await delay(600);
+    }
+    if (MODULES[currentModule].id === 3 && phase === 'reveal') {
+      await setParameter('Show Map', false);
+      await setParameter('Show Waffle', true);
     }
     await setParameter('p_Phase', phase);
     if (phase === 'reveal') {
